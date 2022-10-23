@@ -1,20 +1,84 @@
 [
   {
-    "type": "console.page/route",
+    "type": "console.flag/model",
     "properties": {
-      "exact": true,
-      "path": "/example",
-      "component": { "$codeRef": "ExamplePage" }
+      "flag": "CLUSTER_TEMPLATES_FLAG",
+      "model": {
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1",
+        "kind": "ClusterTemplate"
+      }
     }
   },
   {
     "type": "console.navigation/href",
     "properties": {
-      "id": "example",
-      "name": "Plugin Example",
-      "href": "/example",
+      "id": "admin-clustertemplate-console",
       "perspective": "admin",
-      "section": "home"
+      "section": "home",
+      "name": "%plugin__clustertemplate-plugin~ClusterTemplates%",
+      "href": "/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate"
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "kind": "ClusterTemplate",
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1"
+      },
+      "component": {
+        "$codeRef": "createTemplate.default"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.page/resource/list",
+    "properties": {
+      "model": {
+        "kind": "ClusterTemplate",
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1"
+      },
+      "component": {
+        "$codeRef": "templates.default"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.page/resource/details",
+    "properties": {
+      "model": {
+        "kind": "ClusterTemplate",
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1"
+      },
+      "component": {
+        "$codeRef": "templateDetails.default"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": "/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate/~newRepository",
+      "component": { "$codeRef": "helmRepositoryForm.default" }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES"]
     }
   }
 ]

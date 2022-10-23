@@ -1,8 +1,8 @@
 {
-  "name": "console-plugin-template",
+  "name": "clustertemplates-plugin",
   "version": "0.0.1",
   "private": true,
-  "repository": "git@github.com:spadgett/console-plugin-template.git",
+  "repository": "git@github.com:spadgett/clustertemplates-plugin.git",
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rm -rf dist",
@@ -37,6 +37,7 @@
     "react-i18next": "^11.8.11",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
+    "showdown": "^2.1.0",
     "style-loader": "^3.3.1",
     "stylelint": "^14.9.1",
     "stylelint-config-prettier": "^9.0.3",
@@ -49,15 +50,30 @@
     "webpack-dev-server": "^4.7.4"
   },
   "consolePlugin": {
-    "name": "console-plugin-template",
+    "name": "clustertemplates-plugin",
     "version": "0.0.1",
-    "displayName": "OpenShift Console Plugin Template",
-    "description": "Template project for OpenShift console plugins. Edit package.json to change this message and the plugin name.",
+    "displayName": "Cluster Templates Plugin",
+    "description": "Cluster Templates console plugin",
     "exposedModules": {
-      "ExamplePage": "./components/ExamplePage"
+      "templates": "./components/ClusterTemplatesPage/ClusterTemplatesPage.tsx",
+      "helmRepositoryForm": "./components/HelmRepositories/HelmRepositoryForm.tsx",
+      "createTemplate": "./components/CreateClusterTemplateWizard/CreateClusterTemplateWizard.tsx",
+      "templateDetails": "./components/ClusterTemplateDetails/ClusterTemplateDetailsPage.tsx"
     },
     "dependencies": {
-      "@console/pluginAPI": "*"
+      "@console/pluginAPI": "^4.11"
     }
+  },
+  "dependencies": {
+    "@patternfly/react-table": "^4.111.4",
+    "classnames": "2.2.6",
+    "formik": "^2.2.9",
+    "formik-pf": "^0.0.1-alpha9",
+    "i18next": "^22.0.2",
+    "js-yaml": "4.1.0",
+    "lodash": "4.17.21",
+    "lodash-es": "4.17.21",
+    "recoil": "^0.7.6",
+    "yup": "^0.32.11"
   }
 }
