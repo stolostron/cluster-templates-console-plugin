@@ -2,7 +2,7 @@
   "name": "clustertemplates-plugin",
   "version": "0.0.1",
   "private": true,
-  "repository": "git@github.com:spadgett/clustertemplates-plugin.git",
+  "repository": "git@github.com/stolostron/cluster-templates-console-plugin.git",
   "license": "Apache-2.0",
   "scripts": {
     "clean": "rm -rf dist",
