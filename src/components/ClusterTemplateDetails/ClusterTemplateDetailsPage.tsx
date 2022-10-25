@@ -15,11 +15,7 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useClusterTemplate } from '../../hooks/useClusterTemplates';
 import ClusterTemplateDetailsSections from './ClusterTemplateDetailsSections';
-import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
 import PageLoader from '../../helpers/PageLoader';
-
-export const getResourceListPageUrl = (resourceGVK: K8sGroupVersionKind) =>
-  `/k8s/cluster/${resourceGVK.group}~${resourceGVK.version}~${resourceGVK.kind}`;
 
 const PageBreadcrumb: React.FC<{ clusterTemplateName: string }> = ({
   clusterTemplateName,
