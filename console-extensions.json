@@ -11,16 +11,50 @@
     }
   },
   {
-    "type": "console.navigation/href",
+    "type": "console.flag/model",
     "properties": {
-      "id": "admin-clustertemplate-console",
-      "perspective": "admin",
-      "section": "home",
-      "name": "%plugin__clustertemplate-plugin~ClusterTemplates%",
-      "href": "/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate"
+      "flag": "MCE_FLAG",
+      "model": {
+        "group": "cluster.open-cluster-management.io",
+        "version": "v1",
+        "kind": "ManagedCluster"
+      }
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "acm",
+      "section": "mce-infrastructure",
+      "id": "clustertemplates",
+      "name": "%plugin__clustertemplates-plugin~Cluster templates%",
+      "model": {
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1",
+        "kind": "ClusterTemplate"
+      }
     },
     "flags": {
-      "required": ["CLUSTER_TEMPLATES_FLAG"]
+      "required": ["CLUSTER_TEMPLATES_FLAG", "MCE_FLAG"]
+    }
+  },
+  {
+    "type": "console.navigation/resource-cluster",
+    "properties": {
+      "perspective": "admin",
+      "section": "compute",
+      "insertAfter": "machineconfigpools",
+      "id": "clustertemplates",
+      "name": "%plugin__clustertemplates-plugin~Cluster templates%",
+      "model": {
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1",
+        "kind": "ClusterTemplate"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"],
+      "disallowed": ["MCE_FLAG"]
     }
   },
   {
@@ -78,7 +112,7 @@
       "component": { "$codeRef": "helmRepositoryForm.default" }
     },
     "flags": {
-      "required": ["CLUSTER_TEMPLATES"]
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
     }
   }
 ]
