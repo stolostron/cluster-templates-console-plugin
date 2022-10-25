@@ -13,18 +13,15 @@ import {
   Spinner,
   Title,
 } from '@patternfly/react-core';
-import ErrorState from './ErrorState';
+import ErrorState, { ErrorStateProps } from './ErrorState';
 
 type PageLoaderProps = {
   children: React.ReactNode;
   loaded?: boolean;
   error?: unknown;
-  errorId?: string;
-  errorTitle?: string;
-  errorMessage?: string;
-};
+} & Omit<ErrorStateProps, 'error'>;
 
-export function ErrorPage(props: { error: Error; actions?: React.ReactNode }) {
+export function ErrorPage(props: ErrorStateProps) {
   return (
     <Page>
       <PageSection>
@@ -69,21 +66,12 @@ export function LoadingPage(props: {
 
 const PageLoader = ({
   loaded = false,
-  error,
-  errorId,
-  errorTitle,
-  errorMessage,
   children,
+  error,
+  ...restErrorStateProps
 }: PageLoaderProps) => {
   if (error) {
-    return (
-      <ErrorState
-        error={error}
-        errorId={errorId}
-        errorTitle={errorTitle}
-        errorMessage={errorMessage}
-      />
-    );
+    return <ErrorPage error={error} {...restErrorStateProps} />;
   }
   if (!loaded) {
     return <LoadingPage />;

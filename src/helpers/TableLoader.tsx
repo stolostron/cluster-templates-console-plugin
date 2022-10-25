@@ -1,24 +1,19 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { Skeleton } from '@patternfly/react-core';
-import ErrorState from './ErrorState';
+import ErrorState, { ErrorStateProps } from './ErrorState';
 
 type TableLoaderProps = {
   children: React.ReactNode;
   loaded?: boolean;
   error?: unknown;
-  errorId?: string;
-  errorTitle?: string;
-  errorMessage?: string;
-};
+} & Omit<ErrorStateProps, 'error'>;
 
 function TableLoader({
   loaded = false,
-  error,
-  errorId,
-  errorTitle,
-  errorMessage,
   children,
+  error,
+  ...restErrorStateProps
 }: TableLoaderProps) {
   if (!loaded) {
     return (
@@ -38,14 +33,7 @@ function TableLoader({
     );
   }
   if (error) {
-    return (
-      <ErrorState
-        error={error}
-        errorId={errorId}
-        errorTitle={errorTitle}
-        errorMessage={errorMessage}
-      ></ErrorState>
-    );
+    return <ErrorState error={error} {...restErrorStateProps} />;
   }
   return <>{children}</>;
 }
