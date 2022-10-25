@@ -8,7 +8,8 @@ import {
   waitForLabelText,
   waitForTestId,
   waitForText,
-} from '../../../../lib/test-util';
+} from '../testUtils/testUtils';
+import React from 'react';
 
 describe('getFieldId', () => {
   test('returns correct field id generated from field name and type', () => {
@@ -21,7 +22,7 @@ describe('getFieldId', () => {
   });
 });
 
-describe('SelectField', () => {
+xdescribe('SelectField', () => {
   const onChange = jest.fn();
   beforeEach(() => {
     render(

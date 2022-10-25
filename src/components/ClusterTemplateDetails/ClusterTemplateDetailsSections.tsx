@@ -44,10 +44,9 @@ const getSectionComponents = (): {
 export function ExpandableCard(props: {
   title: string;
   children: React.ReactNode;
-  className?: string;
-  id?: string;
+  dataTestId: string;
 }) {
-  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const onExpand = (event: React.MouseEvent, id: string) => {
@@ -55,7 +54,7 @@ export function ExpandableCard(props: {
   };
 
   return (
-    <Card id={props.id} className={props.className} isExpanded={isExpanded}>
+    <Card data-testid={props.dataTestId} isExpanded={isExpanded}>
       <CardHeader
         toggleButtonProps={{
           id: 'toggle-button',
@@ -86,7 +85,7 @@ const ClusterTemplateDetailsSections: React.FC<{
         const Component = components[section];
         return (
           <StackItem key={key}>
-            <ExpandableCard title={titles[section]} id={key}>
+            <ExpandableCard title={titles[section]} dataTestId={key}>
               <Component clusterTemplate={clusterTemplate} />
             </ExpandableCard>
           </StackItem>

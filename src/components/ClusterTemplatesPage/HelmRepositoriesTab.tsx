@@ -192,7 +192,7 @@ export const HelmRepoRow = ({
         <ActionsColumn
           items={getRowActions()}
           actionsToggle={(props: CustomActionsToggleProps) => (
-            <KebabToggle id="repo-actions-toggle" {...props} />
+            <KebabToggle data-testid="repo-actions-toggle" {...props} />
           )}
         />
       </Td>
@@ -259,7 +259,7 @@ const HelmRepositoriesTab = () => {
           <Card>
             <TableComposable
               aria-label="Helm repositories table"
-              id="helm-repositories-table"
+              data-testid="helm-repositories-table"
               variant="compact"
             >
               <Thead>

@@ -4,43 +4,45 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { waitForTestId, waitForText } from '../../../../lib/test-util';
+import { waitForTestId, waitForText } from '../../testUtils/testUtils';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 import { ClusterTemplate } from '../../types';
 import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInstances';
 import ClusterTemplatesTab, { ClusterTemplateRow } from './ClusterTemplatesTab';
-import clusterTemplateMock1 from '../mocks/clusterTemplateExample.json';
+import clusterTemplateMock1 from '../../mocks/clusterTemplateExample.json';
+import React from 'react';
 
 const clusterTemplatesListMock: ClusterTemplate[] = [clusterTemplateMock1];
 
-const clusterTemplateModelMock = {
-  kind: 'ClusterTemplate',
-  namespaced: false,
-  verbs: [
-    'delete',
-    'deletecollection',
-    'get',
-    'list',
-    'patch',
-    'create',
-    'update',
-    'watch',
-  ],
-  shortNames: ['ct', 'cts'],
-  label: 'ClusterTemplate',
-  plural: 'clustertemplates',
-  apiVersion: 'v1alpha1',
-  abbr: 'CT',
-  apiGroup: 'clustertemplate.openshift.io',
-  labelPlural: 'ClusterTemplates',
-  path: 'clustertemplates',
-  id: 'clustertemplate',
-  crd: true,
-};
-
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const MockComponent = require('../mocks/MockComponent').default;
+  const MockComponent = require('../../mocks/MockComponent').default;
+
+  const clusterTemplateModelMock = {
+    kind: 'ClusterTemplate',
+    namespaced: false,
+    verbs: [
+      'delete',
+      'deletecollection',
+      'get',
+      'list',
+      'patch',
+      'create',
+      'update',
+      'watch',
+    ],
+    shortNames: ['ct', 'cts'],
+    label: 'ClusterTemplate',
+    plural: 'clustertemplates',
+    apiVersion: 'v1alpha1',
+    abbr: 'CT',
+    apiGroup: 'clustertemplate.openshift.io',
+    labelPlural: 'ClusterTemplates',
+    path: 'clustertemplates',
+    id: 'clustertemplate',
+    crd: true,
+  };
+
   return {
     ResourceLink: MockComponent,
     useK8sModel: jest.fn().mockReturnValue([clusterTemplateModelMock]),
@@ -48,8 +50,8 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   };
 });
 
-jest.mock('../hooks/useClusterTemplates');
-jest.mock('../hooks/useClusterTemplateInstances');
+jest.mock('../../hooks/useClusterTemplates');
+jest.mock('../../hooks/useClusterTemplateInstances');
 (useClusterTemplates as jest.Mock).mockReturnValue([
   clusterTemplatesListMock,
   true,

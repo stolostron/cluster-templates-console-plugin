@@ -27,7 +27,7 @@ const getStatusIcon = (
       return (
         <ExclamationCircleIcon
           color="var(--pf-global--danger-color--100)"
-          id="failed-icon"
+          data-testid="failed-icon"
         />
       );
     }
@@ -39,7 +39,7 @@ const getStatusIcon = (
       return (
         <RunningIcon
           color="var(--pf-global--success-color--100)"
-          id="running-icon"
+          data-testid="running-icon"
         />
       );
     }
@@ -47,7 +47,7 @@ const getStatusIcon = (
       return (
         <CheckCircleIcon
           color="var(--pf-global--success-color--100)"
-          id="success-icon"
+          data-testid="success-icon"
         />
       );
     }
@@ -55,7 +55,7 @@ const getStatusIcon = (
       return (
         <UnknownIcon
           color="var(--pf-global--disabled-color--100)"
-          id="unknown-icon"
+          data-testid="unknown-icon"
         />
       );
     }

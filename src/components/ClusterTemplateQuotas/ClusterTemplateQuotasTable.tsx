@@ -50,8 +50,8 @@ const QuotaRow: React.FC<{
   index: number;
 }> = ({ quota, columns, index }) => {
   return (
-    <Tr data-index={index} id="quotas-table-row">
-      <Td dataLabel={columns[0].title} id="name">
+    <Tr data-index={index} data-testid="quotas-table-row">
+      <Td dataLabel={columns[0].title} data-testid="name">
         <ResourceLink
           groupVersionKind={clusterTemplateQuotaGVK}
           name={quota.metadata?.name}
@@ -60,7 +60,7 @@ const QuotaRow: React.FC<{
           data-testid={`quota-${quota.metadata?.name}`}
         />
       </Td>
-      <Td dataLabel={columns[1].title} id="namespace">
+      <Td dataLabel={columns[1].title} data-testid="namespace">
         <ResourceLink
           groupVersionKind={namespaceGVK}
           name={quota.metadata?.namespace}
@@ -68,10 +68,10 @@ const QuotaRow: React.FC<{
           data-testid={`namespace-${quota.metadata?.namespace}`}
         />
       </Td>
-      <Td dataLabel={columns[2].title} id="user-management">
+      <Td dataLabel={columns[2].title} data-testid="user-management">
         <ClusterTemplateQuotaAccessSummary quota={quota} />
       </Td>
-      <Td dataLabel={columns[3].title} id="cost">
+      <Td dataLabel={columns[3].title} data-testid="cost">
         <ClusterTemplateQuotaCostSummary quota={quota} />
       </Td>
     </Tr>
@@ -84,7 +84,7 @@ const ClusterTemplateQuotasTable: React.FC<{
   const { t } = useTranslation();
   const columns = getTableColumns(t);
   return (
-    <TableComposable variant="compact" id="quotas-table">
+    <TableComposable variant="compact" data-testid="quotas-table">
       <Thead>
         <Tr>
           {columns.map((column) => (

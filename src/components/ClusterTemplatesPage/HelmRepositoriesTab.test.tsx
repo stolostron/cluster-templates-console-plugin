@@ -3,7 +3,7 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { waitForTestId, waitForText } from '../../../../lib/test-util';
+import { waitForTestId, waitForText } from '../../testUtils/testUtils';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 import {
@@ -14,6 +14,7 @@ import {
 import HelmRepositoriesTab, { HelmRepoRow } from './HelmRepositoriesTab';
 import * as useHelmRepositoryIndex from '../../hooks/useHelmRepositoryIndex';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 
 const helmRepositoryMock1 = {
   kind: 'HelmChartRepository',
@@ -83,9 +84,9 @@ const helmRepositoryIndexMock: HelmRepoIndex = {
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const MockComponent = require('../mocks/MockComponent').default;
+  const MockComponent = require('../../mocks/MockComponent').default;
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const HCRModelMock = require('../mocks/MockComponent').HCRModelMock;
+  const HCRModelMock = require('../../mocks/MockComponent').HCRModelMock;
   return {
     ResourceLink: MockComponent,
     useK8sModel: jest.fn().mockReturnValue([HCRModelMock]),
@@ -93,8 +94,8 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   };
 });
 
-jest.mock('../hooks/useHelmRepositories');
-jest.mock('../hooks/useClusterTemplates');
+jest.mock('../../hooks/useHelmRepositories');
+jest.mock('../../hooks/useClusterTemplates');
 (useHelmRepositories as jest.Mock).mockReturnValue([
   helmRepositoriesListMock,
   true,

@@ -42,8 +42,8 @@ const InstanceRow: React.FC<{
   index: number;
 }> = ({ instance, columns, index }) => {
   return (
-    <Tr data-index={index} id="cluster-template-instance-row">
-      <Td dataLabel={columns[0].title} id="name">
+    <Tr data-index={index} data-testid="cluster-template-instance-row">
+      <Td dataLabel={columns[0].title} data-testid="name">
         <ResourceLink
           groupVersionKind={clusterTemplateInstanceGVK}
           name={instance.metadata?.name}
@@ -52,7 +52,7 @@ const InstanceRow: React.FC<{
           data-testid={`instance-${instance.metadata?.name}`}
         />
       </Td>
-      <Td dataLabel={columns[1].title} id="namespace">
+      <Td dataLabel={columns[1].title} data-testid="namespace">
         <ResourceLink
           groupVersionKind={namespaceGVK}
           name={instance.metadata?.namespace}
@@ -60,7 +60,7 @@ const InstanceRow: React.FC<{
           data-testid={`namespace-${instance.metadata?.namespace}`}
         />
       </Td>
-      <Td dataLabel={columns[2].title} id="status">
+      <Td dataLabel={columns[2].title} data-testid="status">
         <ClusterTemplateInstanceStatus instance={instance} />
       </Td>
     </Tr>
@@ -73,7 +73,10 @@ const ClusterTemplateInstanceTable: React.FC<{
   const { t } = useTranslation();
   const columns = getTableColumns(t);
   return (
-    <TableComposable variant="compact" id="cluster-template-instances-table">
+    <TableComposable
+      variant="compact"
+      data-testid="cluster-template-instances-table"
+    >
       <Thead>
         <Tr>
           {columns.map((column) => (

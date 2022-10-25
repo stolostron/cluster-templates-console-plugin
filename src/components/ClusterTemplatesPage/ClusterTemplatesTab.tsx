@@ -82,7 +82,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({
 
   return (
     <Tr>
-      <Td id={columns[0].id} dataLabel={columns[0].title}>
+      <Td data-testid={columns[0].id} dataLabel={columns[0].title}>
         <ResourceLink
           groupVersionKind={clusterTemplateGVK}
           name={obj.metadata?.name}
@@ -90,20 +90,23 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({
           hideIcon
         />
       </Td>
-      <Td id={columns[1].id} dataLabel={columns[1].title}>
+      <Td data-testid={columns[1].id} dataLabel={columns[1].title}>
         <ClusterTemplateHelmResourceLink clusterTemplate={obj} />
       </Td>
-      <Td id={columns[2].id} dataLabel={columns[2].title}>
+      <Td data-testid={columns[2].id} dataLabel={columns[2].title}>
         <ClusterTemplateHelmChart clusterTemplate={obj} />
       </Td>
-      <Td id={columns[4].id} dataLabel={columns[4].title}>
+      <Td data-testid={columns[4].id} dataLabel={columns[4].title}>
         <ClusterTemplateUsage clusterTemplate={obj} />
       </Td>
-      <Td id={columns[4].id} isActionCell>
+      <Td data-testid={columns[4].id} isActionCell>
         <ActionsColumn
           items={getRowActions()}
           actionsToggle={(props: CustomActionsToggleProps) => (
-            <KebabToggle id="cluster-template-actions-toggle" {...props} />
+            <KebabToggle
+              data-testid="cluster-template-actions-toggle"
+              {...props}
+            />
           )}
         />
       </Td>
@@ -160,7 +163,7 @@ const ClusterTemplatesTab = () => {
           <Card>
             <TableComposable
               aria-label="Cluster templates table"
-              id="cluster-templates-table"
+              data-testid="cluster-templates-table"
               variant="compact"
             >
               <Thead>
