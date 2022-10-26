@@ -4,7 +4,16 @@ import { K8sModel } from '@openshift-console/dynamic-plugin-sdk/lib/api/common-t
 export const HCRModelMock: K8sModel & { path: string } = {
   kind: 'HelmChartRepository',
   namespaced: false,
-  verbs: ['delete', 'deletecollection', 'get', 'list', 'patch', 'create', 'update', 'watch'],
+  verbs: [
+    'delete',
+    'deletecollection',
+    'get',
+    'list',
+    'patch',
+    'create',
+    'update',
+    'watch',
+  ],
   label: 'Helm Chart Repository',
   plural: 'helmchartrepositories',
   apiVersion: 'v1beta1',
@@ -27,7 +36,16 @@ export const ConfigMapModelMock: K8sModel = {
   id: 'configmap',
   labelPlural: 'ConfigMaps',
   labelPluralKey: 'public~ConfigMaps',
-  verbs: ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch'],
+  verbs: [
+    'create',
+    'delete',
+    'deletecollection',
+    'get',
+    'list',
+    'patch',
+    'update',
+    'watch',
+  ],
   shortNames: ['cm'],
 };
 
@@ -42,5 +60,14 @@ export const SecretModelMock: K8sModel = {
   id: 'secret',
   labelPlural: 'Secrets',
   labelPluralKey: 'public~Secrets',
-  verbs: ['create', 'delete', 'deletecollection', 'get', 'list', 'patch', 'update', 'watch'],
+  verbs: [
+    'create',
+    'delete',
+    'deletecollection',
+    'get',
+    'list',
+    'patch',
+    'update',
+    'watch',
+  ],
 };

@@ -1,14 +1,15 @@
 /* Copyright Contributors to the Open Cluster Management project */
 
-import { K8sGroupVersionKind } from '*@openshift-console/dynamic-plugin-sdk';
-import { render } from '*@testing-library/react';
+import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
+import { render } from '@testing-library/react';
 import { clusterTemplateQuotaGVK, roleBindingGVK } from '../../constants';
 import QuotasSection from './QuotaSection';
-import { useK8sWatchResource } from '*@openshift-console/dynamic-plugin-sdk';
-import importedQuotas from '../mocks/quotas.json';
-import clusterTemplate from '../mocks/clusterTemplateExample.json';
-import roleBindings from '../mocks/roleBindings.json';
+import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import importedQuotas from '../../mocks/quotas.json';
+import clusterTemplate from '../../mocks/clusterTemplateExample.json';
+import roleBindings from '../../mocks/roleBindings.json';
 import { ClusterTemplateQuota } from '../../types';
+import React from 'react';
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
 const quotas = importedQuotas as ClusterTemplateQuota[];
@@ -20,7 +21,7 @@ const quotasInTemplate = quotas.filter((quota) =>
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const MockComponent = require('../mocks/MockComponent').default;
+  const MockComponent = require('../../mocks/MockComponent').default;
   return {
     ResourceLink: MockComponent,
     useK8sWatchResource: jest.fn(),
@@ -67,22 +68,22 @@ describe('Cluster template details page quotas section', () => {
 
     for (let i = 0; i < quotasInTemplate.length; ++i) {
       const quota = quotas[i];
-      const rowSelector = `[data-index='${i}'][id=quotas-table-row]`;
+      const rowSelector = `[data-index='${i}'][data-testid=quotas-table-row]`;
       expect(
         container.querySelector(
-          `${rowSelector} [id=quota-${quota.metadata?.name}]`,
+          `${rowSelector} [data-testid=quota-${quota.metadata?.name}]`,
         ),
       ).toBeInTheDocument();
       expect(
         container.querySelector(
-          `${rowSelector} [id=namespace-${quota.metadata?.namespace}]`,
+          `${rowSelector} [data-testid=namespace-${quota.metadata?.namespace}]`,
         ),
       ).toBeInTheDocument();
       expect(
-        container.querySelector(`${rowSelector} [id=user-management]`),
-      ).toHaveTextContent(`0 user, 0 group`);
+        container.querySelector(`${rowSelector} [data-testid=user-management]`),
+      ).toHaveTextContent(`0 users, 0 groups`);
       expect(
-        container.querySelector(`${rowSelector} [id=cost]`),
+        container.querySelector(`${rowSelector} [data-testid=cost]`),
       ).toHaveTextContent(
         quota.spec?.budget
           ? `${quota.status?.budgetSpent || 0} / ${quota.spec?.budget}`
@@ -115,13 +116,13 @@ describe('Cluster template details page quotas section', () => {
     const { container } = await renderQuotasSection();
     expect(
       container.querySelector(
-        `[data-index='0'][id='quotas-table-row'] [id='user-management']`,
+        `[data-index='0'][data-testid='quotas-table-row'] [data-testid='user-management']`,
       ),
-    ).toHaveTextContent(`3 user, 2 group`);
+    ).toHaveTextContent(`3 users, 1 group`);
     expect(
       container.querySelector(
-        `[data-index='1'][id='quotas-table-row'] [id='user-management']`,
+        `[data-index='1'][data-testid='quotas-table-row'] [data-testid='user-management']`,
       ),
-    ).toHaveTextContent(`0 user, 0 group`);
+    ).toHaveTextContent(`0 users, 0 groups`);
   });
 });

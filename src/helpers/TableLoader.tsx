@@ -17,7 +17,7 @@ function TableLoader({
 }: TableLoaderProps) {
   if (!loaded) {
     return (
-      <div id="table-skeleton">
+      <div data-testid="table-skeleton">
         <Skeleton />
         <br />
         <Skeleton />

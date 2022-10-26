@@ -37,10 +37,6 @@ export type ListItem = {
   action?: React.ReactNode;
   value?: string | number | React.ReactNode | undefined;
 };
-// const clusterTemplateDefinition = {
-//   kind: clusterTemplateGVK.kind,
-//   apiVersion: `${clusterTemplateGVK.group}/${clusterTemplateGVK.version}`,
-// };
 
 const CostItem: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
   clusterTemplate,
@@ -68,11 +64,11 @@ const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   return (
     <DescriptionList isHorizontal>
       {items.map(({ label, action, value }) => (
-        <DescriptionListGroup label={label} key="label">
-          <DescriptionListTerm id={`${label} label`}>
+        <DescriptionListGroup label={label} key={label}>
+          <DescriptionListTerm data-testid={`${label} label`}>
             {label} {action}
           </DescriptionListTerm>
-          <DescriptionListDescription id={`${label} value`}>
+          <DescriptionListDescription data-testid={`${label} value`}>
             {value ?? '-'}
           </DescriptionListDescription>
         </DescriptionListGroup>
@@ -113,18 +109,19 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
       label: t('Infrastructure type'),
       value: getClusterTemplateInfraType(clusterTemplate),
     },
-    {
-      label: t('table.labels'),
-      value: clusterTemplate.metadata?.labels && <>has labels</>,
-      // action: (
-      //   <Button
-      //     onClick={() => setShowEditLabels(true)}
-      //     variant={ButtonVariant.link}
-      //     aria-label={t('labels.edit.title')}
-      //     icon={<PencilAltIcon />}
-      //   ></Button>
-      // ),
-    },
+    //TODO: implement labels
+    // {
+    //   label: t('table.labels'),
+    //   value: 'todo',
+    //   // action: (
+    //   //   <Button
+    //   //     onClick={() => setShowEditLabels(true)}
+    //   //     variant={ButtonVariant.link}
+    //   //     aria-label={t('labels.edit.title')}
+    //   //     icon={<PencilAltIcon />}
+    //   //   ></Button>
+    //   // ),
+    // },
   ];
 
   const rightItems: ListItem[] = [

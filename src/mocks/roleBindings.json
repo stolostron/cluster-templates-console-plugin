@@ -55,11 +55,6 @@
         "kind": "Group",
         "apiGroup": "rbac.authorization.k8s.io",
         "name": "test-group0"
-      },
-      {
-        "kind": "Group",
-        "apiGroup": "rbac.authorization.k8s.io",
-        "name": "test-group1"
       }
     ],
     "roleRef": {

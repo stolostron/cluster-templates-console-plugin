@@ -26,7 +26,7 @@ const ErrorState = ({
   const { t } = useTranslation();
   const msg = errorMessage ? errorMessage : getErrorMessage(error);
   return (
-    <EmptyState id={errorId ?? 'error'}>
+    <EmptyState data-testid={errorId ?? 'error'}>
       <EmptyStateIcon icon={ExclamationCircleIcon} />
       <Title size="lg" headingLevel="h4">
         {errorTitle ?? t('Something went wrong')}

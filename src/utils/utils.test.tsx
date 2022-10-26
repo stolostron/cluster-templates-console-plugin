@@ -1,7 +1,8 @@
 /* Copyright Contributors to the Open Cluster Management project */
 
-import { render } from 'src/components/ClusterTemplateDetails/@testing-library/react';
-import { waitForSelector, waitForText } from '../../../lib/test-util';
+import { render } from '@testing-library/react';
+import React from 'react';
+import { waitForSelector, waitForText } from '../testUtils/testUtils';
 import { getNavLabelWithCount, LoadingHelper } from './utils';
 
 describe('LoadingHelper component', () => {

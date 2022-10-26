@@ -1,14 +1,15 @@
 /* Copyright Contributors to the Open Cluster Management project */
-import { render } from '*@testing-library/react';
+import { render } from '@testing-library/react';
 import UsageSection from './UsageSection';
-import { useK8sWatchResource } from '*@openshift-console/dynamic-plugin-sdk';
-import clusterTemplate from '../mocks/clusterTemplateExample.json';
-import instances from '../mocks/clusterTemplateInstances.json';
+import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import clusterTemplate from '../../mocks/clusterTemplateExample.json';
+import instances from '../../mocks/clusterTemplateInstances.json';
+import React from 'react';
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const MockComponent = require('../mocks/MockComponent').default;
+  const MockComponent = require('../../mocks/MockComponent').default;
   return {
     ResourceLink: MockComponent,
     useK8sWatchResource: jest.fn(),
@@ -75,23 +76,23 @@ describe('Cluster template details page usage section', () => {
     ];
     expect(getByTestId('cluster-template-instances-table')).toBeInTheDocument();
     for (let i = 0; i < expected.length; ++i) {
-      const rowSelector = `[data-index='${i}'][id='cluster-template-instance-row']`;
+      const rowSelector = `[data-index='${i}'][data-testid='cluster-template-instance-row']`;
       expect(
         container.querySelector(
-          `${rowSelector} [id=instance-${expected[i].name}]`,
+          `${rowSelector} [data-testid=instance-${expected[i].name}]`,
         ),
       ).toBeInTheDocument();
       expect(
         container.querySelector(
-          `${rowSelector} [id=namespace-${expected[i].namespace}]`,
+          `${rowSelector} [data-testid=namespace-${expected[i].namespace}]`,
         ),
       ).toBeInTheDocument();
       expect(
-        container.querySelector(`${rowSelector} [id=status]`),
+        container.querySelector(`${rowSelector} [data-testid=status]`),
       ).toHaveTextContent(expected[i].statusLabel);
       expect(
         container.querySelector(
-          `${rowSelector} [id=status] [id='${expected[i].statusIcon}']`,
+          `${rowSelector} [data-testid=status] [data-testid='${expected[i].statusIcon}']`,
         ),
       ).toBeInTheDocument();
     }

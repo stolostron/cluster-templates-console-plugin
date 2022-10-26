@@ -1,7 +1,8 @@
 /* Copyright Contributors to the Open Cluster Management project */
 
-import { render } from 'src/components/ClusterTemplateDetails/@testing-library/react';
-import { waitForTestId, waitForText } from '../../../../lib/test-util';
+import { render } from '@testing-library/react';
+import React from 'react';
+import { waitForTestId, waitForText } from '../testUtils/testUtils';
 import TableLoader from './TableLoader';
 
 describe('TableLoader', () => {
