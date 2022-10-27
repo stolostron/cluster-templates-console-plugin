@@ -1,5 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { ClusterTemplateQuota } from '../../types';
 
 import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';

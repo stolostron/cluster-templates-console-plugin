@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { Button, Stack, StackItem, Text, TextVariants } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 import * as React from 'react';

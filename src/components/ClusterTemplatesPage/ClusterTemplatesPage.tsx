@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { ListPageCreateDropdown, ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import { useHistory, useLocation } from 'react-router-dom';

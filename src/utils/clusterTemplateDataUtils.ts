@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
 import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types';

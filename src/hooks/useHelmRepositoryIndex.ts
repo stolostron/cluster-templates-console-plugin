@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { load } from 'js-yaml';
 import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';

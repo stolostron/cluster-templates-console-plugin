@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { Skeleton } from '@patternfly/react-core';
 import isString from 'lodash/isString';

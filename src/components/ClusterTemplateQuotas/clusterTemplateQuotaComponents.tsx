@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import React from 'react';
 
 import { useClusterTemplateQuotaAccess } from '../../hooks/useQuotas';

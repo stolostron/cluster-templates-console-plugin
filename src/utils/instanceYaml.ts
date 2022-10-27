@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 /*This module generates a ClusterTemplateInstance YAML 
   The spec.values section containing the values for the instance parameters contains default values, or placeholders
   The description and type are provided as comments

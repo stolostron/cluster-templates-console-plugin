@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateQuotaGVK, roleBindingGVK } from '../constants';
 import { ClusterRoleBinding, ClusterTemplateQuota, ClusterTemplateQuotaAccess } from '../types';

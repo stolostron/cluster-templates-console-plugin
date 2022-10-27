@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { k8sCreate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import {

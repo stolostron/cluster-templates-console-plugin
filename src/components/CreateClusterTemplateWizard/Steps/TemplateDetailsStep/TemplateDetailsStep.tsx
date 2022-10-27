@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { Form, Stack, StackItem, Text, TextContent, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';

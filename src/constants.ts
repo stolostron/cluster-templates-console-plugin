@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
 export const TEMPLATES_HELM_REPO_LABEL = 'clustertemplates.openshift.io/helm-repo';
 

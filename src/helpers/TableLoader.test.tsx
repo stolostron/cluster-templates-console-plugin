@@ -1,5 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { render } from '@testing-library/react';
 import React from 'react';
 import { waitForTestId, waitForText } from '../testUtils/testUtils';

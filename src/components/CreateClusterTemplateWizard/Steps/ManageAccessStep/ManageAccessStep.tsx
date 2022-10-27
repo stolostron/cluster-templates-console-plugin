@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { K8sResourceCommon, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { Form, Stack, StackItem, Text, TextContent } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';

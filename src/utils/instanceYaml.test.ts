@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import generateInstanceYaml from './instanceYaml';
 
 import clusterTemplate from '../mocks/clusterTemplateExample.json';

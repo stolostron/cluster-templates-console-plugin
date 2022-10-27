@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { Alert, EmptyState, EmptyStateBody, Stack, StackItem, Title } from '@patternfly/react-core';
 import React from 'react';
 import ClusterTemplateQuotasTable from '../ClusterTemplateQuotas/ClusterTemplateQuotasTable';

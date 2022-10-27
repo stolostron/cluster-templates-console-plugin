@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { K8sModel } from '@openshift-console/dynamic-plugin-sdk/lib/api/common-types';
 
 export const clusterTemplateModelMock = {

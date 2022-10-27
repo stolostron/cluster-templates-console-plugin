@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import React from 'react';

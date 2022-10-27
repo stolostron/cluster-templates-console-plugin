@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { ClusterTemplate } from '../../types';
 import ClusterTemplateInstancesTable from '../ClusterTemplateInstancesTable/ClusterTemplateInstancesTable';

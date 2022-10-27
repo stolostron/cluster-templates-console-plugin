@@ -1,5 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { Label } from '@patternfly/react-core';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
