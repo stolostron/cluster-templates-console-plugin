@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import {
   k8sDelete,
@@ -30,7 +29,6 @@ import {
   Thead,
   Tr,
 } from '@patternfly/react-table';
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { TFunction } from 'react-i18next';
 import { helmRepoGVK } from '../../constants';
 import {
@@ -115,9 +113,7 @@ export const HelmRepoRow = ({
     clusterTemplatesResult;
 
   const templatesFromRepo = templates.filter(
-    (t) =>
-      t.spec.clusterDefinition.applicationSpec.source.repoURL ===
-      obj.metadata?.name,
+    (t) => t.spec.clusterDefinition.source.repoURL === obj.metadata?.name,
   );
   const repoChartsCount = repoIndex
     ? getRepoCharts(repoIndex, obj.metadata?.name ?? '').length ?? '-'
@@ -192,7 +188,7 @@ export const HelmRepoRow = ({
         <ActionsColumn
           items={getRowActions()}
           actionsToggle={(props: CustomActionsToggleProps) => (
-            <KebabToggle data-testid="repo-actions-toggle" {...props} />
+            <KebabToggle {...props} />
           )}
         />
       </Td>

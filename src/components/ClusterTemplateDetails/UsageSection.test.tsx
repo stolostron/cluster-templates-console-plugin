@@ -1,4 +1,4 @@
-/* Copyright Contributors to the Open Cluster Management project */
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { render } from '@testing-library/react';
 import UsageSection from './UsageSection';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
@@ -8,7 +8,6 @@ import React from 'react';
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const MockComponent = require('../../mocks/MockComponent').default;
   return {
     ResourceLink: MockComponent,

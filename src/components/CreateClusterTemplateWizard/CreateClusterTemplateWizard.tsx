@@ -77,11 +77,9 @@ const CreateClusterTemplateWizard = () => {
             spec: {
               cost: values.cost,
               clusterDefinition: {
-                applicationSpec: {
-                  source: {
-                    repoURL: values.helmRepo,
-                    chart: values.helmChart,
-                  },
+                source: {
+                  repoURL: values.helmRepo,
+                  chart: values.helmChart,
                 },
               },
             },

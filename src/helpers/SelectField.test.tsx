@@ -1,15 +1,8 @@
-/* Copyright Contributors to the Open Cluster Management project */
+import React from 'react';
 import SelectField, { getFieldId } from './SelectField';
 import { Formik } from 'formik';
-import { render, screen } from '@testing-library/react';
-import {
-  clickByLabel,
-  clickByText,
-  waitForLabelText,
-  waitForTestId,
-  waitForText,
-} from '../testUtils/testUtils';
-import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 describe('getFieldId', () => {
   test('returns correct field id generated from field name and type', () => {
@@ -22,8 +15,7 @@ describe('getFieldId', () => {
   });
 });
 
-xdescribe('SelectField', () => {
-  const onChange = jest.fn();
+describe('SelectField', () => {
   beforeEach(() => {
     render(
       <Formik initialValues={{ secretName: 'option1' }} onSubmit={jest.fn()}>
@@ -31,7 +23,6 @@ xdescribe('SelectField', () => {
           name="secretName"
           fieldId="secretName"
           label="Secret name"
-          onChange={onChange}
           options={[
             {
               value: 'option1',
@@ -47,27 +38,22 @@ xdescribe('SelectField', () => {
     );
   });
   test('renders a form group with select', async () => {
-    await waitForText('Secret name');
-    await waitForTestId('pf-select-toggle-id-0-select-typeahead');
-    await waitForTestId('pf-select-toggle-id-0');
+    expect(screen.getByLabelText('Secret name')).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Options menu' })).toBeDefined();
   });
   test('clears the selection when clicking the x button', async () => {
-    expect(screen.getByLabelText('secretName')).toHaveValue('option1');
-    await waitForLabelText('Clear all');
-    await clickByLabel('Clear all');
-    expect(screen.getByLabelText('secretName')).toHaveValue('');
+    expect(screen.getByLabelText('Secret name')).toHaveValue('option1');
+    await userEvent.click(screen.getByRole('button', { name: 'Clear all' }));
+    await waitFor(() => {
+      expect(screen.getByLabelText('Secret name')).toHaveValue('');
+    });
   });
   test('changes the value when clicking on an option', async () => {
-    expect(screen.getByLabelText('secretName')).toHaveValue('option1');
-    await clickByLabel('Options menu');
-    await clickByText('option2');
-    expect(screen.getByLabelText('secretName')).toHaveValue('option2');
-  });
-  test('calls onChange callback when a value is selected', async () => {
-    expect(screen.getByLabelText('secretName')).toHaveValue('option1');
-    await clickByLabel('Options menu');
-    await clickByText('option2');
-    expect(screen.getByLabelText('secretName')).toHaveValue('option2');
-    expect(onChange).toHaveBeenCalled();
+    expect(screen.getByLabelText('Secret name')).toHaveValue('option1');
+    await userEvent.click(screen.getByRole('button', { name: 'Options menu' }));
+    await userEvent.click(screen.getByRole('option', { name: 'option2' }));
+    await waitFor(() => {
+      expect(screen.getByLabelText('Secret name')).toHaveValue('option2');
+    });
   });
 });

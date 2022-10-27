@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { Stack, StackItem } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as React from 'react';
@@ -47,9 +46,7 @@ export function ExpandableCard(props: {
   dataTestId: string;
 }) {
   const [isExpanded, setIsExpanded] = React.useState<boolean>(true);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const onExpand = (event: React.MouseEvent, id: string) => {
+  const onExpand = () => {
     setIsExpanded(!isExpanded);
   };
 

@@ -52,11 +52,10 @@ export const ClusterTemplateHelmResourceLink: React.FC<{
   return isHelmClusterDefinition(clusterTemplate) ? (
     <Link
       to={{
-        pathname:
-          clusterTemplate.spec.clusterDefinition.applicationSpec.source.repoURL,
+        pathname: clusterTemplate.spec.clusterDefinition.source.repoURL,
       }}
     >
-      {clusterTemplate.spec.clusterDefinition.applicationSpec.source.repoURL}
+      {clusterTemplate.spec.clusterDefinition.source.repoURL}
     </Link>
   ) : (
     <>-</>

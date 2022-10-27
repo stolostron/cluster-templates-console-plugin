@@ -1,5 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { render } from '@testing-library/react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
@@ -23,12 +21,9 @@ jest.mock('../../hooks/useClusterTemplateInstances', () => {
   };
 });
 
-jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  return {
-    useK8sWatchResource: jest.fn(),
-  };
-});
+jest.mock('@openshift-console/dynamic-plugin-sdk', () => ({
+  useK8sWatchResource: jest.fn(),
+}));
 
 const renderTemplatesPage = () => {
   const history = createMemoryHistory();
@@ -66,13 +61,11 @@ describe('cluster template details page', () => {
     const { getByTestId } = renderTemplatesPage();
     const details = {
       ['Template name']: exampleTemplate.metadata?.name,
-      ['HELM chart name']:
-        exampleTemplate.spec.clusterDefinition.applicationSpec.source.chart,
+      ['HELM chart name']: exampleTemplate.spec.clusterDefinition.source.chart,
       ['HELM chart repository']:
-        exampleTemplate.spec.clusterDefinition.applicationSpec.source.repoURL,
+        exampleTemplate.spec.clusterDefinition.source.repoURL,
       ['HELM chart version']:
-        exampleTemplate.spec.clusterDefinition.applicationSpec.source
-          .targetRevision,
+        exampleTemplate.spec.clusterDefinition.source.targetRevision,
       ['Description']:
         exampleTemplate.metadata?.annotations[
           'clustertemplates.openshift.io/description'

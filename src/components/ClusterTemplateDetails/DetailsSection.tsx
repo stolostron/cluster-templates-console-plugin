@@ -96,14 +96,11 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
     },
     {
       label: t('HELM chart name'),
-      value:
-        clusterTemplate.spec.clusterDefinition.applicationSpec.source.chart,
+      value: clusterTemplate.spec.clusterDefinition.source.chart,
     },
     {
       label: t('HELM chart version'),
-      value:
-        clusterTemplate.spec.clusterDefinition.applicationSpec.source
-          .targetRevision,
+      value: clusterTemplate.spec.clusterDefinition.source.targetRevision,
     },
     {
       label: t('Infrastructure type'),

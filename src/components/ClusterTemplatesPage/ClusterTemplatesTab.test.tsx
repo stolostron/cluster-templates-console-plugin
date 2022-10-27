@@ -1,5 +1,4 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -15,34 +14,9 @@ import React from 'react';
 const clusterTemplatesListMock: ClusterTemplate[] = [clusterTemplateMock1];
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const MockComponent = require('../../mocks/MockComponent').default;
-
-  const clusterTemplateModelMock = {
-    kind: 'ClusterTemplate',
-    namespaced: false,
-    verbs: [
-      'delete',
-      'deletecollection',
-      'get',
-      'list',
-      'patch',
-      'create',
-      'update',
-      'watch',
-    ],
-    shortNames: ['ct', 'cts'],
-    label: 'ClusterTemplate',
-    plural: 'clustertemplates',
-    apiVersion: 'v1alpha1',
-    abbr: 'CT',
-    apiGroup: 'clustertemplate.openshift.io',
-    labelPlural: 'ClusterTemplates',
-    path: 'clustertemplates',
-    id: 'clustertemplate',
-    crd: true,
-  };
-
+  const clusterTemplateModelMock =
+    require('../../mocks/models').clusterTemplateModelMock;
   return {
     ResourceLink: MockComponent,
     useK8sModel: jest.fn().mockReturnValue([clusterTemplateModelMock]),
@@ -76,45 +50,40 @@ describe('ClusterTemplatesTab', () => {
   });
 });
 
-const renderRow = () =>
-  render(
-    <MemoryRouter>
-      <ClusterTemplateRow obj={clusterTemplateMock1} />
-    </MemoryRouter>,
-  );
-
 describe('ClusterTemplateRow', () => {
-  test('Cluster template deletion action and modal button', async () => {
-    renderRow();
-    await userEvent.click(
-      screen.getByTestId('cluster-template-actions-toggle'),
+  beforeEach(() => {
+    // NOTE: avoiding DOM nesting warnings:
+    // https://github.com/testing-library/react-testing-library/issues/515#issuecomment-547940273
+    const tableBody = document.createElement('tbody');
+    render(
+      <MemoryRouter>
+        <ClusterTemplateRow obj={clusterTemplateMock1} />
+      </MemoryRouter>,
+      {
+        container: document.body.appendChild(tableBody),
+      },
     );
-    await waitForText('Delete template');
-    await userEvent.click(screen.getByText('Delete template'));
-    await waitForText('Are you sure you want to delete?');
-    await userEvent.click(screen.getByText('Delete'));
-    expect(screen.queryByText('Delete cluster template')).toBeNull();
   });
-  test('Cluster template deletion modal close button closes the dialog', async () => {
-    renderRow();
-    await userEvent.click(
-      screen.getByTestId('cluster-template-actions-toggle'),
-    );
-    await waitForText('Delete template');
-    await userEvent.click(screen.getByText('Delete template'));
-    await waitForText('Are you sure you want to delete?');
-    await userEvent.click(screen.getByText('Cancel'));
-    expect(screen.queryByText('Delete cluster template')).toBeNull();
-  });
-  test('Repo deletion modal x button closes the dialog', async () => {
-    renderRow();
-    await userEvent.click(
-      screen.getByTestId('cluster-template-actions-toggle'),
-    );
-    await waitForText('Delete template');
-    await userEvent.click(screen.getByText('Delete template'));
-    await waitForText('Are you sure you want to delete?');
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
-    expect(screen.queryByText('Delete cluster template')).toBeNull();
+
+  describe('Deletion modal', () => {
+    beforeEach(async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Actions' }));
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: 'Delete template' }),
+      );
+      await waitForText('Are you sure you want to delete?');
+    });
+    test('Cluster template deletion action and modal button', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+      expect(screen.queryByText('Delete cluster template')).toBeNull();
+    });
+    test('Deletion modal close button closes the dialog', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.queryByText('Delete cluster template')).toBeNull();
+    });
+    test('Deletion modal x button closes the dialog', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+      expect(screen.queryByText('Delete cluster template')).toBeNull();
+    });
   });
 });
