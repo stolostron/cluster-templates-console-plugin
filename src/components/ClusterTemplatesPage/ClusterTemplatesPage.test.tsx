@@ -1,6 +1,5 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
-import { render } from '@testing-library/react';
+/* eslint-disable @typescript-eslint/no-var-requires */
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import ClusterTemplatesPage from './ClusterTemplatesPage';
@@ -10,7 +9,6 @@ import { waitForText } from '../../testUtils/testUtils';
 import React from 'react';
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const MockComponent = require('../../mocks/MockComponent').default;
   return {
     HorizontalNav: MockComponent,
@@ -25,7 +23,7 @@ jest.mock('../../hooks/useHelmRepositories');
 (useClusterTemplates as jest.Mock).mockReturnValue([[], true, undefined]);
 (useHelmRepositoriesCount as jest.Mock).mockReturnValue(0);
 
-xdescribe('ClusterTemplatesPage', () => {
+describe('ClusterTemplatesPage', () => {
   test('redirects to templates tab by default', async () => {
     render(
       <RecoilRoot>
@@ -35,5 +33,7 @@ xdescribe('ClusterTemplatesPage', () => {
       </RecoilRoot>,
     );
     waitForText('Cluster templates');
+    expect(screen.getByRole('tab', { name: 'Cluster templates tab' }));
+    expect(screen.getByRole('tab', { name: 'HELM repositories tab' }));
   });
 });

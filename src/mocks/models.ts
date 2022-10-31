@@ -1,6 +1,31 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import { K8sModel } from '@openshift-console/dynamic-plugin-sdk/lib/api/common-types';
 
+export const clusterTemplateModelMock = {
+  kind: 'ClusterTemplate',
+  namespaced: false,
+  verbs: [
+    'delete',
+    'deletecollection',
+    'get',
+    'list',
+    'patch',
+    'create',
+    'update',
+    'watch',
+  ],
+  shortNames: ['ct', 'cts'],
+  label: 'ClusterTemplate',
+  plural: 'clustertemplates',
+  apiVersion: 'v1alpha1',
+  abbr: 'CT',
+  apiGroup: 'clustertemplate.openshift.io',
+  labelPlural: 'ClusterTemplates',
+  path: 'clustertemplates',
+  id: 'clustertemplate',
+  crd: true,
+};
+
 export const HCRModelMock: K8sModel & { path: string } = {
   kind: 'HelmChartRepository',
   namespaced: false,

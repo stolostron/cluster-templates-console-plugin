@@ -1,4 +1,4 @@
-/* Copyright Contributors to the Open Cluster Management project */
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import EditHelmRepositoryDialog, {
   EditHelmRepoCredsValues,
@@ -21,8 +21,7 @@ import {
   HCRModelMock,
   SecretModelMock,
 } from '../../mocks/models';
-import { typeByTestId, waitForTestId } from '../../testUtils/testUtils';
-import React from 'react';
+import { typeByLabel, waitForTestId } from '../../testUtils/testUtils';
 import userEvent from '@testing-library/user-event';
 
 const helmChartRepositoryWithCredentialsMock: HelmChartRepository = {
@@ -203,7 +202,7 @@ describe('getInitialValues', () => {
   });
 });
 
-xdescribe('EditHelmRepositoryDialog', () => {
+describe('EditHelmRepositoryDialog', () => {
   (useK8sWatchResources as jest.Mock).mockReturnValue({
     secrets: { data: [secretMock], loaded: true },
     configMaps: { data: [configMapMock], loaded: true },
@@ -216,25 +215,32 @@ xdescribe('EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
+    expect(
+      screen.getByRole('dialog', {
+        name: 'Edit repository dialog Edit repository',
+      }),
+    );
     await waitForTestId('edit-helm-repo-form');
   });
-  test('displays credentials fields if useCredentials is checked', async () => {
+  test('displays credentials fields if useCredentials is checked', () => {
     render(
       <EditHelmRepositoryDialog
         helmChartRepository={helmChartRepositoryWithCredentialsMock}
         closeDialog={jest.fn()}
       />,
     );
-    expect(screen.getByTestId('useCredentials')).toBeChecked();
-    expect(screen.getByLabelText('existingConfigMapName')).toHaveValue(
+    expect(screen.getByLabelText('Requires authentication')).toBeChecked();
+    expect(screen.getByLabelText('CA certificate config map')).toHaveValue(
       'with-creds-cluster-templates-repo-ca-certificate',
     );
-    expect(screen.getByTestId('caCertificate')).toHaveValue('one');
-    expect(screen.getByLabelText('existingSecretName')).toHaveValue(
+    expect(screen.getByLabelText('CA certificate *')).toHaveValue('one');
+    expect(screen.getByLabelText('TLS config secret')).toHaveValue(
       'with-creds-cluster-templates-repo-tls-configs',
     );
-    expect(screen.getByTestId('tlsClientCert')).toHaveValue('two');
-    expect(screen.getByTestId('tlsClientKey')).toHaveValue('three');
+    expect(screen.getByLabelText('TLS client certificate *')).toHaveValue(
+      'two',
+    );
+    expect(screen.getByLabelText('TLS client key *')).toHaveValue('three');
   });
   test('hides credentials fields if useCredentials is unchecked', async () => {
     render(
@@ -243,15 +249,17 @@ xdescribe('EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByTestId('useCredentials');
+    const useCredentialsCheckbox = screen.getByLabelText(
+      'Requires authentication',
+    );
     expect(useCredentialsCheckbox).toBeChecked();
-    userEvent.click(useCredentialsCheckbox);
+    await userEvent.click(useCredentialsCheckbox);
     expect(useCredentialsCheckbox).not.toBeChecked();
     expect(screen.queryByLabelText('existingConfigMapName')).toBeNull();
   });
 });
 
-xdescribe('Submitting EditHelmRepositoryDialog', () => {
+describe('Submitting EditHelmRepositoryDialog', () => {
   (useK8sModels as jest.Mock).mockReturnValue([
     {
       ConfigMap: ConfigMapModelMock,
@@ -260,6 +268,9 @@ xdescribe('Submitting EditHelmRepositoryDialog', () => {
     },
     false,
   ]);
+
+  afterEach(() => jest.clearAllMocks());
+
   test('when disabling credentials, remove secret and config map if their name matches default credentials name', async () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       secrets: { data: [secretMock], loaded: true },
@@ -271,33 +282,40 @@ xdescribe('Submitting EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByTestId('useCredentials');
+    const useCredentialsCheckbox = screen.getByLabelText(
+      'Requires authentication',
+    );
     expect(useCredentialsCheckbox).toBeChecked();
-    userEvent.click(useCredentialsCheckbox);
-    userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    await userEvent.click(useCredentialsCheckbox);
+    await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
     await waitFor(() => expect(k8sPatch).toHaveBeenCalled());
     await waitFor(() => expect(k8sDelete).toHaveBeenCalledTimes(2));
   });
-  test('when adding credentials without selecting existing, new secret and config map are created', async () => {
+  xtest('when adding credentials without selecting existing, new secret and config map are created', async () => {
     (useK8sWatchResources as jest.Mock).mockReturnValue({
       secrets: { data: [], loaded: true },
       configMaps: { data: [], loaded: true },
     });
+    const user = userEvent.setup();
     render(
       <EditHelmRepositoryDialog
         helmChartRepository={helmChartRepositoryNoCredentialsMock}
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByTestId('useCredentials');
+    const useCredentialsCheckbox = screen.getByLabelText(
+      'Requires authentication',
+    );
     expect(useCredentialsCheckbox).not.toBeChecked();
-    userEvent.click(useCredentialsCheckbox);
-    await typeByTestId('caCertificate', 'one');
-    await typeByTestId('tlsClientCert', 'two');
-    await typeByTestId('tlsClientKey', 'three');
+    await user.click(useCredentialsCheckbox);
+    await typeByLabel('CA certificate *', 'one');
+    await typeByLabel('TLS client certificate *', 'two');
+    await typeByLabel('TLS client key *', 'three');
+    expect(screen.findByLabelText('CA certificate config map')).toHaveValue('');
+    expect(screen.findByLabelText('TLS config secret')).toHaveValue('');
     const submitButton = screen.getByRole('button', { name: 'Submit' });
     await waitFor(() => expect(submitButton).not.toBeDisabled());
-    userEvent.click(submitButton);
+    await user.click(submitButton);
     await waitFor(() => expect(k8sPatch).toHaveBeenCalled());
     await waitFor(() => expect(k8sCreate).toHaveBeenCalledTimes(2));
   });
@@ -312,12 +330,16 @@ xdescribe('Submitting EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByTestId('useCredentials');
+    const useCredentialsCheckbox = screen.getByLabelText(
+      'Requires authentication',
+    );
     expect(useCredentialsCheckbox).toBeChecked();
-    await typeByTestId('caCertificate', 'one-updated');
-    await typeByTestId('tlsClientCert', 'two-updated');
-    await typeByTestId('tlsClientKey', 'three-updated');
-    userEvent.click(screen.getByRole('button', { name: 'Submit' }));
+    await typeByLabel('CA certificate *', 'one-updated');
+    await typeByLabel('TLS client certificate *', 'two-updated');
+    await typeByLabel('TLS client key *', 'three-updated');
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    await waitFor(() => expect(submitButton).not.toBeDisabled());
+    await userEvent.click(submitButton);
     await waitFor(() => expect(k8sPatch).toHaveBeenCalledTimes(3));
   });
 });

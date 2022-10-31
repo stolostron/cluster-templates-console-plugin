@@ -16,28 +16,26 @@
   },
   "spec": {
     "clusterDefinition": {
-      "applicationSpec": {
-        "destination": {
-          "namespace": "instance_ns",
-          "server": "https://kubernetes.default.svc"
+      "destination": {
+        "namespace": "instance_ns",
+        "server": "https://kubernetes.default.svc"
+      },
+      "project": "default",
+      "source": {
+        "chart": "hypershift-template",
+        "helm": {
+          "parameters": [
+            {
+              "name": "baseDnsDomain",
+              "value": "sampletemplateinstance.com"
+            }
+          ]
         },
-        "project": "default",
-        "source": {
-          "chart": "hypershift-template",
-          "helm": {
-            "parameters": [
-              {
-                "name": "baseDnsDomain",
-                "value": "sampletemplateinstance.com"
-              }
-            ]
-          },
-          "repoURL": "https://repoUrl",
-          "targetRevision": "0.0.2"
-        },
-        "syncPolicy": {
-          "automated": {}
-        }
+        "repoURL": "https://repoUrl",
+        "targetRevision": "0.0.2"
+      },
+      "syncPolicy": {
+        "automated": {}
       },
       "propertyDetails": [
         {
@@ -87,20 +85,18 @@
     },
     "clusterSetup": [
       {
-        "applicationSpec": {
-          "destination": {
-            "namespace": "default",
-            "server": "server"
-          },
-          "project": "default",
-          "source": {
-            "chart": "chart",
-            "repoURL": "demo",
-            "targetRevision": "0.0.4"
-          },
-          "syncPolicy": {
-            "automated": {}
-          }
+        "destination": {
+          "namespace": "default",
+          "server": "server"
+        },
+        "project": "default",
+        "source": {
+          "chart": "chart",
+          "repoURL": "demo",
+          "targetRevision": "0.0.4"
+        },
+        "syncPolicy": {
+          "automated": {}
         },
         "propertyDetails": [
           {
@@ -116,20 +112,18 @@
         "name": "setup1"
       },
       {
-        "applicationSpec": {
-          "destination": {
-            "namespace": "default",
-            "server": "server"
-          },
-          "project": "default",
-          "source": {
-            "chart": "chart",
-            "repoURL": "demo",
-            "targetRevision": "0.0.4"
-          },
-          "syncPolicy": {
-            "automated": {}
-          }
+        "destination": {
+          "namespace": "default",
+          "server": "server"
+        },
+        "project": "default",
+        "source": {
+          "chart": "chart",
+          "repoURL": "demo",
+          "targetRevision": "0.0.4"
+        },
+        "syncPolicy": {
+          "automated": {}
         },
         "propertyDetails": [
           {

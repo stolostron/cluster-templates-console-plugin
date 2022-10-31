@@ -39,11 +39,12 @@ const SelectField: React.FC<SelectFieldProps> = ({
   placeholderText,
   helperText,
   isRequired,
+  ...props
 }) => {
   const [field, { touched, error }, { setValue, setTouched }] =
     useField<string>(name);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const fieldId = getFieldId(name, 'select-input');
+  const fieldId = getFieldId(props.fieldId, 'select-input');
   const isValid = !(touched && error);
   const errorMessage = !isValid ? error : '';
 
@@ -64,7 +65,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
 
   return (
     <FormGroup
-      fieldId={fieldId}
+      fieldId={`${fieldId}-select-typeahead`}
       validated={isValid ? 'default' : 'error'}
       label={label}
       helperText={helperText}
@@ -80,6 +81,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
         selections={field.value}
         placeholderText={placeholderText}
         typeAheadAriaLabel={name}
+        toggleId={fieldId}
       >
         {[...options].map((op) => (
           <SelectOption

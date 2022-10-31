@@ -20,6 +20,7 @@ import {
   useK8sModels,
   useK8sWatchResources,
 } from '@openshift-console/dynamic-plugin-sdk';
+import { Buffer } from 'buffer';
 import { configMapGVK, helmRepoGVK, secretGVK } from '../../constants';
 import TableLoader from '../../helpers/TableLoader';
 import { InputField, CheckboxField, TextAreaField } from 'formik-pf';
@@ -338,6 +339,7 @@ const EditHelmRepositoryDialog = ({
       isOpen
       title={t('Edit repository')}
       onClose={closeDialog}
+      aria-label="Edit repository dialog"
       showClose
       hasNoBodyWrapper
     >
@@ -430,7 +432,7 @@ const FormikContent = ({
   return (
     <>
       <ModalBoxBody>
-        <Form id="edit-helm-repo-form" onSubmit={handleSubmit}>
+        <Form data-testid="edit-helm-repo-form" onSubmit={handleSubmit}>
           <InputField
             fieldId="url"
             name="url"
@@ -452,7 +454,7 @@ const FormikContent = ({
               <SelectField
                 name="existingConfigMapName"
                 fieldId="existingConfigMapName"
-                label={t('CA certificate ConfigMap')}
+                label={t('CA certificate config map')}
                 placeholder={t('Select a ConfigMap')}
                 options={configMaps.map((cm) => ({
                   value: cm.metadata?.name || '',
@@ -469,7 +471,7 @@ const FormikContent = ({
               <SelectField
                 name="existingSecretName"
                 fieldId="existingSecretName"
-                label={t('TLS config Credential')}
+                label={t('TLS config secret')}
                 placeholder={t('Select a credential')}
                 options={availableTlsSecrets.map((secret) => ({
                   value: secret.metadata?.name || '',

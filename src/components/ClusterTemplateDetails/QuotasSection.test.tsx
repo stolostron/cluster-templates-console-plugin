@@ -1,5 +1,4 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
 import { render } from '@testing-library/react';
 import { clusterTemplateQuotaGVK, roleBindingGVK } from '../../constants';
@@ -20,7 +19,6 @@ const quotasInTemplate = quotas.filter((quota) =>
 );
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const MockComponent = require('../../mocks/MockComponent').default;
   return {
     ResourceLink: MockComponent,

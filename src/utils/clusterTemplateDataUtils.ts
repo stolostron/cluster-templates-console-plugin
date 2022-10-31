@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import {
   ClusterTemplate,
   ClusterTemplateVendor,
-  ApplicationSpec,
+  ApplicationSource,
 } from '../types';
 
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
@@ -52,12 +52,11 @@ export const getClusterTemplateInfraType = (
   clusterTemplate: ClusterTemplate,
 ): string | undefined => getLabelValue(clusterTemplate, TEMPLATE_LABELS.infra);
 
-export const isHelmAppSpec = (appSpec: ApplicationSpec) =>
-  !!appSpec.source.chart;
+export const isHelmAppSpec = (source: ApplicationSource) => !!source.chart;
 
 export const getClusterDefinitionHelmChart = (
   clusterTemplate: ClusterTemplate,
-) => clusterTemplate.spec.clusterDefinition.applicationSpec.source.chart;
+) => clusterTemplate.spec.clusterDefinition.source.chart;
 
 export const isHelmClusterDefinition = (clusterTemplate: ClusterTemplate) =>
-  isHelmAppSpec(clusterTemplate.spec.clusterDefinition.applicationSpec);
+  isHelmAppSpec(clusterTemplate.spec.clusterDefinition.source);

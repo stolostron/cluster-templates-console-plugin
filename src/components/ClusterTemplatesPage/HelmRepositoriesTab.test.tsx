@@ -1,5 +1,4 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
+/* eslint-disable @typescript-eslint/no-var-requires */
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
@@ -83,10 +82,8 @@ const helmRepositoryIndexMock: HelmRepoIndex = {
 };
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   const MockComponent = require('../../mocks/MockComponent').default;
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const HCRModelMock = require('../../mocks/MockComponent').HCRModelMock;
+  const HCRModelMock = require('../../mocks/models').HCRModelMock;
   return {
     ResourceLink: MockComponent,
     useK8sModel: jest.fn().mockReturnValue([HCRModelMock]),
@@ -120,49 +117,38 @@ describe('HelmRepositoritesTab', () => {
 });
 
 describe('HelmRepoRow', () => {
-  test('Repo deletion action and modal button', async () => {
+  beforeEach(() => {
+    // NOTE: avoiding DOM nesting warnings:
+    // https://github.com/testing-library/react-testing-library/issues/515#issuecomment-547940273
+    const tableBody = document.createElement('tbody');
     render(
       <HelmRepoRow
         obj={helmRepositoryMock1}
         helmRepoIndexResult={[helmRepositoryIndexMock, true, undefined]}
         clusterTemplatesResult={[[], true, undefined]}
       />,
+      { container: document.body.appendChild(tableBody) },
     );
-    await userEvent.click(screen.getByTestId('repo-actions-toggle'));
-    await waitForText('Delete repository');
-    await userEvent.click(screen.getByText('Delete repository'));
-    await waitForText('Are you sure you want to delete?');
-    await userEvent.click(screen.getByText('Delete'));
-    expect(screen.queryByText('Delete Helm chart repository')).toBeNull();
   });
-  test('Repo deletion modal close button closes the dialog', async () => {
-    render(
-      <HelmRepoRow
-        obj={helmRepositoryMock1}
-        helmRepoIndexResult={[helmRepositoryIndexMock, true, undefined]}
-        clusterTemplatesResult={[[], true, undefined]}
-      />,
-    );
-    await userEvent.click(screen.getByTestId('repo-actions-toggle'));
-    await waitForText('Delete repository');
-    await userEvent.click(screen.getByText('Delete repository'));
-    await waitForText('Are you sure you want to delete?');
-    await userEvent.click(screen.getByText('Cancel'));
-    expect(screen.queryByText('Delete Helm chart repository')).toBeNull();
-  });
-  test('Repo deletion modal x button closes the dialog', async () => {
-    render(
-      <HelmRepoRow
-        obj={helmRepositoryMock1}
-        helmRepoIndexResult={[helmRepositoryIndexMock, true, undefined]}
-        clusterTemplatesResult={[[], true, undefined]}
-      />,
-    );
-    await userEvent.click(screen.getByTestId('repo-actions-toggle'));
-    await waitForText('Delete repository');
-    await userEvent.click(screen.getByText('Delete repository'));
-    await waitForText('Are you sure you want to delete?');
-    await userEvent.click(screen.getByRole('button', { name: 'Close' }));
-    expect(screen.queryByText('Delete Helm chart repository')).toBeNull();
+  describe('Deletion modal', () => {
+    beforeEach(async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Actions' }));
+      await userEvent.click(
+        screen.getByRole('menuitem', { name: 'Delete repository' }),
+      );
+      await waitForText('Are you sure you want to delete?');
+    });
+    test('Repo deletion action and modal button', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Delete' }));
+      expect(screen.queryByText('Delete Helm chart repository')).toBeNull();
+    });
+    test('Repo deletion modal close button closes the dialog', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+      expect(screen.queryByText('Delete Helm chart repository')).toBeNull();
+    });
+    test('Repo deletion modal x button closes the dialog', async () => {
+      await userEvent.click(screen.getByRole('button', { name: 'Close' }));
+      expect(screen.queryByText('Delete Helm chart repository')).toBeNull();
+    });
   });
 });

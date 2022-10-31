@@ -28,23 +28,21 @@ export type ClusterTemplateProperty = {
   };
 };
 
-export type ApplicationSpec = {
-  source: {
-    repoURL: string;
-    chart?: string;
-    targetRevision?: string;
-  };
+export type ApplicationSource = {
+  repoURL: string;
+  chart?: string;
+  targetRevision?: string;
 };
 
 export type ClusterTemplate = K8sResourceCommon & {
   spec: {
     cost: number;
     clusterDefinition: {
-      applicationSpec: ApplicationSpec;
+      source: ApplicationSource;
       propertyDetails?: ClusterTemplateProperty[];
     };
     clusterSetup?: {
-      applicationSpec: ApplicationSpec;
+      source: ApplicationSource;
       name: string;
       propertyDetails?: ClusterTemplateProperty[];
     }[];

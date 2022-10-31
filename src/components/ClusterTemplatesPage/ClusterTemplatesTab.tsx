@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import {
   k8sDelete,
@@ -28,8 +27,6 @@ import {
 import { clusterTemplateGVK } from '../../constants';
 import { ClusterTemplate, RowProps, TableColumn } from '../../types';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
-
-// eslint-disable-next-line @typescript-eslint/no-restricted-imports
 import { TFunction, useTranslation } from 'react-i18next';
 import TableLoader from '../../helpers/TableLoader';
 
@@ -103,10 +100,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({
         <ActionsColumn
           items={getRowActions()}
           actionsToggle={(props: CustomActionsToggleProps) => (
-            <KebabToggle
-              data-testid="cluster-template-actions-toggle"
-              {...props}
-            />
+            <KebabToggle {...props} />
           )}
         />
       </Td>
