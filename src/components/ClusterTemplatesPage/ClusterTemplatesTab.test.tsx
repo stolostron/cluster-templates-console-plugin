@@ -15,8 +15,7 @@ const clusterTemplatesListMock: ClusterTemplate[] = [clusterTemplateMock1];
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
   const MockComponent = require('../../mocks/MockComponent').default;
-  const clusterTemplateModelMock =
-    require('../../mocks/models').clusterTemplateModelMock;
+  const clusterTemplateModelMock = require('../../mocks/models').clusterTemplateModelMock;
   return {
     ResourceLink: MockComponent,
     useK8sModel: jest.fn().mockReturnValue([clusterTemplateModelMock]),
@@ -26,16 +25,8 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
 
 jest.mock('../../hooks/useClusterTemplates');
 jest.mock('../../hooks/useClusterTemplateInstances');
-(useClusterTemplates as jest.Mock).mockReturnValue([
-  clusterTemplatesListMock,
-  true,
-  undefined,
-]);
-(useClusterTemplateInstances as jest.Mock).mockReturnValue([
-  [],
-  true,
-  undefined,
-]);
+(useClusterTemplates as jest.Mock).mockReturnValue([clusterTemplatesListMock, true, undefined]);
+(useClusterTemplateInstances as jest.Mock).mockReturnValue([[], true, undefined]);
 
 describe('ClusterTemplatesTab', () => {
   test('renders the cluster templates table', async () => {
@@ -68,9 +59,7 @@ describe('ClusterTemplateRow', () => {
   describe('Deletion modal', () => {
     beforeEach(async () => {
       await userEvent.click(screen.getByRole('button', { name: 'Actions' }));
-      await userEvent.click(
-        screen.getByRole('menuitem', { name: 'Delete template' }),
-      );
+      await userEvent.click(screen.getByRole('menuitem', { name: 'Delete template' }));
       await waitForText('Are you sure you want to delete?');
     });
     test('Cluster template deletion action and modal button', async () => {

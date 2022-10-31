@@ -7,24 +7,18 @@ import * as _ from 'lodash';
 import { ClusterTemplate } from '../types';
 
 describe('Download Instance yaml', () => {
-  const expected = readFileSync(
-    `${__dirname}/../mocks/downloadYamlResult.yaml`,
-    {
-      encoding: 'utf-8',
-    },
-  );
+  const expected = readFileSync(`${__dirname}/../mocks/downloadYamlResult.yaml`, {
+    encoding: 'utf-8',
+  });
   it('should generate correct instance yaml', () => {
     const text = generateInstanceYaml(clusterTemplate);
     expect(text).toEqual(expected);
   });
 
   it('should not contain values section if there are no properties in the template', () => {
-    const clusterTemplateNoProperties = _.cloneDeep(
-      clusterTemplate,
-    ) as ClusterTemplate;
+    const clusterTemplateNoProperties = _.cloneDeep(clusterTemplate) as ClusterTemplate;
     clusterTemplateNoProperties.spec.clusterSetup = undefined;
-    clusterTemplateNoProperties.spec.clusterDefinition.propertyDetails =
-      undefined;
+    clusterTemplateNoProperties.spec.clusterDefinition.propertyDetails = undefined;
     const text = generateInstanceYaml(clusterTemplateNoProperties);
     expect(text.indexOf('values:')).toEqual(-1);
   });

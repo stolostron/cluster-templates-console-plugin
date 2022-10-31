@@ -49,33 +49,22 @@ describe('cluster template details page', () => {
   it('should show the four sections when template is loaded', async () => {
     const { getByTestId } = renderTemplatesPage();
     expect(getByTestId('details')).toHaveTextContent(/Details/);
-    expect(getByTestId('instanceYaml')).toHaveTextContent(
-      /Download the YAML file/,
-    );
+    expect(getByTestId('instanceYaml')).toHaveTextContent(/Download the YAML file/);
     expect(getByTestId('quotas')).toHaveTextContent(/No quota set yet/);
-    expect(getByTestId('uses')).toHaveTextContent(
-      /No clusters associated with this template yet/,
-    );
+    expect(getByTestId('uses')).toHaveTextContent(/No clusters associated with this template yet/);
   });
   it('should show details in details section', () => {
     const { getByTestId } = renderTemplatesPage();
     const details = {
       ['Template name']: exampleTemplate.metadata?.name,
       ['HELM chart name']: exampleTemplate.spec.clusterDefinition.source.chart,
-      ['HELM chart repository']:
-        exampleTemplate.spec.clusterDefinition.source.repoURL,
-      ['HELM chart version']:
-        exampleTemplate.spec.clusterDefinition.source.targetRevision,
+      ['HELM chart repository']: exampleTemplate.spec.clusterDefinition.source.repoURL,
+      ['HELM chart version']: exampleTemplate.spec.clusterDefinition.source.targetRevision,
       ['Description']:
-        exampleTemplate.metadata?.annotations[
-          'clustertemplates.openshift.io/description'
-        ],
+        exampleTemplate.metadata?.annotations['clustertemplates.openshift.io/description'],
       ['Infrastructure type']:
         exampleTemplate.metadata?.labels['clustertemplates.openshift.io/infra'],
-      ['Location']:
-        exampleTemplate.metadata?.labels[
-          'clustertemplates.openshift.io/location'
-        ],
+      ['Location']: exampleTemplate.metadata?.labels['clustertemplates.openshift.io/location'],
       ['Vendor']: 'Custom template',
       ['Cost estimation']: `${exampleTemplate.spec.cost} / Per use`,
       ['Template uses']: '0 clusters',
@@ -104,9 +93,7 @@ describe('cluster template details page', () => {
   xit('should show labels in details section', () => {
     const { getByTestId } = renderTemplatesPage();
     expect(getByTestId('Labels label')).toHaveTextContent('Labels');
-    for (const [key, value] of Object.entries(
-      exampleTemplate.metadata.labels,
-    )) {
+    for (const [key, value] of Object.entries(exampleTemplate.metadata.labels)) {
       expect(getByTestId('Labels value')).toHaveTextContent(`${key}=${value}`);
     }
   });
@@ -120,11 +107,7 @@ describe('Cluster template details page loading and error states', () => {
   });
 
   it('should show error when useClusterTemplate failed', async () => {
-    useClusterTemplateMock.mockReturnValue([
-      undefined,
-      false,
-      new Error('test error'),
-    ]);
+    useClusterTemplateMock.mockReturnValue([undefined, false, new Error('test error')]);
     const { getByTestId } = renderTemplatesPage();
     expect(getByTestId('error')).toBeInTheDocument();
   });

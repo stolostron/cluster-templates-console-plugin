@@ -17,5 +17,4 @@ export const getReference = ({
   group,
   version,
   kind,
-}: K8sGroupVersionKind): K8sResourceKindReference =>
-  [group || 'core', version, kind].join('~');
+}: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');

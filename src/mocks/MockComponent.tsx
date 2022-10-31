@@ -4,8 +4,8 @@ import React from 'react';
 
 const MockComponent = jest
   .fn()
-  .mockImplementation((props: any) => (
-    <div data-testid={props['data-testid']}>{props.children}</div>
+  .mockImplementation(({ testId, children }: { children: React.ReactChildren; testId: string }) => (
+    <div data-testid={testId}>{children}</div>
   ));
 
 export default MockComponent;

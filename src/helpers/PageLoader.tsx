@@ -54,9 +54,7 @@ export function LoadingPage(props: {
               <EmptyStateBody>{props.message}</EmptyStateBody>
             </div>
             {props.primaryAction}
-            <EmptyStateSecondaryActions>
-              {props.secondaryActions}
-            </EmptyStateSecondaryActions>
+            <EmptyStateSecondaryActions>{props.secondaryActions}</EmptyStateSecondaryActions>
           </EmptyState>
         </Bullseye>
       </PageSection>

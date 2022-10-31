@@ -1,12 +1,5 @@
 /* Copyright Contributors to the Open Cluster Management project */
-import {
-  Alert,
-  EmptyState,
-  EmptyStateBody,
-  Stack,
-  StackItem,
-  Title,
-} from '@patternfly/react-core';
+import { Alert, EmptyState, EmptyStateBody, Stack, StackItem, Title } from '@patternfly/react-core';
 import React from 'react';
 import ClusterTemplateQuotasTable from '../ClusterTemplateQuotas/ClusterTemplateQuotasTable';
 import TableLoader from '../../helpers/TableLoader';
@@ -30,9 +23,7 @@ const QuotasEmptyState: React.FC = () => {
   );
 };
 
-const _QuotasSection: React.FC<{ quotas: ClusterTemplateQuota[] }> = ({
-  quotas,
-}) => {
+const _QuotasSection: React.FC<{ quotas: ClusterTemplateQuota[] }> = ({ quotas }) => {
   const { t } = useTranslation();
 
   if (quotas.length === 0) {
@@ -56,12 +47,8 @@ const _QuotasSection: React.FC<{ quotas: ClusterTemplateQuota[] }> = ({
   );
 };
 
-const QuotasSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
-  clusterTemplate,
-}) => {
-  const [quotas, loaded, error] = useQuotas(
-    clusterTemplate.metadata?.name || '',
-  );
+const QuotasSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
+  const [quotas, loaded, error] = useQuotas(clusterTemplate.metadata?.name || '');
   return (
     <TableLoader loaded={loaded} error={error}>
       <_QuotasSection quotas={quotas}></_QuotasSection>

@@ -40,9 +40,7 @@ export const ClusterTemplateVendorLabel: React.FC<{
   }
   const color = vendor === ClusterTemplateVendor.REDHAT ? 'green' : 'purple';
   const labelText =
-    vendor === ClusterTemplateVendor.REDHAT
-      ? t('Red Hat template')
-      : t('Custom template');
+    vendor === ClusterTemplateVendor.REDHAT ? t('Red Hat template') : t('Custom template');
   return <Label color={color}>{labelText}</Label>;
 };
 

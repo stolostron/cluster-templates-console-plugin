@@ -23,9 +23,7 @@ enum Section {
 }
 
 const getSectionTitles = (t: TFunction): { [i in Section]: string } => ({
-  [Section.InstanceYaml]: t(
-    'Download template instance YAML file to instantiate the template',
-  ),
+  [Section.InstanceYaml]: t('Download template instance YAML file to instantiate the template'),
   [Section.Details]: t('Details'),
   [Section.Quotas]: t('Quotas'),
   [Section.Uses]: t('Template uses'),

@@ -1,12 +1,7 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import { k8sCreate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
-import {
-  Button,
-  Wizard,
-  WizardContext,
-  WizardFooter,
-} from '@patternfly/react-core';
+import { Button, Wizard, WizardContext, WizardFooter } from '@patternfly/react-core';
 import { Formik, useFormikContext } from 'formik';
 import ManageAccessStep from './Steps/ManageAccessStep/ManageAccessStep';
 import ReviewStep from './Steps/ReviewStep/ReviewStep';

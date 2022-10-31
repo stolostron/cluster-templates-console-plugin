@@ -16,11 +16,7 @@ type LoadingHelperProps = {
   children: React.ReactNode;
 };
 
-export const LoadingHelper = ({
-  isLoaded,
-  error,
-  children,
-}: LoadingHelperProps) => {
+export const LoadingHelper = ({ isLoaded, error, children }: LoadingHelperProps) => {
   if (!isLoaded) return <Skeleton />;
   if (error) return <>-</>;
   return <>{children}</>;
@@ -37,11 +33,7 @@ export const getErrorMessage = (error: unknown) => {
 };
 
 /* istanbul ignore next */
-export const createDownloadFile = (
-  filename: string,
-  content: string,
-  type?: string,
-) => {
+export const createDownloadFile = (filename: string, content: string, type?: string) => {
   const a = document.createElement('a');
   const blob = new Blob([content], { type: type || 'text/plain' });
   const event = new MouseEvent('click', {

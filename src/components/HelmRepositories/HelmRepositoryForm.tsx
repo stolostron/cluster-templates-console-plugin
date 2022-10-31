@@ -57,7 +57,7 @@ const HelmRepositoryForm = () => {
                   });
                   history.goBack();
                 } catch (e) {
-                  setError(e as any);
+                  setError(e);
                 }
               }}
             >

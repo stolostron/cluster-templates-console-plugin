@@ -2,14 +2,7 @@
 
 import { ClusterTemplateInstance } from '../../types';
 
-import {
-  TableComposable,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-} from '@patternfly/react-table';
+import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { clusterTemplateInstanceGVK, namespaceGVK } from '../../constants';
 import ClusterTemplateInstanceStatus from './ClusterTemplateInstanceStatus';
 import { TFunction, useTranslation } from 'react-i18next';
@@ -73,10 +66,7 @@ const ClusterTemplateInstanceTable: React.FC<{
   const { t } = useTranslation();
   const columns = getTableColumns(t);
   return (
-    <TableComposable
-      variant="compact"
-      data-testid="cluster-template-instances-table"
-    >
+    <TableComposable variant="compact" data-testid="cluster-template-instances-table">
       <Thead>
         <Tr>
           {columns.map((column) => (
@@ -86,12 +76,7 @@ const ClusterTemplateInstanceTable: React.FC<{
       </Thead>
       <Tbody>
         {instances.map((instance, index) => (
-          <InstanceRow
-            instance={instance}
-            columns={columns}
-            index={index}
-            key={index}
-          />
+          <InstanceRow instance={instance} columns={columns} index={index} key={index} />
         ))}
       </Tbody>
     </TableComposable>

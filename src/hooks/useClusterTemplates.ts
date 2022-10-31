@@ -1,8 +1,5 @@
 /* Copyright Contributors to the Open Cluster Management project */
-import {
-  useK8sWatchResource,
-  WatchK8sResult,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { useK8sWatchResource, WatchK8sResult } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateGVK } from '../constants';
 import { ClusterTemplate } from '../types';
 
@@ -17,9 +14,7 @@ export const useClusterTemplatesCount = () => {
   return loaded && !error ? templates.length : undefined;
 };
 
-export const useClusterTemplate = (
-  name: string,
-): [ClusterTemplate, boolean, unknown] =>
+export const useClusterTemplate = (name: string): [ClusterTemplate, boolean, unknown] =>
   useK8sWatchResource<ClusterTemplate>({
     groupVersionKind: clusterTemplateGVK,
     name: name,

@@ -15,16 +15,12 @@ const UsageEmptyState: React.FC = () => {
       <Title size="lg" headingLevel="h4">
         {t('No clusters associated with this template yet')}
       </Title>
-      <EmptyStateBody>
-        {t('Clusters created using this template will appear here.')}
-      </EmptyStateBody>
+      <EmptyStateBody>{t('Clusters created using this template will appear here.')}</EmptyStateBody>
     </EmptyState>
   );
 };
 
-const UsageSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
-  clusterTemplate,
-}) => {
+const UsageSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
   const [instances, loaded, loadError] = useClusterTemplateInstances(
     clusterTemplate.metadata?.name,
   );
@@ -33,9 +29,7 @@ const UsageSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
       {instances.length === 0 ? (
         <UsageEmptyState />
       ) : (
-        <ClusterTemplateInstancesTable
-          instances={instances}
-        ></ClusterTemplateInstancesTable>
+        <ClusterTemplateInstancesTable instances={instances}></ClusterTemplateInstancesTable>
       )}
     </TableLoader>
   );

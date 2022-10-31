@@ -1,11 +1,5 @@
 /* Copyright Contributors to the Open Cluster Management project */
-import {
-  Button,
-  Stack,
-  StackItem,
-  Text,
-  TextVariants,
-} from '@patternfly/react-core';
+import { Button, Stack, StackItem, Text, TextVariants } from '@patternfly/react-core';
 import { DownloadIcon } from '@patternfly/react-icons';
 import * as React from 'react';
 import generateInstanceYaml from '../../utils/instanceYaml';
@@ -20,9 +14,7 @@ const InstanceYamlSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
   return (
     <Stack hasGutter>
       <StackItem>
-        <Text component={TextVariants.p}>{`1. ${t(
-          'Download the YAML file',
-        )}`}</Text>
+        <Text component={TextVariants.p}>{`1. ${t('Download the YAML file')}`}</Text>
       </StackItem>
       <StackItem>
         <Button
@@ -40,9 +32,7 @@ const InstanceYamlSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
       </StackItem>
       <StackItem>
         <Text component={TextVariants.p}>
-          {`2. ${t(
-            '(optional) Provide values if contains parameters without default values',
-          )}`}
+          {`2. ${t('(optional) Provide values if contains parameters without default values')}`}
           <br />
           {`3. ${t('oc login to this cluster')}`}
           <br />

@@ -41,8 +41,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   isRequired,
   ...props
 }) => {
-  const [field, { touched, error }, { setValue, setTouched }] =
-    useField<string>(name);
+  const [field, { touched, error }, { setValue, setTouched }] = useField<string>(name);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const fieldId = getFieldId(props.fieldId, 'select-input');
   const isValid = !(touched && error);
@@ -84,11 +83,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
         toggleId={fieldId}
       >
         {[...options].map((op) => (
-          <SelectOption
-            value={op.value}
-            isDisabled={op.disabled}
-            key={op.value}
-          />
+          <SelectOption value={op.value} isDisabled={op.disabled} key={op.value} />
         ))}
       </Select>
     </FormGroup>

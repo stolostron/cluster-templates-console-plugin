@@ -17,12 +17,7 @@ export const ClusterTemplateQuotaAccessSummary: React.FC<{
   const groups = t('{{count}} group', {
     count: access?.groups.length,
   });
-  return (
-    <LoadingHelper
-      isLoaded={loaded}
-      error={loadError}
-    >{`${users}, ${groups}`}</LoadingHelper>
-  );
+  return <LoadingHelper isLoaded={loaded} error={loadError}>{`${users}, ${groups}`}</LoadingHelper>;
 };
 
 export const ClusterTemplateQuotaCostSummary: React.FC<{

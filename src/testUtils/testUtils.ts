@@ -11,53 +11,34 @@ const options = { timeout: waitTimeout };
 
 export async function waitForText(text: string, multipleAllowed?: boolean) {
   if (multipleAllowed) {
-    await waitFor(
-      () => expect(screen.queryAllByText(text).length).toBeGreaterThan(0),
-      options,
-    );
+    await waitFor(() => expect(screen.queryAllByText(text).length).toBeGreaterThan(0), options);
   } else {
     await waitFor(() => expect(screen.getByText(text)).toBeDefined(), options);
   }
 }
 
 export async function waitForNotText(text: string) {
-  await waitFor(
-    () => expect(screen.queryAllByText(text)).toHaveLength(0),
-    options,
-  );
+  await waitFor(() => expect(screen.queryAllByText(text)).toHaveLength(0), options);
 }
 
 export async function waitForInputByText(text: string, index?: number) {
   if (index !== undefined) {
-    await waitFor(
-      () => expect(screen.getAllByText(text).length).toBeGreaterThan(index),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getAllByText(text)[index]).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getAllByText(text).length).toBeGreaterThan(index), options);
+    await waitFor(() => expect(screen.getAllByText(text)[index]).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getAllByText(text)[index] as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getAllByText(text)[index] as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
   } else {
     await waitFor(() => expect(screen.getByText(text)).toBeDefined(), options);
-    await waitFor(
-      () => expect(screen.getByText(text)).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByText(text)).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getByText(text) as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getByText(text) as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
@@ -66,38 +47,22 @@ export async function waitForInputByText(text: string, index?: number) {
 
 export async function waitForInputByTitle(title: string, index?: number) {
   if (index !== undefined) {
-    await waitFor(
-      () => expect(screen.getAllByTitle(title).length).toBeGreaterThan(index),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getAllByTitle(title)[index]).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getAllByTitle(title).length).toBeGreaterThan(index), options);
+    await waitFor(() => expect(screen.getAllByTitle(title)[index]).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getAllByTitle(title)[index] as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getAllByTitle(title)[index] as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
   } else {
-    await waitFor(
-      () => expect(screen.getByTitle(title)).toBeDefined(),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getByTitle(title)).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByTitle(title)).toBeDefined(), options);
+    await waitFor(() => expect(screen.getByTitle(title)).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getByTitle(title) as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getByTitle(title) as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
@@ -133,11 +98,7 @@ export async function typeByText(text: string, type: string, index?: number) {
 
 // By Placeholder text
 
-export async function typeByPlaceholderText(
-  text: string,
-  type: string,
-  index?: number,
-) {
+export async function typeByPlaceholderText(text: string, type: string, index?: number) {
   if (index !== undefined) {
     userEvent.type(screen.getAllByPlaceholderText(text)[index], type);
   } else {
@@ -157,53 +118,34 @@ export async function clickByPlaceholderText(text: string, index?: number) {
 
 export async function waitForRole(text: string, multipleAllowed?: boolean) {
   if (multipleAllowed) {
-    await waitFor(
-      () => expect(screen.queryAllByRole(text).length).toBeGreaterThan(0),
-      options,
-    );
+    await waitFor(() => expect(screen.queryAllByRole(text).length).toBeGreaterThan(0), options);
   } else {
     await waitFor(() => expect(screen.getByRole(text)).toBeDefined(), options);
   }
 }
 
 export async function waitForNotRole(text: string) {
-  await waitFor(
-    () => expect(screen.queryAllByRole(text)).toHaveLength(0),
-    options,
-  );
+  await waitFor(() => expect(screen.queryAllByRole(text)).toHaveLength(0), options);
 }
 
 export async function waitForInputByRole(text: string, index?: number) {
   if (index !== undefined) {
-    await waitFor(
-      () => expect(screen.getAllByRole(text).length).toBeGreaterThan(index),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getAllByRole(text)[index]).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getAllByRole(text).length).toBeGreaterThan(index), options);
+    await waitFor(() => expect(screen.getAllByRole(text)[index]).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getAllByRole(text)[index] as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getAllByRole(text)[index] as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
   } else {
     await waitFor(() => expect(screen.getByRole(text)).toBeDefined(), options);
-    await waitFor(
-      () => expect(screen.getByRole(text)).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByRole(text)).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getByRole(text) as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getByRole(text) as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
@@ -232,59 +174,34 @@ export async function typeByRole(role: string, type: string, index?: number) {
 
 export async function waitForTestId(text: string, multipleAllowed?: boolean) {
   if (multipleAllowed) {
-    await waitFor(
-      () => expect(screen.queryAllByTestId(text).length).toBeGreaterThan(0),
-      options,
-    );
+    await waitFor(() => expect(screen.queryAllByTestId(text).length).toBeGreaterThan(0), options);
   } else {
-    await waitFor(
-      () => expect(screen.getByTestId(text)).toBeDefined(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByTestId(text)).toBeDefined(), options);
   }
 }
 
 export async function waitForNotTestId(text: string) {
-  await waitFor(
-    () => expect(screen.queryAllByTestId(text)).toHaveLength(0),
-    options,
-  );
+  await waitFor(() => expect(screen.queryAllByTestId(text)).toHaveLength(0), options);
 }
 
 export async function waitForInputByTestId(text: string, index?: number) {
   if (index !== undefined) {
-    await waitFor(
-      () => expect(screen.getAllByTestId(text).length).toBeGreaterThan(index),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getAllByTestId(text)[index]).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getAllByTestId(text).length).toBeGreaterThan(index), options);
+    await waitFor(() => expect(screen.getAllByTestId(text)[index]).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getAllByTestId(text)[index] as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getAllByTestId(text)[index] as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
   } else {
-    await waitFor(
-      () => expect(screen.getByTestId(text)).toBeDefined(),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getByTestId(text)).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByTestId(text)).toBeDefined(), options);
+    await waitFor(() => expect(screen.getByTestId(text)).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getByTestId(text) as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getByTestId(text) as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
@@ -311,65 +228,42 @@ export async function typeByTestId(id: string, type: string, index?: number) {
 
 // By Label Text
 
-export async function waitForLabelText(
-  text: string,
-  multipleAllowed?: boolean,
-) {
+export async function waitForLabelText(text: string, multipleAllowed?: boolean) {
   if (multipleAllowed) {
     await waitFor(
       () => expect(screen.queryAllByLabelText(text).length).toBeGreaterThan(0),
       options,
     );
   } else {
-    await waitFor(
-      () => expect(screen.getByLabelText(text)).toBeDefined(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByLabelText(text)).toBeDefined(), options);
   }
 }
 
 export async function waitForNotLabelText(text: string) {
-  await waitFor(
-    () => expect(screen.queryAllByLabelText(text)).toHaveLength(0),
-    options,
-  );
+  await waitFor(() => expect(screen.queryAllByLabelText(text)).toHaveLength(0), options);
 }
 
 export async function waitForInputByLabelText(text: string, index?: number) {
   if (index !== undefined) {
     await waitFor(
-      () =>
-        expect(screen.getAllByLabelText(text).length).toBeGreaterThan(index),
+      () => expect(screen.getAllByLabelText(text).length).toBeGreaterThan(index),
       options,
     );
-    await waitFor(
-      () => expect(screen.getAllByLabelText(text)[index]).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getAllByLabelText(text)[index]).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (
-            screen.getAllByLabelText(text)[index] as HTMLInputElement
-          ).getAttribute('aria-disabled'),
+          (screen.getAllByLabelText(text)[index] as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
   } else {
-    await waitFor(
-      () => expect(screen.getByLabelText(text)).toBeDefined(),
-      options,
-    );
-    await waitFor(
-      () => expect(screen.getByLabelText(text)).not.toBeDisabled(),
-      options,
-    );
+    await waitFor(() => expect(screen.getByLabelText(text)).toBeDefined(), options);
+    await waitFor(() => expect(screen.getByLabelText(text)).not.toBeDisabled(), options);
     await waitFor(
       () =>
         expect(
-          (screen.getByLabelText(text) as HTMLInputElement).getAttribute(
-            'aria-disabled',
-          ),
+          (screen.getByLabelText(text) as HTMLInputElement).getAttribute('aria-disabled'),
         ).not.toEqual('true'),
       options,
     );
@@ -395,21 +289,12 @@ export async function typeByLabel(text: string, type: string, index?: number) {
 }
 
 // By Selector
-export async function waitForSelector(
-  container: HTMLElement,
-  selector: string,
-) {
+export async function waitForSelector(container: HTMLElement, selector: string) {
   await waitFor(() => expect(container.querySelector(selector)));
 }
 
-export async function waitForNoSelector(
-  container: HTMLElement,
-  selector: string,
-) {
-  await waitFor(
-    () => expect(container.querySelector(selector)).toHaveLength(0),
-    options,
-  );
+export async function waitForNoSelector(container: HTMLElement, selector: string) {
+  await waitFor(() => expect(container.querySelector(selector)).toHaveLength(0), options);
 }
 
 export async function waitForValueBySelector(
@@ -417,18 +302,11 @@ export async function waitForValueBySelector(
   selector: string,
   value: string | number,
 ) {
-  await waitFor(() =>
-    expect(container.querySelector(selector)).toHaveValue(value),
-  );
+  await waitFor(() => expect(container.querySelector(selector)).toHaveValue(value));
 }
 
-export async function clickBySelector(
-  container: HTMLElement,
-  selector: string,
-) {
-  const elem = await waitFor(() =>
-    container.querySelector<HTMLButtonElement>(selector),
-  );
+export async function clickBySelector(container: HTMLElement, selector: string) {
+  const elem = await waitFor(() => container.querySelector<HTMLButtonElement>(selector));
   elem?.click();
 }
 

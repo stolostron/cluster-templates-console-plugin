@@ -1,11 +1,7 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateQuotaGVK, roleBindingGVK } from '../constants';
-import {
-  ClusterRoleBinding,
-  ClusterTemplateQuota,
-  ClusterTemplateQuotaAccess,
-} from '../types';
+import { ClusterRoleBinding, ClusterTemplateQuota, ClusterTemplateQuotaAccess } from '../types';
 
 const CLUSTER_TEMPLATES_ROLE = 'cluster-templates-user';
 
@@ -17,14 +13,10 @@ export const useAllQuotas = () => {
 };
 
 const getQuotaTemplateNames = (quota: ClusterTemplateQuota) => {
-  return (
-    quota.spec?.allowedTemplates?.map((templateData) => templateData.name) || []
-  );
+  return quota.spec?.allowedTemplates?.map((templateData) => templateData.name) || [];
 };
 
-export const useQuotas = (
-  templateName: string,
-): [ClusterTemplateQuota[], boolean, unknown] => {
+export const useQuotas = (templateName: string): [ClusterTemplateQuota[], boolean, unknown] => {
   const [quotas, loaded, error] = useAllQuotas();
   if (error || !loaded) {
     return [[], loaded, error];
@@ -35,9 +27,7 @@ export const useQuotas = (
   return [templateQuotas, true, null];
 };
 
-const getRoleBindingsAccess = (
-  roleBindings: ClusterRoleBinding[],
-): ClusterTemplateQuotaAccess => {
+const getRoleBindingsAccess = (roleBindings: ClusterRoleBinding[]): ClusterTemplateQuotaAccess => {
   const access: ClusterTemplateQuotaAccess = {
     users: [],
     groups: [],
@@ -58,9 +48,7 @@ const getRoleBindingsAccess = (
 export const useClusterTemplateQuotaAccess = (
   quota: ClusterTemplateQuota,
 ): [ClusterTemplateQuotaAccess | null, boolean, unknown] => {
-  const [roleBindings, loaded, error] = useK8sWatchResource<
-    ClusterRoleBinding[]
-  >({
+  const [roleBindings, loaded, error] = useK8sWatchResource<ClusterRoleBinding[]>({
     groupVersionKind: roleBindingGVK,
     namespace: quota.metadata?.namespace,
     isList: true,

@@ -1,11 +1,7 @@
 /* Copyright Contributors to the Open Cluster Management project */
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import * as _ from 'lodash';
-import {
-  ClusterTemplate,
-  ClusterTemplateVendor,
-  ApplicationSource,
-} from '../types';
+import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types';
 
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
 
@@ -16,10 +12,8 @@ export const TEMPLATE_LABELS = {
   vendor: `${TEMPLATES_LABEL_PREFIX}/vendor`,
 };
 
-const getLabelValue = (
-  resource: K8sResourceCommon,
-  labelName: string,
-): string | undefined => _.get(resource, ['metadata', 'labels', labelName]);
+const getLabelValue = (resource: K8sResourceCommon, labelName: string): string | undefined =>
+  _.get(resource, ['metadata', 'labels', labelName]);
 
 export const getClusterTemplateVendor = (
   clusterTemplate: ClusterTemplate,
@@ -36,27 +30,19 @@ export const getClusterTemplateVendor = (
 export const getClusterTemplateDescription = (
   clusterTemplate: ClusterTemplate,
 ): string | undefined => {
-  return _.get(clusterTemplate, [
-    'metadata',
-    'annotations',
-    TEMPLATE_LABELS.description,
-  ]);
+  return _.get(clusterTemplate, ['metadata', 'annotations', TEMPLATE_LABELS.description]);
 };
 
-export const getClusterTemplateLocation = (
-  clusterTemplate: ClusterTemplate,
-): string | undefined =>
+export const getClusterTemplateLocation = (clusterTemplate: ClusterTemplate): string | undefined =>
   getLabelValue(clusterTemplate, TEMPLATE_LABELS.location);
 
-export const getClusterTemplateInfraType = (
-  clusterTemplate: ClusterTemplate,
-): string | undefined => getLabelValue(clusterTemplate, TEMPLATE_LABELS.infra);
+export const getClusterTemplateInfraType = (clusterTemplate: ClusterTemplate): string | undefined =>
+  getLabelValue(clusterTemplate, TEMPLATE_LABELS.infra);
 
 export const isHelmAppSpec = (source: ApplicationSource) => !!source.chart;
 
-export const getClusterDefinitionHelmChart = (
-  clusterTemplate: ClusterTemplate,
-) => clusterTemplate.spec.clusterDefinition.source.chart;
+export const getClusterDefinitionHelmChart = (clusterTemplate: ClusterTemplate) =>
+  clusterTemplate.spec.clusterDefinition.source.chart;
 
 export const isHelmClusterDefinition = (clusterTemplate: ClusterTemplate) =>
   isHelmAppSpec(clusterTemplate.spec.clusterDefinition.source);
