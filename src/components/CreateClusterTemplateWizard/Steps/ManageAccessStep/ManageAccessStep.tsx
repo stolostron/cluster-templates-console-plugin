@@ -1,15 +1,5 @@
-/* Copyright Contributors to the Open Cluster Management project */
-import {
-  K8sResourceCommon,
-  useK8sWatchResource,
-} from '@openshift-console/dynamic-plugin-sdk';
-import {
-  Form,
-  Stack,
-  StackItem,
-  Text,
-  TextContent,
-} from '@patternfly/react-core';
+import { K8sResourceCommon, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { Form, Stack, StackItem, Text, TextContent } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { SelectField } from 'formik-pf';
 import React from 'react';
@@ -44,9 +34,9 @@ const ManageAccessStep = () => {
               <Text component="h2">Manage access</Text>
             </StackItem>
             <StackItem>
-              Choose users or group of users who can create a cluster using the
-              templates which are associated with this repository. Limit the
-              number of clusters that can be created from this template.
+              Choose users or group of users who can create a cluster using the templates which are
+              associated with this repository. Limit the number of clusters that can be created from
+              this template.
             </StackItem>
           </Stack>
         </TextContent>

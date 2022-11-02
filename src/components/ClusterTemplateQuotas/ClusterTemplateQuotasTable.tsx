@@ -1,15 +1,6 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { ClusterTemplateQuota } from '../../types';
 
-import {
-  TableComposable,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-} from '@patternfly/react-table';
+import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';

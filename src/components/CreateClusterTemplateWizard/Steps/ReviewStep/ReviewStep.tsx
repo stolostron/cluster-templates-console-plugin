@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import {
   Stack,
   StackItem,
@@ -26,34 +25,24 @@ const ReviewStep = () => {
         <DescriptionList>
           <DescriptionListGroup>
             <DescriptionListTerm>Name</DescriptionListTerm>
-            <DescriptionListDescription>
-              {values.name}
-            </DescriptionListDescription>
+            <DescriptionListDescription>{values.name}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>HELM chart repository</DescriptionListTerm>
-            <DescriptionListDescription>
-              {values.helmRepo}
-            </DescriptionListDescription>
+            <DescriptionListDescription>{values.helmRepo}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>HELM chart</DescriptionListTerm>
-            <DescriptionListDescription>
-              {values.helmChart}
-            </DescriptionListDescription>
+            <DescriptionListDescription>{values.helmChart}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Cost</DescriptionListTerm>
-            <DescriptionListDescription>
-              {values.cost}
-            </DescriptionListDescription>
+            <DescriptionListDescription>{values.cost}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>Pipelines</DescriptionListTerm>
             {values.pipelines.map((p) => (
-              <DescriptionListDescription key={p}>
-                {p}
-              </DescriptionListDescription>
+              <DescriptionListDescription key={p}>{p}</DescriptionListDescription>
             ))}
           </DescriptionListGroup>
         </DescriptionList>

@@ -16,11 +16,7 @@ import {
   k8sPatch,
   k8sCreate,
 } from '@openshift-console/dynamic-plugin-sdk';
-import {
-  ConfigMapModelMock,
-  HCRModelMock,
-  SecretModelMock,
-} from '../../mocks/models';
+import { ConfigMapModelMock, HCRModelMock, SecretModelMock } from '../../mocks/models';
 import { typeByLabel, waitForTestId } from '../../testUtils/testUtils';
 import userEvent from '@testing-library/user-event';
 
@@ -179,11 +175,7 @@ describe('getInitialValues', () => {
       tlsClientKey: 'three',
     };
     expect(
-      getInitialValues(
-        helmChartRepositoryWithCredentialsMock,
-        secretMock,
-        configMapMock,
-      ),
+      getInitialValues(helmChartRepositoryWithCredentialsMock, secretMock, configMapMock),
     ).toEqual(expected);
   });
   test('returns initial form values for helm chart repository with no credentials', () => {
@@ -196,9 +188,7 @@ describe('getInitialValues', () => {
       tlsClientCert: '',
       tlsClientKey: '',
     };
-    expect(getInitialValues(helmChartRepositoryNoCredentialsMock)).toEqual(
-      expected,
-    );
+    expect(getInitialValues(helmChartRepositoryNoCredentialsMock)).toEqual(expected);
   });
 });
 
@@ -237,9 +227,7 @@ describe('EditHelmRepositoryDialog', () => {
     expect(screen.getByLabelText('TLS config secret')).toHaveValue(
       'with-creds-cluster-templates-repo-tls-configs',
     );
-    expect(screen.getByLabelText('TLS client certificate *')).toHaveValue(
-      'two',
-    );
+    expect(screen.getByLabelText('TLS client certificate *')).toHaveValue('two');
     expect(screen.getByLabelText('TLS client key *')).toHaveValue('three');
   });
   test('hides credentials fields if useCredentials is unchecked', async () => {
@@ -249,9 +237,7 @@ describe('EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByLabelText(
-      'Requires authentication',
-    );
+    const useCredentialsCheckbox = screen.getByLabelText('Requires authentication');
     expect(useCredentialsCheckbox).toBeChecked();
     await userEvent.click(useCredentialsCheckbox);
     expect(useCredentialsCheckbox).not.toBeChecked();
@@ -282,9 +268,7 @@ describe('Submitting EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByLabelText(
-      'Requires authentication',
-    );
+    const useCredentialsCheckbox = screen.getByLabelText('Requires authentication');
     expect(useCredentialsCheckbox).toBeChecked();
     await userEvent.click(useCredentialsCheckbox);
     await userEvent.click(screen.getByRole('button', { name: 'Submit' }));
@@ -303,9 +287,7 @@ describe('Submitting EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByLabelText(
-      'Requires authentication',
-    );
+    const useCredentialsCheckbox = screen.getByLabelText('Requires authentication');
     expect(useCredentialsCheckbox).not.toBeChecked();
     await user.click(useCredentialsCheckbox);
     await typeByLabel('CA certificate *', 'one');
@@ -330,9 +312,7 @@ describe('Submitting EditHelmRepositoryDialog', () => {
         closeDialog={jest.fn()}
       />,
     );
-    const useCredentialsCheckbox = screen.getByLabelText(
-      'Requires authentication',
-    );
+    const useCredentialsCheckbox = screen.getByLabelText('Requires authentication');
     expect(useCredentialsCheckbox).toBeChecked();
     await typeByLabel('CA certificate *', 'one-updated');
     await typeByLabel('TLS client certificate *', 'two-updated');

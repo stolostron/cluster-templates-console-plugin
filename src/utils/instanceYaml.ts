@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 /*This module generates a ClusterTemplateInstance YAML 
   The spec.values section containing the values for the instance parameters contains default values, or placeholders
   The description and type are provided as comments
@@ -20,20 +19,13 @@ import { clusterTemplateInstanceGVK } from '../constants';
 
 const valuePlaceholder = '<value>';
 
-const getPropertyTypeKey = (
-  property: ClusterTemplateProperty,
-  clusterSetup = '',
-) => {
+const getPropertyTypeKey = (property: ClusterTemplateProperty, clusterSetup = '') => {
   return `${clusterSetup}_${property.name}Type`;
 };
-const getPropertyDescriptionKey = (
-  property: ClusterTemplateProperty,
-  clusterSetup = '',
-) => `${clusterSetup}_${property.name}Description`;
-const getPropertySecretKey = (
-  property: ClusterTemplateProperty,
-  clusterSetup = '',
-) => `${clusterSetup}_${property.name}Secret`;
+const getPropertyDescriptionKey = (property: ClusterTemplateProperty, clusterSetup = '') =>
+  `${clusterSetup}_${property.name}Description`;
+const getPropertySecretKey = (property: ClusterTemplateProperty, clusterSetup = '') =>
+  `${clusterSetup}_${property.name}Secret`;
 
 const getValueItem = (
   property: ClusterTemplateProperty,
@@ -54,25 +46,20 @@ const getValueItem = (
 const getOverwritableProperties = (properties?: ClusterTemplateProperty[]) =>
   _.filter(properties, (property) => property.overwritable);
 
-const getValues = (
-  clusterTemplate: ClusterTemplate,
-): ClusterTemplateInstancePropertyValue[] => {
-  let values: ClusterTemplateInstancePropertyValue[] =
-    getOverwritableProperties(
-      clusterTemplate.spec.clusterDefinition.propertyDetails,
-    ).map((property) => getValueItem(property));
+const getValues = (clusterTemplate: ClusterTemplate): ClusterTemplateInstancePropertyValue[] => {
+  let values: ClusterTemplateInstancePropertyValue[] = getOverwritableProperties(
+    clusterTemplate.spec.clusterDefinition.propertyDetails,
+  ).map((property) => getValueItem(property));
   for (const clusterSetup of clusterTemplate.spec.clusterSetup || []) {
-    const clusterSetupValues = getOverwritableProperties(
-      clusterSetup.propertyDetails,
-    ).map((property) => getValueItem(property, clusterSetup.name));
+    const clusterSetupValues = getOverwritableProperties(clusterSetup.propertyDetails).map(
+      (property) => getValueItem(property, clusterSetup.name),
+    );
     values = [...values, ...clusterSetupValues];
   }
   return values;
 };
 
-const getInstanceObject = (
-  clusterTemplate: ClusterTemplate,
-): ClusterTemplateInstance => {
+const getInstanceObject = (clusterTemplate: ClusterTemplate): ClusterTemplateInstance => {
   const values = getValues(clusterTemplate);
   return {
     apiVersion: `${clusterTemplateInstanceGVK.group}/${clusterTemplateInstanceGVK.version}`,
@@ -97,19 +84,13 @@ const addPropertyComments = (
   property: ClusterTemplateProperty,
   clusterSetup?: string,
 ): string => {
-  let ret = yaml.replace(
-    getPropertyTypeKey(property, clusterSetup),
-    getYamlComment('type'),
-  );
+  let ret = yaml.replace(getPropertyTypeKey(property, clusterSetup), getYamlComment('type'));
   ret = ret.replace(
     getPropertyDescriptionKey(property, clusterSetup),
     getYamlComment('description'),
   );
   if (property.secretRef) {
-    ret = ret.replace(
-      `${getPropertySecretKey(property, clusterSetup)}: `,
-      getYamlComment(''),
-    );
+    ret = ret.replace(`${getPropertySecretKey(property, clusterSetup)}: `, getYamlComment(''));
   }
   return ret;
 };
@@ -125,9 +106,7 @@ const addPropertyDescriptionsAsComments = (
     ret = addPropertyComments(ret, property);
   }
   for (const clusterSetup of clusterTemplate.spec.clusterSetup || []) {
-    for (const property of getOverwritableProperties(
-      clusterSetup.propertyDetails,
-    )) {
+    for (const property of getOverwritableProperties(clusterSetup.propertyDetails)) {
       ret = addPropertyComments(ret, property, clusterSetup.name);
     }
   }

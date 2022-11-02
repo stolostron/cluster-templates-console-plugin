@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import {
   Button,
@@ -38,9 +37,7 @@ export type ListItem = {
   value?: string | number | React.ReactNode | undefined;
 };
 
-const CostItem: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
-  clusterTemplate,
-}) => {
+const CostItem: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
   return (
     <>
@@ -50,10 +47,7 @@ const CostItem: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
           'Cost is estimated according to the maximum number of nodes specified for this template',
         )}
       >
-        <Button
-          variant="link"
-          style={{ paddingLeft: 'var(--pf-global--spacer--sm)' }}
-        >
+        <Button variant="link" style={{ paddingLeft: 'var(--pf-global--spacer--sm)' }}>
           <OutlinedQuestionCircleIcon />
         </Button>
       </Popover>
@@ -77,9 +71,7 @@ const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   );
 };
 
-const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
-  clusterTemplate,
-}) => {
+const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
   const name = clusterTemplate.metadata?.name;
   // const [showEditLabels, setShowEditLabels] = React.useState<boolean>(false);
@@ -90,9 +82,7 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
     },
     {
       label: t('HELM chart repository'),
-      value: (
-        <ClusterTemplateHelmResourceLink clusterTemplate={clusterTemplate} />
-      ),
+      value: <ClusterTemplateHelmResourceLink clusterTemplate={clusterTemplate} />,
     },
     {
       label: t('HELM chart name'),

@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -17,9 +16,7 @@ import { useClusterTemplate } from '../../hooks/useClusterTemplates';
 import ClusterTemplateDetailsSections from './ClusterTemplateDetailsSections';
 import PageLoader from '../../helpers/PageLoader';
 
-const PageBreadcrumb: React.FC<{ clusterTemplateName: string }> = ({
-  clusterTemplateName,
-}) => {
+const PageBreadcrumb: React.FC<{ clusterTemplateName: string }> = ({ clusterTemplateName }) => {
   const { t } = useTranslation();
   const history = useHistory();
   return (
@@ -34,9 +31,7 @@ const PageBreadcrumb: React.FC<{ clusterTemplateName: string }> = ({
   );
 };
 
-const PageHeader: React.FC<{ clusterTemplateName: string }> = ({
-  clusterTemplateName,
-}) => {
+const PageHeader: React.FC<{ clusterTemplateName: string }> = ({ clusterTemplateName }) => {
   return (
     <PageSection
       variant={PageSectionVariants.light}

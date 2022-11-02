@@ -1,5 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { render } from '@testing-library/react';
 import React from 'react';
 import { waitForSelector, waitForText } from '../testUtils/testUtils';
@@ -11,9 +9,7 @@ describe('LoadingHelper component', () => {
     await waitForText('The content');
   });
   test('renders skeleton when loading', async () => {
-    const { container } = render(
-      <LoadingHelper isLoaded={false}>The content</LoadingHelper>,
-    );
+    const { container } = render(<LoadingHelper isLoaded={false}>The content</LoadingHelper>);
     await waitForSelector(container, 'div.pf-c-skeleton');
   });
   test('renders `-` when there is an error', async () => {

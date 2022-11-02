@@ -13,9 +13,9 @@ const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
 const quotas = importedQuotas as ClusterTemplateQuota[];
 const quotasInTemplate = quotas.filter((quota) =>
-  (
-    quota.spec?.allowedTemplates?.map((templateData) => templateData.name) || []
-  ).includes(clusterTemplate.metadata.name),
+  (quota.spec?.allowedTemplates?.map((templateData) => templateData.name) || []).includes(
+    clusterTemplate.metadata.name,
+  ),
 );
 
 jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
@@ -27,9 +27,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
 });
 
 const renderQuotasSection = async () => {
-  return render(
-    <QuotasSection clusterTemplate={clusterTemplate}></QuotasSection>,
-  );
+  return render(<QuotasSection clusterTemplate={clusterTemplate}></QuotasSection>);
 };
 
 describe('Cluster template details page quotas section', () => {
@@ -40,11 +38,7 @@ describe('Cluster template details page quotas section', () => {
   });
 
   it('should show error when load quotas returns an error', async () => {
-    useK8sWatchResourceMock.mockReturnValue([
-      undefined,
-      true,
-      new Error('test error'),
-    ]);
+    useK8sWatchResourceMock.mockReturnValue([undefined, true, new Error('test error')]);
     const { getByTestId } = await renderQuotasSection();
     expect(getByTestId('error')).toBeInTheDocument();
   });
@@ -68,9 +62,7 @@ describe('Cluster template details page quotas section', () => {
       const quota = quotas[i];
       const rowSelector = `[data-index='${i}'][data-testid=quotas-table-row]`;
       expect(
-        container.querySelector(
-          `${rowSelector} [data-testid=quota-${quota.metadata?.name}]`,
-        ),
+        container.querySelector(`${rowSelector} [data-testid=quota-${quota.metadata?.name}]`),
       ).toBeInTheDocument();
       expect(
         container.querySelector(
@@ -80,12 +72,8 @@ describe('Cluster template details page quotas section', () => {
       expect(
         container.querySelector(`${rowSelector} [data-testid=user-management]`),
       ).toHaveTextContent(`0 users, 0 groups`);
-      expect(
-        container.querySelector(`${rowSelector} [data-testid=cost]`),
-      ).toHaveTextContent(
-        quota.spec?.budget
-          ? `${quota.status?.budgetSpent || 0} / ${quota.spec?.budget}`
-          : '-',
+      expect(container.querySelector(`${rowSelector} [data-testid=cost]`)).toHaveTextContent(
+        quota.spec?.budget ? `${quota.status?.budgetSpent || 0} / ${quota.spec?.budget}` : '-',
       );
     }
   });
@@ -102,11 +90,7 @@ describe('Cluster template details page quotas section', () => {
           return [quotas, true, null];
         }
         if (groupVersionKind.kind === roleBindingGVK.kind) {
-          return [
-            roleBindings.filter((rb) => rb.metadata.namespace === namespace),
-            true,
-            null,
-          ];
+          return [roleBindings.filter((rb) => rb.metadata.namespace === namespace), true, null];
         }
         throw `unexpected kind ${groupVersionKind.kind}`;
       },

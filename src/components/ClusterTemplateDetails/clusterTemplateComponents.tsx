@@ -1,5 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
-
 import { Label } from '@patternfly/react-core';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
@@ -40,9 +38,7 @@ export const ClusterTemplateVendorLabel: React.FC<{
   }
   const color = vendor === ClusterTemplateVendor.REDHAT ? 'green' : 'purple';
   const labelText =
-    vendor === ClusterTemplateVendor.REDHAT
-      ? t('Red Hat template')
-      : t('Custom template');
+    vendor === ClusterTemplateVendor.REDHAT ? t('Red Hat template') : t('Custom template');
   return <Label color={color}>{labelText}</Label>;
 };
 

@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 
 type DialogsState<DialogIds extends string> = {
@@ -21,9 +20,7 @@ function reducer<DialogIds extends string>(
   }
 }
 
-export const useDialogsReducer = <DialogIds extends string>(
-  dialogIds: DialogIds[],
-) => {
+export const useDialogsReducer = <DialogIds extends string>(dialogIds: DialogIds[]) => {
   const initialState = dialogIds.reduce(
     (res, id) => ({ ...res, [id]: false }),
     {} as DialogsState<DialogIds>,
@@ -32,10 +29,8 @@ export const useDialogsReducer = <DialogIds extends string>(
     state: DialogsState<DialogIds>,
     dispatch: React.Dispatch<DialogsAction<DialogIds>>,
   ] = React.useReducer(reducer, initialState);
-  const openDialog = (dialogId: DialogIds) =>
-    dispatch({ type: 'open', payload: dialogId });
-  const closeDialog = (dialogId: DialogIds) =>
-    dispatch({ type: 'close', payload: dialogId });
+  const openDialog = (dialogId: DialogIds) => dispatch({ type: 'open', payload: dialogId });
+  const closeDialog = (dialogId: DialogIds) => dispatch({ type: 'close', payload: dialogId });
   const isDialogOpen = (dialogId: DialogIds) => state[dialogId];
   return { openDialog, closeDialog, isDialogOpen };
 };

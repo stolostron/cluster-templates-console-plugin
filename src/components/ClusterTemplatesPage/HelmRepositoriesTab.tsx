@@ -31,12 +31,7 @@ import {
 } from '@patternfly/react-table';
 import { TFunction } from 'react-i18next';
 import { helmRepoGVK } from '../../constants';
-import {
-  ClusterTemplate,
-  HelmChartRepository,
-  RowProps,
-  TableColumn,
-} from '../../types';
+import { ClusterTemplate, HelmChartRepository, RowProps, TableColumn } from '../../types';
 import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 import {
   useHelmRepositoryIndex,
@@ -109,8 +104,7 @@ export const HelmRepoRow = ({
   );
   const [model] = useK8sModel(helmRepoGVK);
   const [repoIndex, repoIndexLoaded, repoIndexError] = helmRepoIndexResult;
-  const [templates, templatesLoaded, templatesLoadError] =
-    clusterTemplatesResult;
+  const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
 
   const templatesFromRepo = templates.filter(
     (t) => t.spec.clusterDefinition.source.repoURL === obj.metadata?.name,
@@ -118,9 +112,7 @@ export const HelmRepoRow = ({
   const repoChartsCount = repoIndex
     ? getRepoCharts(repoIndex, obj.metadata?.name ?? '').length ?? '-'
     : '-';
-  const repoChartsUpdatedAt = repoIndex
-    ? new Date(repoIndex.generated).toLocaleString()
-    : '-';
+  const repoChartsUpdatedAt = repoIndex ? new Date(repoIndex.generated).toLocaleString() : '-';
 
   const getRowActions = (): IAction[] => {
     return [
@@ -162,9 +154,7 @@ export const HelmRepoRow = ({
         </Text>
       </Td>
       <Td dataLabel={columns[2].title}>
-        {obj.spec.connectionConfig.tlsClientConfig
-          ? t('Authenticated')
-          : t('Not required')}
+        {obj.spec.connectionConfig.tlsClientConfig ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].title}>
         <LoadingHelper isLoaded={repoIndexLoaded} error={repoIndexError}>
@@ -187,9 +177,7 @@ export const HelmRepoRow = ({
       <Td isActionCell>
         <ActionsColumn
           items={getRowActions()}
-          actionsToggle={(props: CustomActionsToggleProps) => (
-            <KebabToggle {...props} />
-          )}
+          actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
         />
       </Td>
       {isDialogOpen('deleteDialog') && (
@@ -214,11 +202,7 @@ export const HelmRepoRow = ({
             >
               {t('Delete')}
             </Button>,
-            <Button
-              key="cancel"
-              variant="link"
-              onClick={() => closeDialog('deleteDialog')}
-            >
+            <Button key="cancel" variant="link" onClick={() => closeDialog('deleteDialog')}>
               {t('Cancel')}
             </Button>,
           ]}
@@ -237,8 +221,7 @@ export const HelmRepoRow = ({
 };
 
 const HelmRepositoriesTab = () => {
-  const [repositories, repositoriesLoaded, repositoriesError] =
-    useHelmRepositories();
+  const [repositories, repositoriesLoaded, repositoriesError] = useHelmRepositories();
   const helmRepoIndexResult = useHelmRepositoryIndex();
   const clusterTemplatesResult = useClusterTemplates();
   const { t } = useTranslation();

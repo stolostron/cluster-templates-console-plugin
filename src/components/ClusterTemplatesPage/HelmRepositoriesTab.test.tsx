@@ -5,11 +5,7 @@ import { RecoilRoot } from 'recoil';
 import { waitForTestId, waitForText } from '../../testUtils/testUtils';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 import { useHelmRepositories } from '../../hooks/useHelmRepositories';
-import {
-  HelmChartRepository,
-  HelmRepoIndex,
-  HelmRepoIndexChartEntry,
-} from '../../types';
+import { HelmChartRepository, HelmRepoIndex, HelmRepoIndexChartEntry } from '../../types';
 import HelmRepositoriesTab, { HelmRepoRow } from './HelmRepositoriesTab';
 import * as useHelmRepositoryIndex from '../../hooks/useHelmRepositoryIndex';
 import userEvent from '@testing-library/user-event';
@@ -47,9 +43,7 @@ const hiveTemplateRepoCharts: HelmRepoIndexChartEntry = {
   digest: '4d200d352b4181c34605aa53faad6bdc113baa5ce4e645e002985d2a137737c1',
   name: 'hive-template',
   type: 'application',
-  urls: [
-    'https://rawagner.github.io/helm-demo/index.yaml/hive-template-0.1.0.tgz',
-  ],
+  urls: ['https://rawagner.github.io/helm-demo/index.yaml/hive-template-0.1.0.tgz'],
   version: '0.1.0',
 };
 
@@ -64,9 +58,7 @@ const hypershiftTemplateRepoCharts: HelmRepoIndexChartEntry = {
   digest: 'a47cf46a2551bbec37fd7973fc8fe4b66e9fe320c564f9de218a942f1969074b',
   name: 'hypershift-template',
   type: 'application',
-  urls: [
-    'https://rawagner.github.io/helm-demo/index.yaml/hypershift-template-0.1.0.tgz',
-  ],
+  urls: ['https://rawagner.github.io/helm-demo/index.yaml/hypershift-template-0.1.0.tgz'],
   version: '0.1.0',
 };
 
@@ -74,9 +66,7 @@ const helmRepositoryIndexMock: HelmRepoIndex = {
   apiVersion: 'v1',
   entries: {
     'hive-template--cluster-templates-repo': [hiveTemplateRepoCharts],
-    'hypershift-template--cluster-templates-repo': [
-      hypershiftTemplateRepoCharts,
-    ],
+    'hypershift-template--cluster-templates-repo': [hypershiftTemplateRepoCharts],
   },
   generated: '2022-09-23T14:42:54.245748+02:00',
 };
@@ -93,11 +83,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
 
 jest.mock('../../hooks/useHelmRepositories');
 jest.mock('../../hooks/useClusterTemplates');
-(useHelmRepositories as jest.Mock).mockReturnValue([
-  helmRepositoriesListMock,
-  true,
-  undefined,
-]);
+(useHelmRepositories as jest.Mock).mockReturnValue([helmRepositoriesListMock, true, undefined]);
 (useClusterTemplates as jest.Mock).mockReturnValue([[], true, undefined]);
 jest
   .spyOn(useHelmRepositoryIndex, 'useHelmRepositoryIndex')
@@ -133,9 +119,7 @@ describe('HelmRepoRow', () => {
   describe('Deletion modal', () => {
     beforeEach(async () => {
       await userEvent.click(screen.getByRole('button', { name: 'Actions' }));
-      await userEvent.click(
-        screen.getByRole('menuitem', { name: 'Delete repository' }),
-      );
+      await userEvent.click(screen.getByRole('menuitem', { name: 'Delete repository' }));
       await waitForText('Are you sure you want to delete?');
     });
     test('Repo deletion action and modal button', async () => {

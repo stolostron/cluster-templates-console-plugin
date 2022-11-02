@@ -120,8 +120,7 @@ export function getInitialValues(
   secret?: Secret,
   configMap?: ConfigMap,
 ): EditHelmRepoCredsValues {
-  const { tlsClientConfig, ca, url } =
-    helmChartRepository.spec.connectionConfig;
+  const { tlsClientConfig, ca, url } = helmChartRepository.spec.connectionConfig;
   const useCredentials = !!(tlsClientConfig || ca);
   const { tlsClientCert, tlsClientKey } = getDecodedSecretData(secret?.data);
   return {
@@ -171,12 +170,8 @@ const EditHelmRepositoryDialog = ({
   });
 
   const availableTlsSecrets = secrets.filter((s) => s.type === SECRET_TYPE);
-  const initialConfigMap = configMaps.find(
-    (cm) => cm.metadata?.name === ca?.name,
-  );
-  const initialSecret = secrets.find(
-    (s) => s.metadata?.name === tlsClientConfig?.name,
-  );
+  const initialConfigMap = configMaps.find((cm) => cm.metadata?.name === ca?.name);
+  const initialSecret = secrets.find((s) => s.metadata?.name === tlsClientConfig?.name);
   const dataLoaded = secretsLoaded && configMapsLoaded;
 
   const handleSubmit = async ({
@@ -189,15 +184,11 @@ const EditHelmRepositoryDialog = ({
     caCertificate,
   }: EditHelmRepoCredsValues) => {
     const configMapName =
-      existingConfigMapName ||
-      getDefaultConfigMapName(helmChartRepository.metadata?.name);
+      existingConfigMapName || getDefaultConfigMapName(helmChartRepository.metadata?.name);
     const secretName =
-      existingSecretName ||
-      getDefaultSecretName(helmChartRepository.metadata?.name);
+      existingSecretName || getDefaultSecretName(helmChartRepository.metadata?.name);
 
-    const configMapToUpdate = configMaps.find(
-      (cm) => cm.metadata?.name === configMapName,
-    );
+    const configMapToUpdate = configMaps.find((cm) => cm.metadata?.name === configMapName);
     const secretToUpdate = secrets.find((s) => s.metadata?.name === secretName);
 
     setFormError(undefined);
@@ -234,12 +225,8 @@ const EditHelmRepositoryDialog = ({
               // labels: { },
             },
             data: {
-              ['tls.crt']: Buffer.from(tlsClientCert, 'ascii').toString(
-                'base64',
-              ),
-              ['tls.key']: Buffer.from(tlsClientKey, 'ascii').toString(
-                'base64',
-              ),
+              ['tls.crt']: Buffer.from(tlsClientCert, 'ascii').toString('base64'),
+              ['tls.key']: Buffer.from(tlsClientKey, 'ascii').toString('base64'),
             },
             type: SECRET_TYPE,
           },
@@ -302,12 +289,9 @@ const EditHelmRepositoryDialog = ({
     if (
       secretToUpdate &&
       !useCredentials &&
-      secretToUpdate.metadata?.name ===
-        getDefaultSecretName(helmChartRepository?.metadata?.name)
+      secretToUpdate.metadata?.name === getDefaultSecretName(helmChartRepository?.metadata?.name)
     ) {
-      promises.push(
-        k8sDelete<Secret>({ model: secretModel, resource: secretToUpdate }),
-      );
+      promises.push(k8sDelete<Secret>({ model: secretModel, resource: secretToUpdate }));
     }
     if (
       configMapToUpdate &&
@@ -345,11 +329,7 @@ const EditHelmRepositoryDialog = ({
     >
       <TableLoader loaded={dataLoaded}>
         <Formik<EditHelmRepoCredsValues>
-          initialValues={getInitialValues(
-            helmChartRepository,
-            initialSecret,
-            initialConfigMap,
-          )}
+          initialValues={getInitialValues(helmChartRepository, initialSecret, initialConfigMap)}
           onSubmit={handleSubmit}
           validationSchema={getValidationSchema(t)}
           component={(props) => (
@@ -391,25 +371,20 @@ const FormikContent = ({
   const isInitialRenderRef = React.useRef(true);
 
   React.useEffect(() => {
-    if (!isInitialRenderRef.current)
-      setCaCertificateValue(values.existingConfigMapName);
+    if (!isInitialRenderRef.current) setCaCertificateValue(values.existingConfigMapName);
   }, [values.existingConfigMapName]);
 
   React.useEffect(() => {
-    if (!isInitialRenderRef.current)
-      setTlsConfigValues(values.existingSecretName);
+    if (!isInitialRenderRef.current) setTlsConfigValues(values.existingSecretName);
   }, [values.existingSecretName]);
 
   React.useEffect(() => {
     isInitialRenderRef.current = false;
   }, []);
 
-  const setTlsConfigValues = async (
-    value: EditHelmRepoCredsValues['existingSecretName'],
-  ) => {
+  const setTlsConfigValues = async (value: EditHelmRepoCredsValues['existingSecretName']) => {
     const { tlsClientCert, tlsClientKey } = getDecodedSecretData(
-      availableTlsSecrets.find((secret) => secret.metadata?.name === value)
-        ?.data,
+      availableTlsSecrets.find((secret) => secret.metadata?.name === value)?.data,
     );
     await setFieldValue('tlsClientCert', tlsClientCert || '', true);
     setFieldTouched('tlsClientCert', true, false);
@@ -417,14 +392,10 @@ const FormikContent = ({
     setFieldTouched('tlsClientKey', true, false);
   };
 
-  const setCaCertificateValue = async (
-    value: EditHelmRepoCredsValues['existingConfigMapName'],
-  ) => {
+  const setCaCertificateValue = async (value: EditHelmRepoCredsValues['existingConfigMapName']) => {
     await setFieldValue(
       'caCertificate',
-      configMaps.find((cm) => cm.metadata?.name === value)?.data?.[
-        'ca-bundle.crt'
-      ] || '',
+      configMaps.find((cm) => cm.metadata?.name === value)?.data?.['ca-bundle.crt'] || '',
       true,
     );
     setFieldTouched('caCertificate', true, false);
@@ -495,11 +466,7 @@ const FormikContent = ({
             </>
           )}
           {formError && (
-            <Alert
-              variant={AlertVariant.danger}
-              title={formError?.title}
-              isInline
-            >
+            <Alert variant={AlertVariant.danger} title={formError?.title} isInline>
               {formError?.message}
             </Alert>
           )}

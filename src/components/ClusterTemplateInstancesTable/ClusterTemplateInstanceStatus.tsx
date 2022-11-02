@@ -1,4 +1,3 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import { Button, Popover } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -10,14 +9,9 @@ import { TFunction } from 'i18next';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-import {
-  ClusterTemplateInstance,
-  ClusterTemplateInstanceStatusPhase,
-} from '../../types';
+import { ClusterTemplateInstance, ClusterTemplateInstanceStatusPhase } from '../../types';
 
-const getStatusIcon = (
-  phase: ClusterTemplateInstanceStatusPhase,
-): React.ReactNode => {
+const getStatusIcon = (phase: ClusterTemplateInstanceStatusPhase): React.ReactNode => {
   switch (phase) {
     case ClusterTemplateInstanceStatusPhase.HelmChartInstallFailed:
     case ClusterTemplateInstanceStatusPhase.ClusterInstallFailed:
@@ -37,35 +31,23 @@ const getStatusIcon = (
     case ClusterTemplateInstanceStatusPhase.ClusterSetupCreating:
     case ClusterTemplateInstanceStatusPhase.ClusterSetupRunning: {
       return (
-        <RunningIcon
-          color="var(--pf-global--success-color--100)"
-          data-testid="running-icon"
-        />
+        <RunningIcon color="var(--pf-global--success-color--100)" data-testid="running-icon" />
       );
     }
     case ClusterTemplateInstanceStatusPhase.Ready: {
       return (
-        <CheckCircleIcon
-          color="var(--pf-global--success-color--100)"
-          data-testid="success-icon"
-        />
+        <CheckCircleIcon color="var(--pf-global--success-color--100)" data-testid="success-icon" />
       );
     }
     default: {
       return (
-        <UnknownIcon
-          color="var(--pf-global--disabled-color--100)"
-          data-testid="unknown-icon"
-        />
+        <UnknownIcon color="var(--pf-global--disabled-color--100)" data-testid="unknown-icon" />
       );
     }
   }
 };
 
-const getStatusLabel = (
-  t: TFunction,
-  phase: ClusterTemplateInstanceStatusPhase,
-): string => {
+const getStatusLabel = (t: TFunction, phase: ClusterTemplateInstanceStatusPhase): string => {
   switch (phase) {
     case ClusterTemplateInstanceStatusPhase.HelmChartInstallFailed:
     case ClusterTemplateInstanceStatusPhase.ClusterInstallFailed:
@@ -104,11 +86,7 @@ const ClusterTemplateInstanceStatus: React.FC<{
   }
   return (
     <Popover bodyContent={instance.status?.message}>
-      <Button
-        icon={getStatusIcon(phase)}
-        variant="link"
-        style={{ paddingLeft: 'unset' }}
-      >
+      <Button icon={getStatusIcon(phase)} variant="link" style={{ paddingLeft: 'unset' }}>
         {getStatusLabel(t, phase)}
       </Button>
     </Popover>

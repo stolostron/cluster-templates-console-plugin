@@ -1,9 +1,5 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
-import {
-  ListPageCreateDropdown,
-  ListPageHeader,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { ListPageCreateDropdown, ListPageHeader } from '@openshift-console/dynamic-plugin-sdk';
 import { useHistory, useLocation } from 'react-router-dom';
 import { Tab, Tabs, TabTitleText } from '@patternfly/react-core';
 import ClusterTemplatesTab from './ClusterTemplatesTab';
@@ -41,15 +37,10 @@ const ClusterTemplatesPage = () => {
     [t],
   );
 
-  const handleTabSelect: React.ComponentProps<typeof Tabs>['onSelect'] = (
-    _,
-    eventKey,
-  ) => {
+  const handleTabSelect: React.ComponentProps<typeof Tabs>['onSelect'] = (_, eventKey) => {
     switch (eventKey) {
       case 'repositories':
-        history.push(
-          `/k8s/cluster/${clusterTemplateReference}?tab=repositories`,
-        );
+        history.push(`/k8s/cluster/${clusterTemplateReference}?tab=repositories`);
         break;
       default:
         history.push(`/k8s/cluster/${clusterTemplateReference}`);
@@ -88,31 +79,20 @@ const ClusterTemplatesPage = () => {
         >
           <Tab
             eventKey="templates"
-            title={
-              <TabTitleText>
-                {getNavLabelWithCount('Templates', templatesCount)}
-              </TabTitleText>
-            }
+            title={<TabTitleText>{getNavLabelWithCount('Templates', templatesCount)}</TabTitleText>}
             aria-label="Cluster templates tab"
           />
           <Tab
             eventKey="repositories"
             title={
               <TabTitleText>
-                {getNavLabelWithCount(
-                  'HELM repositories',
-                  helmRepositoriesCount,
-                )}
+                {getNavLabelWithCount('HELM repositories', helmRepositoriesCount)}
               </TabTitleText>
             }
             aria-label="HELM repositories tab"
           />
         </Tabs>
-        {activeTab === 'repositories' ? (
-          <HelmRepositoriesTab />
-        ) : (
-          <ClusterTemplatesTab />
-        )}
+        {activeTab === 'repositories' ? <HelmRepositoriesTab /> : <ClusterTemplatesTab />}
       </div>
     </>
   );

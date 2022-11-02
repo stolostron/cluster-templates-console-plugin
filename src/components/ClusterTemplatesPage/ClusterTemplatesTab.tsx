@@ -1,9 +1,5 @@
 import * as React from 'react';
-import {
-  k8sDelete,
-  ResourceLink,
-  useK8sModel,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { k8sDelete, ResourceLink, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import {
   Button,
   Card,
@@ -61,9 +57,7 @@ function getTableColumns(t: TFunction): TableColumn[] {
   ];
 }
 
-export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({
-  obj,
-}) => {
+export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj }) => {
   const { t } = useTranslation();
   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
   const [model] = useK8sModel(clusterTemplateGVK);
@@ -99,9 +93,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({
       <Td data-testid={columns[4].id} isActionCell>
         <ActionsColumn
           items={getRowActions()}
-          actionsToggle={(props: CustomActionsToggleProps) => (
-            <KebabToggle {...props} />
-          )}
+          actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
         />
       </Td>
       {isDeleteOpen && (
@@ -126,11 +118,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({
             >
               {t('Delete')}
             </Button>,
-            <Button
-              key="cancel"
-              variant="link"
-              onClick={() => setDeleteOpen(false)}
-            >
+            <Button key="cancel" variant="link" onClick={() => setDeleteOpen(false)}>
               {t('Cancel')}
             </Button>,
           ]}
@@ -169,10 +157,7 @@ const ClusterTemplatesTab = () => {
               </Thead>
               <Tbody>
                 {templates.map((template) => (
-                  <ClusterTemplateRow
-                    key={template.metadata?.name}
-                    obj={template}
-                  />
+                  <ClusterTemplateRow key={template.metadata?.name} obj={template} />
                 ))}
               </Tbody>
             </TableComposable>

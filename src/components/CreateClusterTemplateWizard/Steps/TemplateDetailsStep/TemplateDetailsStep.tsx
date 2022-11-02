@@ -1,21 +1,10 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
-import {
-  Form,
-  Stack,
-  StackItem,
-  Text,
-  TextContent,
-  TextInputTypes,
-} from '@patternfly/react-core';
+import { Form, Stack, StackItem, Text, TextContent, TextInputTypes } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import { InputField, NumberSpinnerField, SelectField } from 'formik-pf';
 
 import { FormikValues } from '../../types';
-import {
-  getRepoCharts,
-  useHelmRepositoryIndex,
-} from '../../../../hooks/useHelmRepositoryIndex';
+import { getRepoCharts, useHelmRepositoryIndex } from '../../../../hooks/useHelmRepositoryIndex';
 import { useHelmRepositories } from '../../../../hooks/useHelmRepositories';
 
 const TemplateDetailsStep = () => {
@@ -34,9 +23,7 @@ const TemplateDetailsStep = () => {
     label: r.metadata?.name || '',
     disabled: false,
   }));
-  const chartsFromRepo = repoIndex
-    ? getRepoCharts(repoIndex, values.helmRepo)
-    : [];
+  const chartsFromRepo = repoIndex ? getRepoCharts(repoIndex, values.helmRepo) : [];
 
   const firstChart = chartsFromRepo[0]?.name;
 
@@ -44,13 +31,7 @@ const TemplateDetailsStep = () => {
     if (indexLoaded && values.helmRepo && !values.helmChart) {
       setFieldValue('helmChart', firstChart);
     }
-  }, [
-    indexLoaded,
-    values.helmRepo,
-    values.helmChart,
-    firstChart,
-    setFieldValue,
-  ]);
+  }, [indexLoaded, values.helmRepo, values.helmChart, firstChart, setFieldValue]);
 
   const chartOptions = chartsFromRepo.map((c) => ({
     value: c.name,
@@ -90,13 +71,7 @@ const TemplateDetailsStep = () => {
             label="Helm chart"
             isDisabled={!values.helmRepo}
           />
-          <NumberSpinnerField
-            isRequired
-            fieldId="cost"
-            name="cost"
-            min={1}
-            label="Cost"
-          />
+          <NumberSpinnerField isRequired fieldId="cost" name="cost" min={1} label="Cost" />
         </Form>
       </StackItem>
     </Stack>

@@ -16,9 +16,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
 });
 
 const renderUsageSection = async () => {
-  return render(
-    <UsageSection clusterTemplate={clusterTemplate}></UsageSection>,
-  );
+  return render(<UsageSection clusterTemplate={clusterTemplate}></UsageSection>);
 };
 
 describe('Cluster template details page usage section', () => {
@@ -29,11 +27,7 @@ describe('Cluster template details page usage section', () => {
   });
 
   it('should show error when load instances returns an error', async () => {
-    useK8sWatchResourceMock.mockReturnValue([
-      undefined,
-      true,
-      new Error('test error'),
-    ]);
+    useK8sWatchResourceMock.mockReturnValue([undefined, true, new Error('test error')]);
     const { getByTestId } = await renderUsageSection();
     expect(getByTestId('error')).toBeInTheDocument();
   });
@@ -77,18 +71,14 @@ describe('Cluster template details page usage section', () => {
     for (let i = 0; i < expected.length; ++i) {
       const rowSelector = `[data-index='${i}'][data-testid='cluster-template-instance-row']`;
       expect(
-        container.querySelector(
-          `${rowSelector} [data-testid=instance-${expected[i].name}]`,
-        ),
+        container.querySelector(`${rowSelector} [data-testid=instance-${expected[i].name}]`),
       ).toBeInTheDocument();
       expect(
-        container.querySelector(
-          `${rowSelector} [data-testid=namespace-${expected[i].namespace}]`,
-        ),
+        container.querySelector(`${rowSelector} [data-testid=namespace-${expected[i].namespace}]`),
       ).toBeInTheDocument();
-      expect(
-        container.querySelector(`${rowSelector} [data-testid=status]`),
-      ).toHaveTextContent(expected[i].statusLabel);
+      expect(container.querySelector(`${rowSelector} [data-testid=status]`)).toHaveTextContent(
+        expected[i].statusLabel,
+      );
       expect(
         container.querySelector(
           `${rowSelector} [data-testid=status] [data-testid='${expected[i].statusIcon}']`,

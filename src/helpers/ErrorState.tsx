@@ -1,10 +1,4 @@
-/* Copyright Contributors to the Open Cluster Management project */
-import {
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  Title,
-} from '@patternfly/react-core';
+import { EmptyState, EmptyStateBody, EmptyStateIcon, Title } from '@patternfly/react-core';
 import { ExclamationCircleIcon } from '@patternfly/react-icons';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
@@ -17,12 +11,7 @@ export type ErrorStateProps = {
   errorMessage?: string;
 };
 
-const ErrorState = ({
-  errorId,
-  errorTitle,
-  errorMessage,
-  error,
-}: ErrorStateProps) => {
+const ErrorState = ({ errorId, errorTitle, errorMessage, error }: ErrorStateProps) => {
   const { t } = useTranslation();
   const msg = errorMessage ? errorMessage : getErrorMessage(error);
   return (
