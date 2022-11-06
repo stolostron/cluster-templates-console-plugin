@@ -1,6 +1,9 @@
 import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
 export const TEMPLATES_HELM_REPO_LABEL = 'clustertemplates.openshift.io/helm-repo';
 
+export const clusterTemplateVersion = 'v1alpha1';
+export const clusterTemplateGroup = 'clustertemplate.openshift.io';
+
 export const helmRepoGVK: K8sGroupVersionKind = {
   kind: 'HelmChartRepository',
   version: 'v1beta1',
@@ -9,19 +12,19 @@ export const helmRepoGVK: K8sGroupVersionKind = {
 
 export const clusterTemplateGVK: K8sGroupVersionKind = {
   kind: 'ClusterTemplate',
-  version: 'v1alpha1',
+  version: clusterTemplateVersion,
   group: 'clustertemplate.openshift.io',
 };
 
 export const clusterTemplateQuotaGVK: K8sGroupVersionKind = {
   kind: 'ClusterTemplateQuota',
-  version: 'v1alpha1',
-  group: 'clustertemplate.openshift.io',
+  version: clusterTemplateVersion,
+  group: clusterTemplateGroup,
 };
 
 export const clusterTemplateInstanceGVK: K8sGroupVersionKind = {
   kind: 'ClusterTemplateInstance',
-  version: 'v1alpha1',
+  version: clusterTemplateVersion,
   group: 'clustertemplate.openshift.io',
 };
 

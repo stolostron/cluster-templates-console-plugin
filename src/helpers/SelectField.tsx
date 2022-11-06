@@ -83,7 +83,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
         toggleId={fieldId}
       >
         {[...options].map((op) => (
-          <SelectOption value={op.value} isDisabled={op.disabled} key={op.value} />
+          <SelectOption value={op.value} isDisabled={op.disabled} key={op.value} name={op.value} />
         ))}
       </Select>
     </FormGroup>

@@ -3,12 +3,12 @@ import { Form, Stack, StackItem, Text, TextContent, TextInputTypes } from '@patt
 import { useFormikContext } from 'formik';
 import { InputField, NumberSpinnerField, SelectField } from 'formik-pf';
 
-import { FormikValues } from '../../types';
 import { getRepoCharts, useHelmRepositoryIndex } from '../../../../hooks/useHelmRepositoryIndex';
 import { useHelmRepositories } from '../../../../hooks/useHelmRepositories';
+import { WizardFormikValues } from '../../formikTypes';
 
 const TemplateDetailsStep = () => {
-  const { values, setFieldValue } = useFormikContext<FormikValues>();
+  const { values, setFieldValue } = useFormikContext<WizardFormikValues>();
   const [repositories, loaded] = useHelmRepositories();
   const [repoIndex, indexLoaded] = useHelmRepositoryIndex();
 
