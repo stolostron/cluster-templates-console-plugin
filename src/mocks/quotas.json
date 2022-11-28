@@ -3,7 +3,7 @@
     "apiVersion": "clustertemplate.openshift.io/v1alpha1",
     "kind": "ClusterTemplateQuota",
     "metadata": {
-      "name": "example",
+      "name": "quota0",
       "namespace": "devuserns",
       "resourceVersion": "339583945",
       "uid": "5e1b8529-b957-4af1-b466-a79c3987be85"
@@ -41,7 +41,7 @@
     "metadata": {
       "creationTimestamp": "2022-09-28T09:09:47Z",
       "generation": 2,
-      "name": "example1",
+      "name": "quota1",
       "namespace": "template-quota-ns",
       "resourceVersion": "339474492",
       "uid": "1954d6d5-7e6e-46b0-9c7d-7436a5e64db4"
@@ -69,7 +69,7 @@
     "metadata": {
       "creationTimestamp": "2022-09-28T09:09:47Z",
       "generation": 2,
-      "name": "example1",
+      "name": "quota2",
       "namespace": "template-quota-ns",
       "resourceVersion": "339474492",
       "uid": "1954d6d5-7e6e-46b0-9c7d-7436a5e64db4"

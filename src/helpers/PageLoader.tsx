@@ -1,18 +1,7 @@
 import * as React from 'react';
-import {
-  Bullseye,
-  Card,
-  CardBody,
-  EmptyState,
-  EmptyStateBody,
-  EmptyStateIcon,
-  EmptyStateSecondaryActions,
-  Page,
-  PageSection,
-  Spinner,
-  Title,
-} from '@patternfly/react-core';
+import { Card, CardBody, Page, PageSection } from '@patternfly/react-core';
 import ErrorState, { ErrorStateProps } from './ErrorState';
+import { LoadingState } from './LoadingState';
 
 type PageLoaderProps = {
   children: React.ReactNode;
@@ -34,32 +23,15 @@ export function ErrorPage(props: ErrorStateProps) {
   );
 }
 
-export function LoadingPage(props: {
-  title?: string | React.ReactNode;
-  message?: string | React.ReactNode;
-  primaryAction?: React.ReactNode;
-  secondaryActions?: React.ReactNode;
-}) {
+const LoadingPage = () => {
   return (
     <Page>
       <PageSection isFilled>
-        <Bullseye>
-          <EmptyState>
-            <EmptyStateIcon variant="container" component={Spinner} />
-            <div>
-              <Title size="lg" headingLevel="h4">
-                {props.title ?? 'Loading'}
-              </Title>
-              <EmptyStateBody>{props.message}</EmptyStateBody>
-            </div>
-            {props.primaryAction}
-            <EmptyStateSecondaryActions>{props.secondaryActions}</EmptyStateSecondaryActions>
-          </EmptyState>
-        </Bullseye>
+        <LoadingState />
       </PageSection>
     </Page>
   );
-}
+};
 
 const PageLoader = ({
   loaded = false,

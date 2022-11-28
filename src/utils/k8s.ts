@@ -18,3 +18,5 @@ export const getReference = ({
   version,
   kind,
 }: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');
+
+export const getApiVersion = (gvk: K8sGroupVersionKind) => `${gvk.group}/${gvk.version}`;

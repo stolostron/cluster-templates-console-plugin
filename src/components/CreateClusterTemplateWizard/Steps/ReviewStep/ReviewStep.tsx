@@ -10,10 +10,10 @@ import {
 } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import React from 'react';
-import { FormikValues } from '../../types';
+import { WizardFormikValues } from '../../formikTypes';
 
 const ReviewStep = () => {
-  const { values } = useFormikContext<FormikValues>();
+  const { values } = useFormikContext<WizardFormikValues>();
   return (
     <Stack hasGutter>
       <StackItem>

@@ -27,7 +27,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
 });
 
 const renderQuotasSection = async () => {
-  return render(<QuotasSection clusterTemplate={clusterTemplate}></QuotasSection>);
+  return render(<QuotasSection clusterTemplate={clusterTemplate} />);
 };
 
 describe('Cluster template details page quotas section', () => {

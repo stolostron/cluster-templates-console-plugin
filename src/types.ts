@@ -124,7 +124,7 @@ export type ClusterTemplateQuota = K8sResourceCommon & {
     budgetSpent: number;
     templateInstances: {
       name: string;
-      count: number;
+      count?: number;
     }[];
   };
 };
