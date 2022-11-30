@@ -90,6 +90,8 @@
     "lodash": "4.17.21",
     "lodash-es": "4.17.21",
     "recoil": "^0.7.6",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "@openshift-console/plugin-shared": "0.0.1",
+    "sanitize-html": "^2.3.2"
   }
 }
