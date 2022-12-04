@@ -5,29 +5,35 @@ import {
   SelectVariant,
   SelectOption,
   SelectProps,
-  FormGroupProps,
+  SelectOptionObject,
+  ValidatedOptions,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
+import { getOptionValueStr } from './formikFieldUtils';
+import { FieldProps } from './types';
 
-// https://github.com/patternfly-labs/formik-pf/blob/main/src/components/types.ts
-export type FieldProps = {
-  name: string;
-  isDisabled?: boolean;
-  dataTest?: string;
-} & FormGroupProps;
-
-type SelectInputOption = {
-  value: string;
+export type SelectInputOption = {
+  value: string | SelectOptionObject;
   disabled: boolean;
+  description?: string;
 };
 
 type SelectFieldProps = FieldProps & {
   options: SelectInputOption[];
-  placeholderText?: React.ReactNode;
-  isCreatable?: boolean;
-  hasOnCreateOption?: boolean;
-};
-
+  validate?: () => string;
+} & Omit<
+    SelectProps,
+    | 'variant'
+    | 'validated'
+    | 'onToggle'
+    | 'onSelect'
+    | 'onClear'
+    | 'isOpen'
+    | 'selections'
+    | 'className'
+    | 'toggleId'
+    | 'onCreateOption'
+  >;
 // https://github.com/patternfly-labs/formik-pf/blob/main/src/components/utils.ts
 export const getFieldId = (fieldName: string, fieldType: string) =>
   `form-${fieldType}-${fieldName?.replace(/\./g, '-')}-field`;
@@ -35,56 +41,71 @@ export const getFieldId = (fieldName: string, fieldType: string) =>
 const SelectField: React.FC<SelectFieldProps> = ({
   name,
   label,
+  labelIcon,
   options,
-  placeholderText,
   helperText,
   isRequired,
+  validate,
   ...props
 }) => {
-  const [field, { touched, error }, { setValue, setTouched }] = useField<string>(name);
+  const [field, { touched, error }, { setValue }] = useField<string | SelectOptionObject>(name);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const fieldId = getFieldId(props.fieldId, 'select-input');
-  const isValid = !(touched && error);
-  const errorMessage = !isValid ? error : '';
-
+  const errorMessage = validate ? validate() : error;
+  const validated = touched && errorMessage ? ValidatedOptions.error : ValidatedOptions.default;
   const onToggle = () => {
     setIsOpen(!isOpen);
   };
 
   const onSelect: SelectProps['onSelect'] = (_, value) => {
-    setValue(value as string);
-    setTouched(true);
+    setValue(value);
     setIsOpen(false);
   };
 
   const onClearSelection = () => {
-    setValue('');
-    setTouched(true);
+    setValue(undefined);
+  };
+
+  const onCreateOption = (newOption: string) => {
+    setValue(newOption);
+    setIsOpen(false);
   };
 
   return (
     <FormGroup
-      fieldId={`${fieldId}-select-typeahead`}
-      validated={isValid ? 'default' : 'error'}
+      fieldId={name}
+      validated={validated}
       label={label}
+      labelIcon={labelIcon}
       helperText={helperText}
       helperTextInvalid={errorMessage}
       isRequired={isRequired}
     >
       <Select
         variant={SelectVariant.typeahead}
+        validated={validated}
         onToggle={onToggle}
         onSelect={onSelect}
         onClear={onClearSelection}
         isOpen={isOpen}
         selections={field.value}
-        placeholderText={placeholderText}
-        typeAheadAriaLabel={name}
-        toggleId={fieldId}
+        typeAheadAriaLabel={props.typeAheadAriaLabel || name}
+        toggleId={name}
+        onCreateOption={onCreateOption}
+        className="cluster-templates-select-field"
+        {...props}
       >
-        {[...options].map((op) => (
-          <SelectOption value={op.value} isDisabled={op.disabled} key={op.value} name={op.value} />
-        ))}
+        {options.map((op, idx) => {
+          const valueStr = getOptionValueStr(op);
+          return (
+            <SelectOption
+              value={op.value}
+              isDisabled={op.disabled}
+              key={idx}
+              name={valueStr}
+              description={op.description}
+            />
+          );
+        })}
       </Select>
     </FormGroup>
   );

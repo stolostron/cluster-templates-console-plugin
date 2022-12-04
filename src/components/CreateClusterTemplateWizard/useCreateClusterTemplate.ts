@@ -1,43 +1,57 @@
-import { k8sCreate, K8sModel, k8sUpdate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  k8sCreate,
+  k8sGet,
+  K8sModel,
+  k8sUpdate,
+  useK8sModel,
+} from '@openshift-console/dynamic-plugin-sdk';
+import { ClusterTemplate, Quota } from '../../types';
+import { WizardFormikValues, QuotaFormikValues } from './types';
+import { QuotasData, useQuotas } from '../../hooks/useQuotas';
 import { clusterTemplateGVK, clusterTemplateQuotaGVK } from '../../constants';
-import { ClusterTemplate, ClusterTemplateQuota } from '../../types';
-import { WizardFormikValues, AccessFormikValues } from './formikTypes';
-import { useAccessContext } from './Steps/ManageAccessStep/AccessContextProvider';
 
 export const getClusterTemplate = (values: WizardFormikValues): ClusterTemplate => {
   return {
     apiVersion: 'clustertemplate.openshift.io/v1alpha1',
     kind: 'ClusterTemplate',
     metadata: {
-      name: values.name,
+      name: values.details.name,
     },
     spec: {
-      cost: values.cost,
+      cost: values.details.cost,
       clusterDefinition: {
         source: {
-          repoURL: values.helmRepo,
-          chart: values.helmChart,
+          repoURL: values.details.helmRepo,
+          chart: values.details.helmChart,
         },
       },
     },
   };
 };
 
-const getUpdatedQuotas = (
+const getUpdatedQuotas = async (
   clusterTemplateName: string,
-  accessFormikValues: AccessFormikValues[],
-  allQuotas: ClusterTemplateQuota[],
-): ClusterTemplateQuota[] => {
+  quotaFormikValues: QuotaFormikValues[],
+  quotasContext: QuotasData,
+  quotasModel: K8sModel,
+): Promise<Quota[]> => {
   const ret = [];
-  for (const access of accessFormikValues) {
-    const quota = allQuotas.find((quota) => quota.metadata?.name === access.name);
+  for (const quotaFormValues of quotaFormikValues) {
+    if (!quotaFormValues.quota) {
+      throw 'No selected quota';
+    }
+    let quota = quotasContext.getQuota(quotaFormValues.quota.name, quotaFormValues.quota.namespace);
     if (!quota) {
-      throw new Error(`Failed to find quota ${access.name}`);
+      quota = await k8sGet({
+        model: quotasModel,
+        name: quotaFormValues.quota.name,
+        ns: quotaFormValues.quota.namespace,
+      });
     }
     const allowedTemplates = quota.spec?.allowedTemplates || [];
     allowedTemplates.push({
       name: clusterTemplateName,
-      count: access.limitAllowed ? access.numAllowed : undefined,
+      count: quotaFormValues.limitAllowed ? quotaFormValues.numAllowed : undefined,
     });
     const newQuota = {
       ...quota,
@@ -53,22 +67,31 @@ const getUpdatedQuotas = (
 
 export const updateQuotas = async (
   values: WizardFormikValues,
-  allQuotas: ClusterTemplateQuota[],
+  quotasContext: QuotasData,
   quotaModel: K8sModel,
 ) => {
-  const updatedQuotas = getUpdatedQuotas(values.name || 'test', values.quotas, allQuotas);
+  const updatedQuotas = await getUpdatedQuotas(
+    values.details.name || 'test',
+    values.quotas,
+    quotasContext,
+    quotaModel,
+  );
   const promises = updatedQuotas.map((quota) => k8sUpdate({ model: quotaModel, data: quota }));
   await Promise.all(promises);
 };
 
-export const useCreateClusterTemplate = () => {
-  const allQuotas = useAccessContext();
-  const [model] = useK8sModel(clusterTemplateGVK);
-  const [quotasModel] = useK8sModel(clusterTemplateQuotaGVK);
-  return {
-    createClusterTemplate: async (values: WizardFormikValues) => {
-      await k8sCreate({ model, data: getClusterTemplate(values) });
-      await updateQuotas(values, allQuotas, quotasModel);
-    },
+export const useCreateClusterTemplate = (): [
+  (values: WizardFormikValues) => Promise<void>,
+  boolean,
+] => {
+  const [quotasData] = useQuotas();
+  //Instead of handling loading and error, if a quota isn't found it'll be retreived using k8sGet
+  const [clusterTemplateModel, clusterTemplateModelLoaded] = useK8sModel(clusterTemplateGVK);
+  const [quotaModel, quotaModelLoaded] = useK8sModel(clusterTemplateQuotaGVK);
+
+  const createClusterTemplate = async (values: WizardFormikValues) => {
+    await k8sCreate({ model: clusterTemplateModel, data: getClusterTemplate(values) });
+    await updateQuotas(values, quotasData, quotaModel);
   };
+  return [createClusterTemplate, clusterTemplateModelLoaded && quotaModelLoaded];
 };

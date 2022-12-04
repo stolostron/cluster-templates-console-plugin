@@ -1,18 +1,23 @@
-import { WizardFormikValues, AccessFormikValues } from './formikTypes';
+import { WizardFormikValues, QuotaFormikValues } from './types';
 
-export const getAccessFormikInitialValues = (): AccessFormikValues => ({
-  name: '',
+export const getQuotaFormikInitialValues = (): QuotaFormikValues => ({
   numAllowed: 0,
   limitAllowed: false,
+  quota: {
+    name: '',
+    namespace: '',
+    toString: () => '',
+  },
 });
 
 export const getFormikInitialValues = (): WizardFormikValues => {
   return {
-    name: '',
-    helmRepo: '',
-    helmChart: '',
-    cost: 1,
-    quotas: [getAccessFormikInitialValues()],
-    pipelines: [],
+    details: {
+      name: '',
+      helmRepo: '',
+      helmChart: '',
+      cost: 200,
+    },
+    quotas: [getQuotaFormikInitialValues()],
   };
 };

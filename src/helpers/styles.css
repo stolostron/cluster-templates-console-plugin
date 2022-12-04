@@ -1,0 +1,19 @@
+.cluster-templates-inline-resource-link {
+  display: inline;
+}
+
+.cluster-templates-removable-item {
+  display: block;
+  position: relative;
+}
+
+.cluster-templates-removable-item .cluster-templates-remove-button {
+  position: absolute;
+  top: -0.5rem;
+  right: 0px;
+}
+
+.cluster-templates-select-field ul {
+  max-height: 20rem;
+  overflow-y: auto;
+}

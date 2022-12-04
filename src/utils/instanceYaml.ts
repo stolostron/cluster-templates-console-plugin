@@ -6,7 +6,7 @@
   dumping it to a yaml
   replacing the lines with the fake keys and values with the suitable comments
 */
-import * as _ from 'lodash';
+import filter from 'lodash/filter';
 
 import { dump } from 'js-yaml';
 import {
@@ -44,7 +44,7 @@ const getValueItem = (
 };
 
 const getOverwritableProperties = (properties?: ClusterTemplateProperty[]) =>
-  _.filter(properties, (property) => property.overwritable);
+  filter(properties, (property) => property.overwritable);
 
 const getValues = (clusterTemplate: ClusterTemplate): ClusterTemplateInstancePropertyValue[] => {
   let values: ClusterTemplateInstancePropertyValue[] = getOverwritableProperties(

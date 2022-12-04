@@ -4,7 +4,7 @@ import * as React from 'react';
 import { ClusterTemplate } from '../../types';
 import DetailsSection from './DetailsSection';
 import InstanceYamlSection from './InstanceYamlSection';
-import QuotasSection from './QuotaSection';
+import QuotasSection from './QuotasSection';
 import UsageSection from './UsageSection';
 import {
   Card,
@@ -14,6 +14,7 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
+import ErrorBoundary from '../../helpers/ErrorBoundary';
 
 enum Section {
   Details = 'details',
@@ -81,7 +82,9 @@ const ClusterTemplateDetailsSections: React.FC<{
         return (
           <StackItem key={key}>
             <ExpandableCard title={titles[section]} dataTestId={key}>
-              <Component clusterTemplate={clusterTemplate} />
+              <ErrorBoundary>
+                <Component clusterTemplate={clusterTemplate} />
+              </ErrorBoundary>
             </ExpandableCard>
           </StackItem>
         );

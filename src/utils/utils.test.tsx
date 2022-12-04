@@ -1,22 +1,22 @@
 import { render } from '@testing-library/react';
 import React from 'react';
 import { waitForSelector, waitForText } from '../testUtils/testUtils';
-import { getNavLabelWithCount, LoadingHelper } from './utils';
+import { getNavLabelWithCount, CellLoader } from './utils';
 
-describe('LoadingHelper component', () => {
+describe('CellLoader component', () => {
   test('renders children when loaded and no error', async () => {
-    render(<LoadingHelper isLoaded>The content</LoadingHelper>);
+    render(<CellLoader isLoaded>The content</CellLoader>);
     await waitForText('The content');
   });
   test('renders skeleton when loading', async () => {
-    const { container } = render(<LoadingHelper isLoaded={false}>The content</LoadingHelper>);
+    const { container } = render(<CellLoader isLoaded={false}>The content</CellLoader>);
     await waitForSelector(container, 'div.pf-c-skeleton');
   });
   test('renders `-` when there is an error', async () => {
     render(
-      <LoadingHelper isLoaded error={'something went wrong'}>
+      <CellLoader isLoaded error={'something went wrong'}>
         The content
-      </LoadingHelper>,
+      </CellLoader>,
     );
     await waitForText('-');
   });

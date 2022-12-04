@@ -424,7 +424,6 @@ const FormikContent = ({
             <>
               <SelectField
                 name="existingConfigMapName"
-                fieldId="existingConfigMapName"
                 label={t('CA certificate config map')}
                 placeholder={t('Select a ConfigMap')}
                 options={configMaps.map((cm) => ({
@@ -441,9 +440,8 @@ const FormikContent = ({
               />
               <SelectField
                 name="existingSecretName"
-                fieldId="existingSecretName"
                 label={t('TLS config secret')}
-                placeholder={t('Select a credential')}
+                placeholderText={t('Select a credential')}
                 options={availableTlsSecrets.map((secret) => ({
                   value: secret.metadata?.name || '',
                   disabled: false,

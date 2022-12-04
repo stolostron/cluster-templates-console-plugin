@@ -2,19 +2,12 @@ import { render } from '@testing-library/react';
 import { Route, Router, Switch } from 'react-router-dom';
 import { createMemoryHistory } from 'history';
 import ClusterTemplateDetailsPage from './ClusterTemplateDetailsPage';
-import { useClusterTemplate } from '../../hooks/useClusterTemplates';
 import React from 'react';
 import exampleTemplate from '../../mocks/clusterTemplateExample.json';
+import { K8sGroupVersionKind, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { clusterTemplateGVK } from '../../constants';
+const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
-const useClusterTemplateMock = useClusterTemplate as jest.Mock;
-
-jest.mock('../../hooks/useClusterTemplates');
-
-jest.mock('../../hooks/useQuotas', () => {
-  return {
-    useQuotas: jest.fn().mockReturnValue([[], true, null]),
-  };
-});
 jest.mock('../../hooks/useClusterTemplateInstances', () => {
   return {
     useClusterTemplateInstances: () => [[], true, null],
@@ -44,7 +37,14 @@ const renderTemplatesPage = () => {
 
 describe('cluster template details page', () => {
   beforeEach(() => {
-    useClusterTemplateMock.mockReturnValue([exampleTemplate, true, null]);
+    useK8sWatchResourceMock.mockImplementation(
+      ({ groupVersionKind }: { groupVersionKind: K8sGroupVersionKind }) => {
+        if (groupVersionKind.kind === clusterTemplateGVK.kind) {
+          return [exampleTemplate, true, null];
+        }
+        return [[], true, null];
+      },
+    );
   });
   it('should show the four sections when template is loaded', async () => {
     const { getByTestId } = renderTemplatesPage();
@@ -87,7 +87,7 @@ describe('cluster template details page', () => {
       }
     }
     if (error) {
-      throw 'Failed to show details';
+      throw new Error('Failed to show details');
     }
   });
   xit('should show labels in details section', () => {
@@ -101,14 +101,14 @@ describe('cluster template details page', () => {
 
 describe('Cluster template details page loading and error states', () => {
   it('should show loading state while loading', async () => {
-    useClusterTemplateMock.mockReturnValue([undefined, false, null]);
+    useK8sWatchResourceMock.mockReturnValue([undefined, false, null]);
     const { getByText } = renderTemplatesPage();
     expect(getByText('Loading')).toBeInTheDocument();
   });
 
   it('should show error when useClusterTemplate failed', async () => {
-    useClusterTemplateMock.mockReturnValue([undefined, false, new Error('test error')]);
-    const { getByTestId } = renderTemplatesPage();
-    expect(getByTestId('error')).toBeInTheDocument();
+    useK8sWatchResourceMock.mockReturnValue([undefined, false, new Error('test error')]);
+    const { getByText } = renderTemplatesPage();
+    expect(getByText('test error')).toBeInTheDocument();
   });
 });

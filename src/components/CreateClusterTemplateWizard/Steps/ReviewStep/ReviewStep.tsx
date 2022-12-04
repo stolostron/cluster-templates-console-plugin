@@ -9,41 +9,89 @@ import {
   DescriptionListDescription,
 } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
+import { TFunction } from 'i18next';
 import React from 'react';
-import { WizardFormikValues } from '../../formikTypes';
+import CellLoader from '../../../../helpers/CellLoader';
+import { QuotasData, useQuotas } from '../../../../hooks/useQuotas';
+import { useTranslation } from '../../../../hooks/useTranslation';
+import { QuotaDetails } from '../../../../types';
+import { QuotaFormikValues, WizardFormikValues } from '../../types';
+
+export const getQuotaNameAndUsersText = (quotaDetails: QuotaDetails, t: TFunction) => {
+  const users = t('{{count}} user', {
+    count: quotaDetails.numUsers,
+  });
+  const groups = t('{{count}} group', {
+    count: quotaDetails.numGroups,
+  });
+  return `${quotaDetails.name}, (${users}, ${groups})`;
+};
+
+const getQuotaText = (
+  quotaFormikValues: QuotaFormikValues,
+  quotaContext: QuotasData,
+  t: TFunction,
+) => {
+  const part1 = getQuotaNameAndUsersText(
+    quotaContext.getQuotaDetails(quotaFormikValues.quota.name, quotaFormikValues.quota.namespace),
+    t,
+  );
+
+  if (!quotaFormikValues.limitAllowed) {
+    return part1;
+  }
+  const part2 = t('up to {{clusters}} clusters', { clusters: quotaFormikValues.numAllowed });
+  return `${part1} / ${part2}`;
+};
+
+const ReviewQuotas = ({ quotas }: { quotas: QuotaFormikValues[] }) => {
+  const { t } = useTranslation();
+  const [quotasContext, loaded, error] = useQuotas();
+  return (
+    <CellLoader loaded={loaded} error={error}>
+      {quotas.map((quota) => {
+        if (!quota.quota) {
+          return;
+        }
+        return <Text key={quota.quota.toString()}>{getQuotaText(quota, quotasContext, t)}</Text>;
+      })}
+    </CellLoader>
+  );
+};
 
 const ReviewStep = () => {
   const { values } = useFormikContext<WizardFormikValues>();
+  const { t } = useTranslation();
   return (
     <Stack hasGutter>
       <StackItem>
         <TextContent>
-          <Text component="h2">Review</Text>
+          <Text component="h2">{t('Review')}</Text>
         </TextContent>
       </StackItem>
       <StackItem>
         <DescriptionList>
           <DescriptionListGroup>
-            <DescriptionListTerm>Name</DescriptionListTerm>
-            <DescriptionListDescription>{values.name}</DescriptionListDescription>
+            <DescriptionListTerm>{t('Name')}</DescriptionListTerm>
+            <DescriptionListDescription>{values.details.name}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>HELM chart repository</DescriptionListTerm>
-            <DescriptionListDescription>{values.helmRepo}</DescriptionListDescription>
+            <DescriptionListTerm>{t('HELM chart repository')}</DescriptionListTerm>
+            <DescriptionListDescription>{values.details.helmRepo}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>HELM chart</DescriptionListTerm>
-            <DescriptionListDescription>{values.helmChart}</DescriptionListDescription>
+            <DescriptionListTerm>{t('HELM chart')}</DescriptionListTerm>
+            <DescriptionListDescription>{values.details.helmChart}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>Cost</DescriptionListTerm>
-            <DescriptionListDescription>{values.cost}</DescriptionListDescription>
+            <DescriptionListTerm>{t('Cost')}</DescriptionListTerm>
+            <DescriptionListDescription>{values.details.cost}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>Pipelines</DescriptionListTerm>
-            {values.pipelines.map((p) => (
-              <DescriptionListDescription key={p}>{p}</DescriptionListDescription>
-            ))}
+            <DescriptionListTerm>{t('Manage quotas')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <ReviewQuotas quotas={values.quotas} />
+            </DescriptionListDescription>
           </DescriptionListGroup>
         </DescriptionList>
       </StackItem>

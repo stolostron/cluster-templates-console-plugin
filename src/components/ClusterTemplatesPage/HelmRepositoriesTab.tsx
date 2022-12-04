@@ -44,7 +44,7 @@ import TableLoader from '../../helpers/TableLoader';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
 import EditHelmRepositoryDialog from '../HelmRepositories/EditHelmRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
-import { LoadingHelper } from '../../utils/utils';
+import CellLoader from '../../helpers/CellLoader';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -157,21 +157,21 @@ export const HelmRepoRow = ({
         {obj.spec.connectionConfig.tlsClientConfig ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].title}>
-        <LoadingHelper isLoaded={repoIndexLoaded} error={repoIndexError}>
+        <CellLoader loaded={repoIndexLoaded} error={repoIndexError}>
           {repoChartsUpdatedAt}
-        </LoadingHelper>
+        </CellLoader>
       </Td>
       <Td dataLabel={columns[4].title}>
-        <LoadingHelper isLoaded={repoIndexLoaded} error={repoIndexError}>
+        <CellLoader loaded={repoIndexLoaded} error={repoIndexError}>
           {repoChartsCount}
-        </LoadingHelper>
+        </CellLoader>
       </Td>
       <Td dataLabel={columns[5].title}>
-        <LoadingHelper isLoaded={templatesLoaded} error={templatesLoadError}>
+        <CellLoader loaded={templatesLoaded} error={templatesLoadError}>
           <Label color="green" icon={<CheckCircleIcon />}>
             {templatesFromRepo.length}
           </Label>
-        </LoadingHelper>
+        </CellLoader>
       </Td>
       <Td dataLabel={columns[6].title}>-</Td>
       <Td isActionCell>

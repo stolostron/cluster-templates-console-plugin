@@ -2,16 +2,16 @@
 import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
 import { render } from '@testing-library/react';
 import { clusterTemplateQuotaGVK, roleBindingGVK } from '../../constants';
-import QuotasSection from './QuotaSection';
+import QuotasSection from './QuotasSection';
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import importedQuotas from '../../mocks/quotas.json';
 import clusterTemplate from '../../mocks/clusterTemplateExample.json';
 import roleBindings from '../../mocks/roleBindings.json';
-import { ClusterTemplateQuota } from '../../types';
+import { Quota } from '../../types';
 import React from 'react';
 const useK8sWatchResourceMock = useK8sWatchResource as jest.Mock;
 
-const quotas = importedQuotas as ClusterTemplateQuota[];
+const quotas = importedQuotas as Quota[];
 const quotasInTemplate = quotas.filter((quota) =>
   (quota.spec?.allowedTemplates?.map((templateData) => templateData.name) || []).includes(
     clusterTemplate.metadata.name,
@@ -39,8 +39,8 @@ describe('Cluster template details page quotas section', () => {
 
   it('should show error when load quotas returns an error', async () => {
     useK8sWatchResourceMock.mockReturnValue([undefined, true, new Error('test error')]);
-    const { getByTestId } = await renderQuotasSection();
-    expect(getByTestId('error')).toBeInTheDocument();
+    const { getByText } = await renderQuotasSection();
+    expect(getByText('test error')).toBeInTheDocument();
   });
 
   it('should show quotas in table and no users and groups when no cluster template role binding was found', async () => {
@@ -48,11 +48,9 @@ describe('Cluster template details page quotas section', () => {
       ({ groupVersionKind }: { groupVersionKind: K8sGroupVersionKind }) => {
         if (groupVersionKind.kind === clusterTemplateQuotaGVK.kind) {
           return [quotas, true, null];
-        }
-        if (groupVersionKind.kind === roleBindingGVK.kind) {
+        } else {
           return [[], true, null];
         }
-        throw `unexpected kind ${groupVersionKind.kind}`;
       },
     );
     const { container, getByTestId } = await renderQuotasSection();
@@ -79,20 +77,14 @@ describe('Cluster template details page quotas section', () => {
   });
   it('should show data in user management for first quota when has cluster template RoleBinding for that namespace', async () => {
     useK8sWatchResourceMock.mockImplementation(
-      ({
-        groupVersionKind,
-        namespace,
-      }: {
-        groupVersionKind: K8sGroupVersionKind;
-        namespace?: string;
-      }) => {
+      ({ groupVersionKind }: { groupVersionKind: K8sGroupVersionKind; namespace?: string }) => {
         if (groupVersionKind.kind === clusterTemplateQuotaGVK.kind) {
           return [quotas, true, null];
         }
         if (groupVersionKind.kind === roleBindingGVK.kind) {
-          return [roleBindings.filter((rb) => rb.metadata.namespace === namespace), true, null];
+          return [roleBindings, true, null];
         }
-        throw `unexpected kind ${groupVersionKind.kind}`;
+        return [[], true, null];
       },
     );
     const { container } = await renderQuotasSection();
