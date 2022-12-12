@@ -25,7 +25,7 @@ const getNamespaceOptions = (
   });
 };
 
-const NamespaceField = () => {
+const QuotaNamespaceField = () => {
   const { t } = useTranslation();
   const [namespaces, namespacesLoaded, namespaceError] = useNamespaces();
   useAddAlertOnError(namespaceError, t('Failed to load namespace options'));
@@ -56,4 +56,4 @@ const NamespaceField = () => {
   );
 };
 
-export default NamespaceField;
+export default QuotaNamespaceField;

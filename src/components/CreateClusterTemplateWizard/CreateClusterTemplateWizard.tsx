@@ -10,13 +10,15 @@ import { useCreateClusterTemplate } from './useCreateClusterTemplate';
 import TemplateDetailsStep from './Steps/TemplateDetailsStep/TemplateDetailsStep';
 import getWizardValidationSchema from './wizardValidationSchema';
 import { getErrorMessage } from '../../utils/utils';
-import { getResourceUrl } from '../../utils/k8s';
-import { clusterTemplateGVK } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
 import Loader from '../../helpers/Loader';
 import ManageQuotasStep from './Steps/ManageQuotasStep/ManageQuotasStep';
 import Alerts from '../../alerts/Alerts';
 import { AlertsContextProvider } from '../../alerts/AlertsContext';
+import InstallationSettingsStep from './Steps/InstallationSettingsStep/InstallationSettingsStep';
+import PostInstallationStep from './Steps/PostInsallationSettingsStep/PostInstallationSettingsStep';
+import { getResourceUrl } from '../../utils/k8s';
+import { clusterTemplateGVK } from '../../constants';
 
 const CustomFooter = () => {
   const history = useHistory();
@@ -107,6 +109,12 @@ const _CreateClusterTemplateWizard = () => {
   );
   const steps = [
     { name: t('Template details'), component: <TemplateDetailsStep />, id: StepId.DETAILS },
+    { name: t('Installation'), component: <InstallationSettingsStep />, id: StepId.INSTALLATION },
+    {
+      name: t('Post-installation'),
+      component: <PostInstallationStep />,
+      id: StepId.INSTALLATION,
+    },
     { name: t('Manage quotas'), component: <ManageQuotasStep />, id: StepId.QUOTAS },
     { name: t('Review'), component: reviewStep, id: StepId.REVIEW },
   ];
@@ -131,6 +139,7 @@ const _CreateClusterTemplateWizard = () => {
         steps={steps}
         footer={<CustomFooter />}
         hideClose
+        startAtStep={4}
       />
     </Formik>
   );

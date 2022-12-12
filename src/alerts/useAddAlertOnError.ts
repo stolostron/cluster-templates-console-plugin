@@ -8,5 +8,5 @@ export const useAddAlertOnError = (error: unknown, errorTitle: string) => {
     if (error) {
       addAlert({ title: errorTitle, message: getErrorMessage(error) });
     }
-  }, [error]);
+  }, [error, errorTitle]);
 };

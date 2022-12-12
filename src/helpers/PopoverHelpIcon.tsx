@@ -16,7 +16,7 @@ const PopoverHelpIcon = ({
       aria-label="More info"
       onClick={(e) => e.preventDefault()}
       className="pf-c-form__group-label-help"
-      style={{ display: 'inline' }}
+      isInline
     >
       <OutlinedQuestionCircleIcon noVerticalAlign={noVerticalAlign} />
     </Button>

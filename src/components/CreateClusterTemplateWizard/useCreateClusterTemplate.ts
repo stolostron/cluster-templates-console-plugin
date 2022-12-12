@@ -5,12 +5,31 @@ import {
   k8sUpdate,
   useK8sModel,
 } from '@openshift-console/dynamic-plugin-sdk';
-import { ClusterTemplate, Quota } from '../../types';
-import { WizardFormikValues, QuotaFormikValues } from './types';
+import { ArgoCDSpec, ClusterTemplate, Quota } from '../../types';
+import { WizardFormikValues, QuotaFormikValues, ArgoCDSpecFormikValues } from './types';
 import { QuotasData, useQuotas } from '../../hooks/useQuotas';
 import { clusterTemplateGVK, clusterTemplateQuotaGVK } from '../../constants';
 
+export const getArgoCDSpec = (values: ArgoCDSpecFormikValues): ArgoCDSpec => {
+  return {
+    source: {
+      repoURL: values.repoURL,
+      chart: values.chart,
+      targetRevision: values.version,
+    },
+    destination: {
+      namespace: values.destinationNamespace,
+      server: 'https://kubernetes.default.svc',
+    },
+    project: 'default',
+  };
+};
+
 export const getClusterTemplate = (values: WizardFormikValues): ClusterTemplate => {
+  const postSettings = values.postInstallation.map((post) => ({
+    spec: getArgoCDSpec(post),
+    name: `${post.repoURL}/${post.chart}`,
+  }));
   return {
     apiVersion: 'clustertemplate.openshift.io/v1alpha1',
     kind: 'ClusterTemplate',
@@ -19,12 +38,9 @@ export const getClusterTemplate = (values: WizardFormikValues): ClusterTemplate 
     },
     spec: {
       cost: values.details.cost,
-      clusterDefinition: {
-        source: {
-          repoURL: values.details.helmRepo,
-          chart: values.details.helmChart,
-        },
-      },
+      clusterDefinition: getArgoCDSpec(values.installation),
+      clusterSetup: postSettings,
+      argocdNamespace: values.details.argocdNamespace,
     },
   };
 };
@@ -85,7 +101,7 @@ export const useCreateClusterTemplate = (): [
   boolean,
 ] => {
   /*
-  Quotas loading and error our not handled here:
+  Quotas loading and error are not handled here:
   1. If a quota wasn't loaded, k8sGet will be used to fetch it.
      This must be done because there can be quotas that were created but not sent in the socket yet
   2. To avoid handling quotas loading state in the wizard*/

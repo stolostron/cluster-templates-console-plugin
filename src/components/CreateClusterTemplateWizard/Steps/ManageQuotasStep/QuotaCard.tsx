@@ -59,7 +59,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
               variant="link"
               onClick={() => setNewQuotaDialogOpen(true)}
               icon={<PlusIcon />}
-              className="cluster-templates-quota-card__btn"
+              className="cluster-templates-field-array__btn"
             >
               {t('Create a new quota')}
             </Button>

@@ -1,4 +1,11 @@
-import { WizardFormikValues, QuotaFormikValues } from './types';
+import { WizardFormikValues, QuotaFormikValues, ArgoCDSpecFormikValues } from './types';
+
+export const getArgoCDSpecFormikInitialValues = (): ArgoCDSpecFormikValues => ({
+  repoURL: '',
+  chart: '',
+  version: '',
+  destinationNamespace: '',
+});
 
 export const getQuotaFormikInitialValues = (): QuotaFormikValues => ({
   numAllowed: 0,
@@ -13,11 +20,12 @@ export const getQuotaFormikInitialValues = (): QuotaFormikValues => ({
 export const getFormikInitialValues = (): WizardFormikValues => {
   return {
     details: {
-      name: '',
-      helmRepo: '',
-      helmChart: '',
       cost: 200,
+      name: '',
+      argocdNamespace: '',
     },
     quotas: [getQuotaFormikInitialValues()],
+    installation: getArgoCDSpecFormikInitialValues(),
+    postInstallation: [getArgoCDSpecFormikInitialValues()],
   };
 };

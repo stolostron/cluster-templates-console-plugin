@@ -5,11 +5,12 @@ import { Tab, Tabs, TabTitleText } from '@patternfly/react-core';
 import ClusterTemplatesTab from './ClusterTemplatesTab';
 import HelmRepositoriesTab from './HelmRepositoriesTab';
 import { useClusterTemplatesCount } from '../../hooks/useClusterTemplates';
-import { useHelmRepositoriesCount } from '../../hooks/useHelmRepositories';
+
 import { clusterTemplateGVK } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getNavLabelWithCount } from '../../utils/utils';
 import { getReference, getResourceUrl } from '../../utils/k8s';
+import { useHelmRepositoriesCount } from '../../hooks/useHelmRepositories';
 
 const useActiveTab = () => {
   const { search } = useLocation();

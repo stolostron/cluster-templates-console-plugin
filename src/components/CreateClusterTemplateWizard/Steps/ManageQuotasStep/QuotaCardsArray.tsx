@@ -8,7 +8,7 @@ import { getQuotaFormikInitialValues } from '../../initialValues';
 import QuotaCard from './QuotaCard';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { WithRemoveButton } from '../../../../helpers/WithRemoveButton';
-import './styles.css';
+import '../styles.css';
 
 const fieldName = 'quotas';
 
@@ -26,22 +26,20 @@ const _QuotaCardsArray = ({ push, remove }: FieldArrayRenderProps) => {
     <Stack hasGutter>
       {field.value.map((data, quotaIdx) => {
         return (
-          <React.Fragment key={quotaIdx}>
-            <Stack hasGutter>
-              <StackItem>
-                <WithRemoveButton
-                  onRemove={() => remove(quotaIdx)}
-                  isRemoveDisabled={field.value.length === 1}
-                  ariaLabel={t('Remove quota')}
-                >
-                  <QuotaCard quotaIdx={quotaIdx} fieldName={`${fieldName}[${quotaIdx}]`} />
-                </WithRemoveButton>
-              </StackItem>
-              <StackItem>
-                <Divider />
-              </StackItem>
-            </Stack>
-          </React.Fragment>
+          <Stack hasGutter key={quotaIdx}>
+            <StackItem>
+              <WithRemoveButton
+                onRemove={() => remove(quotaIdx)}
+                isRemoveDisabled={field.value.length === 1}
+                ariaLabel={t('Remove quota')}
+              >
+                <QuotaCard quotaIdx={quotaIdx} fieldName={`${fieldName}[${quotaIdx}]`} />
+              </WithRemoveButton>
+            </StackItem>
+            <StackItem>
+              <Divider />
+            </StackItem>
+          </Stack>
         );
       })}
       <StackItem>
@@ -50,7 +48,7 @@ const _QuotaCardsArray = ({ push, remove }: FieldArrayRenderProps) => {
           onClick={onAddQuota}
           data-testid="add-quota"
           icon={<PlusIcon />}
-          className="cluster-templates-quota-card__btn"
+          className="cluster-templates-field-array__btn"
         >
           {t('Add more')}
         </Button>
@@ -60,11 +58,7 @@ const _QuotaCardsArray = ({ push, remove }: FieldArrayRenderProps) => {
 };
 
 const QuotaCardsArray = () => {
-  const renderQuotas = React.useCallback(
-    (renderProps: FieldArrayRenderProps) => <_QuotaCardsArray {...renderProps} />,
-    [],
-  );
-  return <FieldArray name={fieldName} render={renderQuotas} />;
+  return <FieldArray name={fieldName} component={_QuotaCardsArray} />;
 };
 
 export default QuotaCardsArray;

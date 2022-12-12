@@ -21,11 +21,11 @@ import { NewQuotaFormikValues } from '../types';
 import { UsersField, GroupsField } from './AccessFields';
 import getNewQuotaValidationSchema from './newQuotaValidationSchema';
 import BudgetField from './BudgetField';
-import NamespaceField from './NamespaceField';
 import Loader from '../../../helpers/Loader';
 import useCreateQuota from './useCreateQuota';
 import { AlertsContextProvider } from '../../../alerts/AlertsContext';
 import Alerts from '../../../alerts/Alerts';
+import QuotaNamespaceField from './QuotaNamespaceField';
 
 const getTitleText = (t: TFunction) => t('Create a new quota');
 
@@ -55,7 +55,7 @@ const NewQuotaFormFields = ({ clusterTemplateCost }: { clusterTemplateCost: numb
   return (
     <Form>
       <InputField name="name" fieldId="new-quota-name" label={t('Quota name')} isRequired />
-      <NamespaceField />
+      <QuotaNamespaceField />
       <UsersField />
       <GroupsField />
       <BudgetField
@@ -78,7 +78,7 @@ const NewQuotaDialog = ({
   isOpen: boolean;
 }) => {
   const { t } = useTranslation();
-  const [createQuota, loaded, loadError] = useCreateQuota();
+  const [createQuota, loaded] = useCreateQuota();
   const [error, setError] = React.useState<unknown>();
   const onSubmit = async (values: NewQuotaFormikValues) => {
     try {
@@ -109,7 +109,7 @@ const NewQuotaDialog = ({
           validationSchema={getNewQuotaValidationSchema(t, clusterTemplateCost)}
         >
           {({ isSubmitting, handleSubmit }) => (
-            <Loader loaded={loaded} error={loadError}>
+            <Loader loaded={loaded}>
               <ModalBoxBody>
                 <NewQuotaFormFields clusterTemplateCost={clusterTemplateCost} />
                 <Alerts />

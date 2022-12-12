@@ -15,6 +15,7 @@ import { sortByResourceName } from '../../../utils/utils';
 import { K8sResourceCommon, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { Group, User } from '../../../types';
 import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
+import { Trans } from 'react-i18next';
 
 export const useUsers = () => {
   return useK8sWatchResource<User[]>({
@@ -36,18 +37,16 @@ const getOptions = (resources: K8sResourceCommon[]): SelectInputOption[] =>
   }));
 
 const UsersHelpText = () => {
-  const { t } = useTranslation();
   return (
-    <>
-      {t('Create a RoleBinding granting the selected users the ')}
+    <Trans ns="plugin__clustertemplates-plugin">
+      Create a RoleBinding granting the selected users the
       <InlineResourceLink
         groupVersionKind={clusterRoleGroupVersionKind}
         name={clusterTemplatesRoleRef.name}
       />
-      {t(
-        ' role in the selected namespace. This role provides the minimum permissions needed for using the cluster templates.',
-      )}
-    </>
+      &nbsp; role in the selected namespace. This role provides the minimum permissions needed for
+      using the cluster templates.
+    </Trans>
   );
 };
 

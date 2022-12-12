@@ -25,7 +25,7 @@ export const createDownloadFile = (filename: string, content: string, type?: str
 };
 
 export const sortByResourceName = <T extends K8sResourceCommon>(crs: T[]) =>
-  crs.sort((cr1, cr2) => (cr1.metadata?.name || '').localeCompare(cr2.metadata?.name));
+  crs.sort((cr1, cr2) => (cr1.metadata?.name || '').localeCompare(cr2.metadata?.name || ''));
 
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) {

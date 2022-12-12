@@ -5,10 +5,27 @@ import { useTranslation } from '../hooks/useTranslation';
 import './styles.css';
 
 type WithRemoveButtonProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   onRemove: () => void;
   isRemoveDisabled: boolean;
   ariaLabel: string;
+};
+
+export const RemoveButton = ({ onRemove, isRemoveDisabled, ariaLabel }: WithRemoveButtonProps) => {
+  const { t } = useTranslation();
+  return (
+    <Tooltip content={t('Remove')}>
+      <Button
+        variant="plain"
+        className="cluster-templates-remove-button"
+        onClick={onRemove}
+        isDisabled={isRemoveDisabled}
+        aria-label={ariaLabel}
+      >
+        <MinusCircleIcon />
+      </Button>
+    </Tooltip>
+  );
 };
 
 export const WithRemoveButton = ({

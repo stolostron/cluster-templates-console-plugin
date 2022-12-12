@@ -79,11 +79,11 @@ const ReviewStep = () => {
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>{t('HELM chart repository')}</DescriptionListTerm>
-            <DescriptionListDescription>{values.details.helmRepo}</DescriptionListDescription>
+            <DescriptionListDescription>{values.installation.repoURL}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>{t('HELM chart')}</DescriptionListTerm>
-            <DescriptionListDescription>{values.details.helmChart}</DescriptionListDescription>
+            <DescriptionListDescription>{values.installation.chart}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Cost')}</DescriptionListTerm>

@@ -32,7 +32,6 @@ import {
 import { TFunction } from 'react-i18next';
 import { helmRepoGVK } from '../../constants';
 import { ClusterTemplate, HelmChartRepository, RowProps, TableColumn } from '../../types';
-import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 import {
   useHelmRepositoryIndex,
   getRepoCharts,
@@ -45,6 +44,7 @@ import useDialogsReducer from '../../hooks/useDialogsReducer';
 import EditHelmRepositoryDialog from '../HelmRepositories/EditHelmRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
+import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -221,7 +221,7 @@ export const HelmRepoRow = ({
 };
 
 const HelmRepositoriesTab = () => {
-  const [repositories, repositoriesLoaded, repositoriesError] = useHelmRepositories();
+  const [repositories, loaded, error] = useHelmRepositories();
   const helmRepoIndexResult = useHelmRepositoryIndex();
   const clusterTemplatesResult = useClusterTemplates();
   const { t } = useTranslation();
@@ -230,8 +230,8 @@ const HelmRepositoriesTab = () => {
     <Page>
       <PageSection>
         <TableLoader
-          loaded={repositoriesLoaded}
-          error={repositoriesError}
+          loaded={loaded}
+          error={error}
           errorId="helm-repositories-load-error"
           errorMessage={t('The Helm repositories could not be loaded.')}
         >
