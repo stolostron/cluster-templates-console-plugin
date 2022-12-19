@@ -14,15 +14,18 @@ import {
   CardTitle,
 } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
+import DescriptionSection from './DescriptionSection';
 
 enum Section {
   Details = 'details',
   Quotas = 'quotas',
   Uses = 'uses',
   InstanceYaml = 'instanceYaml',
+  Description = 'description',
 }
 
 const getSectionTitles = (t: TFunction): { [i in Section]: string } => ({
+  [Section.Description]: t('Description'),
   [Section.InstanceYaml]: t('Download template instance YAML file to instantiate the template'),
   [Section.Details]: t('Details'),
   [Section.Quotas]: t('Quotas'),
@@ -32,6 +35,7 @@ const getSectionTitles = (t: TFunction): { [i in Section]: string } => ({
 const getSectionComponents = (): {
   [i in Section]: React.FC<{ clusterTemplate: ClusterTemplate }>;
 } => ({
+  [Section.Description]: DescriptionSection,
   [Section.InstanceYaml]: InstanceYamlSection,
   [Section.Details]: DetailsSection,
   [Section.Quotas]: QuotasSection,
