@@ -4,23 +4,24 @@ import {
   boolean as booleanSchema,
   number as numberSchema,
   array as arraySchema,
+  string as stringSchema,
   SchemaOf,
 } from 'yup';
-import { nameSchema, requiredSchema } from '../../utils/commonValidationSchemas';
+import { nameSchema } from '../../utils/commonValidationSchemas';
 import { DetailsFormikValues, QuotaFormikValues, WizardFormikValues } from './types';
 
 const getQuotaValidationSchema = (t: TFunction): SchemaOf<QuotaFormikValues> =>
   objectSchema().shape({
     quota: objectSchema().shape({
-      name: requiredSchema(t),
-      namespace: requiredSchema(t),
+      name: stringSchema().required(t('Required')),
+      namespace: stringSchema().required(t('Required')),
       toString: objectSchema(),
       compareTo: objectSchema().optional(),
     }),
     limitAllowed: booleanSchema(),
     numAllowed: numberSchema().when('limitAllowed', {
       is: true,
-      then: (schema) => schema.min(0, t(`Value can't be negative`)),
+      then: (schema) => schema.min(0, t(`Please enter a positive value`)),
       otherwise: (schema) => schema.optional(),
     }),
   });
@@ -30,7 +31,7 @@ const getDetailsValidationSchema = (t: TFunction): SchemaOf<DetailsFormikValues>
     name: nameSchema(t),
     helmChart: nameSchema(t),
     helmRepo: nameSchema(t),
-    cost: numberSchema(),
+    cost: numberSchema().min(0, t(`Please enter a positive value`)).required(t('Required')),
   });
 
 const getWizardValidationSchema = (t: TFunction): SchemaOf<WizardFormikValues> =>

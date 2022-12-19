@@ -3,7 +3,7 @@ import React from 'react';
 import { namespaceGVK } from '../constants';
 
 export const useNamespaces = (): [string[], boolean, unknown] => {
-  const [allNamespaces, loaded, loadError] = useK8sWatchResource<K8sResourceCommon[]>({
+  const [allNamespaces, loaded, error] = useK8sWatchResource<K8sResourceCommon[]>({
     groupVersionKind: namespaceGVK,
     isList: true,
   });
@@ -11,5 +11,5 @@ export const useNamespaces = (): [string[], boolean, unknown] => {
     () => allNamespaces.map((ns) => ns.metadata?.name || ''),
     [allNamespaces],
   );
-  return [namespaceNames, loaded, loadError];
+  return [namespaceNames, loaded, error];
 };

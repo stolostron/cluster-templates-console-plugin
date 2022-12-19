@@ -84,14 +84,18 @@ export const useCreateClusterTemplate = (): [
   (values: WizardFormikValues) => Promise<void>,
   boolean,
 ] => {
+  /*
+  Quotas loading and error our not handled here:
+  1. If a quota wasn't loaded, k8sGet will be used to fetch it.
+     This must be done because there can be quotas that were created but not sent in the socket yet
+  2. To avoid handling quotas loading state in the wizard*/
   const [quotasData] = useQuotas();
-  //Instead of handling loading and error, if a quota isn't found it'll be retreived using k8sGet
-  const [clusterTemplateModel, clusterTemplateModelLoaded] = useK8sModel(clusterTemplateGVK);
-  const [quotaModel, quotaModelLoaded] = useK8sModel(clusterTemplateQuotaGVK);
+  const [clusterTemplateModel, clusterTemplateModelLoading] = useK8sModel(clusterTemplateGVK);
+  const [quotaModel, quotaModelLoading] = useK8sModel(clusterTemplateQuotaGVK);
 
   const createClusterTemplate = async (values: WizardFormikValues) => {
     await k8sCreate({ model: clusterTemplateModel, data: getClusterTemplate(values) });
     await updateQuotas(values, quotasData, quotaModel);
   };
-  return [createClusterTemplate, clusterTemplateModelLoaded && quotaModelLoaded];
+  return [createClusterTemplate, !clusterTemplateModelLoading && !quotaModelLoading];
 };

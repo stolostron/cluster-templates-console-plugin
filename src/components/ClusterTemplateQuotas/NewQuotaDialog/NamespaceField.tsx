@@ -1,10 +1,11 @@
 import React from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';
 import { useNamespaces } from '../../../hooks/useNamespaces';
 import { QuotasData, useQuotas } from '../../../hooks/useQuotas';
 import PopoverHelpIcon from '../../../helpers/PopoverHelpIcon';
 import SelectField, { SelectInputOption } from '../../../helpers/SelectField';
-import CellLoader from '../../../helpers/CellLoader';
+import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
+import { useTranslation } from '../../../hooks/useTranslation';
 
 const getNamespaceOptions = (
   namespaces: string[],
@@ -26,31 +27,32 @@ const getNamespaceOptions = (
 
 const NamespaceField = () => {
   const { t } = useTranslation();
-  const [namespaces, namespacesLoaded, namespacesError] = useNamespaces();
-
+  const [namespaces, namespacesLoaded, namespaceError] = useNamespaces();
+  useAddAlertOnError(namespaceError, t('Failed to load namespace options'));
   const [quotasData, quotasLoaded, quotasError] = useQuotas();
+  useAddAlertOnError(quotasError, t('Failed to load namespace options'));
   const options = React.useMemo(
     () => getNamespaceOptions(namespaces, quotasData, t),
     [namespaces, quotasData, t],
   );
   return (
-    <CellLoader loaded={quotasLoaded && namespacesLoaded} error={quotasError || namespacesError}>
-      <SelectField
-        name="namespace"
-        label={t('Namespace')}
-        labelIcon={
-          <PopoverHelpIcon
-            helpText={t(
-              'Set the namespace from the list of quotaible namespaces, or enter a name to create a namespace. Each namespace can only have one quota.',
-            )}
-          />
-        }
-        isRequired
-        options={options}
-        isCreatable={true}
-        placeholder={t('Enter namespace')}
-      />
-    </CellLoader>
+    <SelectField
+      name="namespace"
+      label={t('Namespace')}
+      labelIcon={
+        <PopoverHelpIcon
+          helpText={t(
+            'Set the namespace from the list of available namespaces, or enter a name to create a namespace. Each namespace can only have one quota.',
+          )}
+        />
+      }
+      isRequired
+      options={options}
+      isCreatable={true}
+      placeholder={t('Enter namespace')}
+      isDisabled={!!quotasError || !!namespaceError}
+      loadingVariant={quotasLoaded && namespacesLoaded ? undefined : 'spinner'}
+    />
   );
 };
 

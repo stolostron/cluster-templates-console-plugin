@@ -12,9 +12,9 @@ import { SelectInputOption } from '../../../helpers/SelectField';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 import { sortByResourceName } from '../../../utils/utils';
-import CellLoader from '../../../helpers/CellLoader';
 import { K8sResourceCommon, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { Group, User } from '../../../types';
+import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
 
 export const useUsers = () => {
   return useK8sWatchResource<User[]>({
@@ -52,37 +52,39 @@ const UsersHelpText = () => {
 };
 
 export const UsersField = () => {
-  const [users, loaded, error] = useUsers();
   const { t } = useTranslation();
+  const [users, loaded, error] = useUsers();
+  useAddAlertOnError(error, t('Failed to load users'));
   const userOptions = React.useMemo<SelectInputOption[]>(() => getOptions(users), [users]);
   return (
-    <CellLoader loaded={loaded} error={error}>
-      <MultiSelectField
-        name="users"
-        label={t('Grant quota to specific user(s)')}
-        labelIcon={<PopoverHelpIcon helpText={<UsersHelpText />} />}
-        options={userOptions}
-        createText={t('Add')}
-        isCreatable={true}
-      />
-    </CellLoader>
+    <MultiSelectField
+      name="users"
+      label={t('Grant quota to specific user(s)')}
+      labelIcon={<PopoverHelpIcon helpText={<UsersHelpText />} />}
+      options={userOptions}
+      createText={t('Add')}
+      isCreatable={true}
+      loadingVariant={loaded ? undefined : 'spinner'}
+      isDisabled={!!error}
+    />
   );
 };
 
 export const GroupsField = () => {
   const { t } = useTranslation();
   const [groups, loaded, error] = useGroups();
+  useAddAlertOnError(error, t('Failed to load groups'));
   const groupOptions = React.useMemo<SelectInputOption[]>(() => getOptions(groups), [groups]);
   return (
-    <CellLoader loaded={loaded} error={error}>
-      <MultiSelectField
-        name="groups"
-        label={t('Grant quota to specific group(s)')}
-        labelIcon={<PopoverHelpIcon helpText={<UsersHelpText />} />}
-        options={groupOptions}
-        isCreatable={true}
-        createText={t('Add')}
-      />
-    </CellLoader>
+    <MultiSelectField
+      name="groups"
+      label={t('Grant quota to specific group(s)')}
+      labelIcon={<PopoverHelpIcon helpText={<UsersHelpText />} />}
+      options={groupOptions}
+      isCreatable={true}
+      createText={t('Add')}
+      loadingVariant={loaded ? undefined : 'spinner'}
+      isDisabled={!!error}
+    />
   );
 };

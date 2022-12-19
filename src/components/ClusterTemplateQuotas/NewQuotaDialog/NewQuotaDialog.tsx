@@ -24,6 +24,8 @@ import BudgetField from './BudgetField';
 import NamespaceField from './NamespaceField';
 import Loader from '../../../helpers/Loader';
 import useCreateQuota from './useCreateQuota';
+import { AlertsContextProvider } from '../../../alerts/AlertsContext';
+import Alerts from '../../../alerts/Alerts';
 
 const getTitleText = (t: TFunction) => t('Create a new quota');
 
@@ -76,7 +78,7 @@ const NewQuotaDialog = ({
   isOpen: boolean;
 }) => {
   const { t } = useTranslation();
-  const [createQuota, loaded] = useCreateQuota();
+  const [createQuota, loaded, loadError] = useCreateQuota();
   const [error, setError] = React.useState<unknown>();
   const onSubmit = async (values: NewQuotaFormikValues) => {
     try {
@@ -100,40 +102,43 @@ const NewQuotaDialog = ({
       hasNoBodyWrapper
       isOpen={isOpen}
     >
-      <Formik<NewQuotaFormikValues>
-        onSubmit={onSubmit}
-        initialValues={getInitialValues()}
-        validationSchema={getNewQuotaValidationSchema(t, clusterTemplateCost)}
-      >
-        {({ isSubmitting, handleSubmit }) => (
-          <Loader loaded={loaded}>
-            <ModalBoxBody>
-              <NewQuotaFormFields clusterTemplateCost={clusterTemplateCost} />
-              {!!error && (
-                <Alert variant={AlertVariant.danger} title={t('Failed to create quota')} isInline>
-                  {getErrorMessage(error)}
-                </Alert>
-              )}
-            </ModalBoxBody>
-            <ModalBoxFooter>
-              <Button
-                key="confirm"
-                variant="primary"
-                isLoading={isSubmitting}
-                name="confirm"
-                onClick={() => handleSubmit()}
-                type="submit"
-              >
-                {t('Create')}
-              </Button>
+      <AlertsContextProvider>
+        <Formik<NewQuotaFormikValues>
+          onSubmit={onSubmit}
+          initialValues={getInitialValues()}
+          validationSchema={getNewQuotaValidationSchema(t, clusterTemplateCost)}
+        >
+          {({ isSubmitting, handleSubmit }) => (
+            <Loader loaded={loaded} error={loadError}>
+              <ModalBoxBody>
+                <NewQuotaFormFields clusterTemplateCost={clusterTemplateCost} />
+                <Alerts />
+                {!!error && (
+                  <Alert variant={AlertVariant.danger} title={t('Failed to create quota')} isInline>
+                    {getErrorMessage(error)}
+                  </Alert>
+                )}
+              </ModalBoxBody>
+              <ModalBoxFooter>
+                <Button
+                  key="confirm"
+                  variant="primary"
+                  isLoading={isSubmitting}
+                  name="confirm"
+                  onClick={() => handleSubmit()}
+                  type="submit"
+                >
+                  {t('Create')}
+                </Button>
 
-              <Button key="cancel" variant="link" onClick={onClose} data-test="cancel">
-                {t('Cancel')}
-              </Button>
-            </ModalBoxFooter>
-          </Loader>
-        )}
-      </Formik>
+                <Button key="cancel" variant="link" onClick={onClose} data-test="cancel">
+                  {t('Cancel')}
+                </Button>
+              </ModalBoxFooter>
+            </Loader>
+          )}
+        </Formik>
+      </AlertsContextProvider>
     </Modal>
   );
 };

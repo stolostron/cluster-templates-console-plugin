@@ -1,7 +1,7 @@
 import { Button, Tooltip } from '@patternfly/react-core';
 import { MinusCircleIcon } from '@patternfly/react-icons';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../hooks/useTranslation';
 import './styles.css';
 
 type WithRemoveButtonProps = {

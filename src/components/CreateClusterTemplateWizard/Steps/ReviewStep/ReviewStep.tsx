@@ -12,6 +12,7 @@ import { useFormikContext } from 'formik';
 import { TFunction } from 'i18next';
 import React from 'react';
 import CellLoader from '../../../../helpers/CellLoader';
+import { useAddAlertOnError } from '../../../../alerts/useAddAlertOnError';
 import { QuotasData, useQuotas } from '../../../../hooks/useQuotas';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { QuotaDetails } from '../../../../types';
@@ -47,8 +48,9 @@ const getQuotaText = (
 const ReviewQuotas = ({ quotas }: { quotas: QuotaFormikValues[] }) => {
   const { t } = useTranslation();
   const [quotasContext, loaded, error] = useQuotas();
+  useAddAlertOnError(error, t('Failed to load quotas'));
   return (
-    <CellLoader loaded={loaded} error={error}>
+    <CellLoader loaded={loaded}>
       {quotas.map((quota) => {
         if (!quota.quota) {
           return;

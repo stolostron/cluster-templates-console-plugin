@@ -6,6 +6,7 @@ import {
   RBAC_API_GROUP,
   roleBindingGVK,
 } from '../../../constants';
+import { useNamespaces } from '../../../hooks/useNamespaces';
 import { Quota, RoleBinding, Subject } from '../../../types';
 import { getApiVersion } from '../../../utils/k8s';
 import { NewQuotaFormikValues } from '../types';
@@ -53,17 +54,18 @@ const getRoleBinding = (namespace: string, users: string[], groups: string[]): R
   roleRef: clusterTemplatesRoleRef,
 });
 
-const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, boolean] => {
-  const [roleBindingModel, roleBindingModelLoaded] = useK8sModel(roleBindingGVK);
-  const [nsModel, nsModelLoaded] = useK8sModel(namespaceGVK);
-  const [quotaModel, quotaModelLoaded] = useK8sModel(clusterTemplateQuotaGVK);
-
+const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, boolean, unknown] => {
+  const [roleBindingModel, roleBindingModelLoading] = useK8sModel(roleBindingGVK);
+  const [nsModel, nsModelLoading] = useK8sModel(namespaceGVK);
+  const [quotaModel, quotaModelLoading] = useK8sModel(clusterTemplateQuotaGVK);
+  const [namespaces, namespacesLoading, namespacesEror] = useNamespaces();
   const createQuota = async (values: NewQuotaFormikValues): Promise<Quota> => {
-    await k8sCreate({
-      data: getNamespace(values.namespace),
-      model: nsModel,
-    });
-
+    if (!namespaces.includes(values.namespace)) {
+      await k8sCreate({
+        data: getNamespace(values.namespace),
+        model: nsModel,
+      });
+    }
     if (values.users.length || values.groups.length) {
       await k8sCreate({
         data: getRoleBinding(values.namespace, values.users, values.groups),
@@ -72,7 +74,11 @@ const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, bo
     }
     return await k8sCreate({ data: getQuota(values), model: quotaModel });
   };
-  return [createQuota, roleBindingModelLoaded && quotaModelLoaded && nsModelLoaded];
+  return [
+    createQuota,
+    !roleBindingModelLoading && !quotaModelLoading && !nsModelLoading && !namespacesLoading,
+    namespacesEror,
+  ];
 };
 
 export default useCreateQuota;

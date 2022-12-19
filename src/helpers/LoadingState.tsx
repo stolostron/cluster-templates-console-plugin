@@ -1,6 +1,6 @@
 import { Bullseye, EmptyState, EmptyStateIcon, Spinner, Title } from '@patternfly/react-core';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../hooks/useTranslation';
 
 export function LoadingState() {
   const { t } = useTranslation();

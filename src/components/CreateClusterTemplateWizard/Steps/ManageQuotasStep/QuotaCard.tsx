@@ -10,7 +10,7 @@ import { QuotaOptionObject, WizardFormikValues } from '../../types';
 import BudgetField from '../../../ClusterTemplateQuotas/NewQuotaDialog/BudgetField';
 import { PlusIcon } from '@patternfly/react-icons';
 import get from 'lodash/get';
-import Loader from '../../../../helpers/Loader';
+import { useAddAlertOnError } from '../../../../alerts/useAddAlertOnError';
 
 type QuotaCardProps = {
   quotaIdx: number;
@@ -31,6 +31,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
 
   const { t } = useTranslation();
   const [quotasContext, loaded, error] = useQuotas();
+  useAddAlertOnError(error, t('Failed to load quota options'));
   const [newQuotaDialogOpen, setNewQuotaDialogOpen] = React.useState(false);
   const getSelectOptions = (): SelectInputOption[] => {
     return quotasContext.getAllQuotasDetails().map((quotaDetails) => ({
@@ -43,7 +44,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
   const selectOptions = React.useMemo(() => getSelectOptions(), [quotasContext]);
 
   return (
-    <Loader loaded={loaded} error={error}>
+    <>
       <Form>
         <SelectField
           label={t('Quota')}
@@ -63,6 +64,8 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
               {t('Create a new quota')}
             </Button>
           }
+          loadingVariant={loaded ? undefined : 'spinner'}
+          isDisabled={!!error}
         />
         <BudgetField
           hasBudgetFieldName={checkboxFieldName}
@@ -80,7 +83,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
         }}
         clusterTemplateCost={values.details.cost}
       />
-    </Loader>
+    </>
   );
 };
 

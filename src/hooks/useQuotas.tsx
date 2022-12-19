@@ -61,7 +61,6 @@ export const useQuotas = (): [QuotasData, boolean, unknown] => {
   const [rbs, roleBindingsLoaded, roleBindingsError] = useClusterTemplateRoleBindings();
   const loaded = quotasLoaded && roleBindingsLoaded;
   const error = quotasError || roleBindingsError;
-
   const data: QuotasData = React.useMemo(() => {
     return {
       getAllQuotasDetails: () => allQuotas.map((quota) => getDetails(quota, rbs)),

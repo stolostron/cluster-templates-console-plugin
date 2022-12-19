@@ -21,6 +21,7 @@ export type SelectInputOption = {
 type SelectFieldProps = FieldProps & {
   options: SelectInputOption[];
   validate?: () => string;
+  helperTextInvalid?: string;
 } & Omit<
     SelectProps,
     | 'variant'

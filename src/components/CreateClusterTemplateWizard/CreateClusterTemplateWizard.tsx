@@ -15,17 +15,27 @@ import { clusterTemplateGVK } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
 import Loader from '../../helpers/Loader';
 import ManageQuotasStep from './Steps/ManageQuotasStep/ManageQuotasStep';
+import Alerts from '../../alerts/Alerts';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
 
 const CustomFooter = () => {
   const history = useHistory();
-  const { values, isSubmitting, errors, submitForm } = useFormikContext<WizardFormikValues>();
+  const { values, isSubmitting, errors, submitForm, setErrors, setTouched } =
+    useFormikContext<WizardFormikValues>();
   const [submitError, setSubmitError] = React.useState();
   const [submitClicked, setSubmitClicked] = React.useState(false);
   const { activeStep, onBack, onNext } = React.useContext(WizardContext);
   const { t } = useTranslation();
   const invalid = !!errors[activeStep.id];
-  const onClickSubmit = async () => {
+
+  const reset = () => {
     setSubmitError(undefined);
+    setSubmitClicked(false);
+    setErrors({});
+    setTouched({});
+  };
+
+  const onClickSubmit = async () => {
     if (invalid) {
       //call submitForm also when there are input errors, so errors will be visible to users
       //submitForm will set all the fields as touched
@@ -36,25 +46,24 @@ const CustomFooter = () => {
     if (activeStep.id === 'review') {
       try {
         await submitForm();
+        history.push(getResourceUrl(clusterTemplateGVK, values.details.name));
       } catch (err) {
         setSubmitError(err);
-        return;
       }
-      history.push(getResourceUrl(clusterTemplateGVK, values.details.name));
     } else {
-      setSubmitClicked(false);
+      reset();
       onNext();
     }
   };
 
   const onClickedBack = () => {
-    setSubmitError(undefined);
-    setSubmitClicked(false);
+    reset();
     onBack();
   };
 
   return (
     <>
+      <Alerts />
       {submitError && (
         <Alert title={t('Failed to create the cluster template')} variant="danger" isInline>
           {getErrorMessage(submitError)}
@@ -127,6 +136,10 @@ const _CreateClusterTemplateWizard = () => {
   );
 };
 
-const CreateClusterTemplateWizard = () => <_CreateClusterTemplateWizard />;
+const CreateClusterTemplateWizard = () => (
+  <AlertsContextProvider>
+    <_CreateClusterTemplateWizard />
+  </AlertsContextProvider>
+);
 
 export default CreateClusterTemplateWizard;
