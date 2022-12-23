@@ -81,10 +81,10 @@ const getTableColumns = (t: TFunction): TableColumn[] => [
   },
 ];
 
-type HelmRepositoryActionDialogIds = 'deleteDialog' | 'editCredentialsDialog';
+type HelmRepositoryActionDialogIds = 'deleteDialog' | 'editHelmChartRepositoryDialog';
 const helmRepositoryActionDialogIds: HelmRepositoryActionDialogIds[] = [
   'deleteDialog',
-  'editCredentialsDialog',
+  'editHelmChartRepositoryDialog',
 ];
 
 type HelmRepoRowProps = RowProps<HelmChartRepository> & {
@@ -118,7 +118,7 @@ export const HelmRepoRow = ({
     return [
       {
         title: t('Edit repository'),
-        onClick: () => openDialog('editCredentialsDialog'),
+        onClick: () => openDialog('editHelmChartRepositoryDialog'),
       },
       {
         title: t('Delete repository'),
@@ -210,10 +210,10 @@ export const HelmRepoRow = ({
           {t('Are you sure you want to delete?')}
         </Modal>
       )}
-      {isDialogOpen('editCredentialsDialog') && (
+      {isDialogOpen('editHelmChartRepositoryDialog') && (
         <EditHelmRepositoryDialog
           helmChartRepository={obj}
-          closeDialog={() => closeDialog('editCredentialsDialog')}
+          closeDialog={() => closeDialog('editHelmChartRepositoryDialog')}
         />
       )}
     </Tr>
