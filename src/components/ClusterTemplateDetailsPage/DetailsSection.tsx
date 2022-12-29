@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   Button,
-  // ButtonVariant,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
@@ -10,26 +9,18 @@ import {
   GridItem,
   Popover,
 } from '@patternfly/react-core';
-import {
-  OutlinedQuestionCircleIcon,
-  // PencilAltIcon,
-} from '@patternfly/react-icons';
+import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
-// import { clusterTemplateGVK } from '../../constants';
 import {
   ClusterTemplateCost,
-  ClusterTemplateHelmResourceLink,
-  ClusterTemplateUsage,
   ClusterTemplateVendorLabel,
-} from './clusterTemplateComponents';
+  InstallationDetails,
+  PostInstallationDetails,
+} from '../sharedDetailItems/clusterTemplateDetailItems';
 import { ClusterTemplate } from '../../types';
 
-import {
-  getClusterTemplateDescription,
-  getClusterTemplateInfraType,
-  getClusterTemplateLocation,
-} from '../../utils/clusterTemplateDataUtils';
 import { useTranslation } from '../../hooks/useTranslation';
+import { Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 export type ListItem = {
   label: string;
 
@@ -81,20 +72,16 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clust
       value: name,
     },
     {
-      label: t('HELM chart repository'),
-      value: <ClusterTemplateHelmResourceLink clusterTemplate={clusterTemplate} />,
+      label: t('Installation Settings'),
+      value: <InstallationDetails clusterTemplate={clusterTemplate} />,
     },
     {
-      label: t('HELM chart name'),
+      label: t('Argocd namespace'),
       value: clusterTemplate.spec.clusterDefinition.source.chart,
     },
     {
-      label: t('HELM chart version'),
-      value: clusterTemplate.spec.clusterDefinition.source.targetRevision,
-    },
-    {
-      label: t('Infrastructure type'),
-      value: getClusterTemplateInfraType(clusterTemplate),
+      label: t('Created'),
+      value: <Timestamp timestamp={clusterTemplate.metadata?.creationTimestamp} />,
     },
     //TODO: implement labels
     // {
@@ -113,20 +100,12 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clust
 
   const rightItems: ListItem[] = [
     {
-      label: t('Description'),
-      value: getClusterTemplateDescription(clusterTemplate),
-    },
-    {
-      label: t('Location'),
-      value: getClusterTemplateLocation(clusterTemplate),
+      label: t('Post-installation settings'),
+      value: <PostInstallationDetails clusterTemplate={clusterTemplate} />,
     },
     {
       label: t('Cost estimation'),
       value: <CostItem clusterTemplate={clusterTemplate} />,
-    },
-    {
-      label: t('Template uses'),
-      value: <ClusterTemplateUsage clusterTemplate={clusterTemplate} />,
     },
     {
       label: t('Vendor'),

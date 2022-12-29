@@ -1,8 +1,15 @@
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sGet, useK8sModel, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
 import { clusterTemplateQuotaGVK, CLUSTER_TEMPLATES_ROLE, roleBindingGVK } from '../constants';
 
 import { Quota, QuotaDetails, RoleBinding } from '../types';
+
+export const useAllQuotas = (): [Quota[], boolean, unknown] =>
+  useK8sWatchResource<Quota[]>({
+    groupVersionKind: clusterTemplateQuotaGVK,
+    isList: true,
+    namespaced: true,
+  });
 
 const useClusterTemplateRoleBindings = () => {
   const [rbs, loaded, error] = useK8sWatchResource<RoleBinding[]>({
@@ -14,13 +21,13 @@ const useClusterTemplateRoleBindings = () => {
   return [clusterTemplateRbs, loaded, error];
 };
 
-const getQuotaTemplateNames = (quota: Quota) => {
+export const getQuotaTemplateNames = (quota: Quota) => {
   return quota.spec?.allowedTemplates?.map((templateData) => templateData.name) || [];
 };
 
 export type QuotasData = {
   getAllQuotasDetails(): QuotaDetails[];
-  getQuota(quotaName, quotaNamespace): Quota;
+  getQuota(quotaName, quotaNamespace): Promise<Quota>;
   getClusterTemplateQuotasDetails: (clusterTemplateName: string) => QuotaDetails[];
   namespaceHasQuota: (namespace: string) => boolean;
   getQuotaDetails: (quotaName: string, quotaNamespace: string) => QuotaDetails;
@@ -54,22 +61,28 @@ const getDetails = (quota: Quota, rbs: RoleBinding[]): QuotaDetails => {
 };
 
 export const useQuotas = (): [QuotasData, boolean, unknown] => {
-  const [allQuotas, quotasLoaded, quotasError] = useK8sWatchResource<Quota[]>({
-    groupVersionKind: clusterTemplateQuotaGVK,
-    isList: true,
-    namespaced: true,
-  });
+  const [allQuotas, quotasLoaded, quotasError] = useAllQuotas();
   const [rbs, roleBindingsLoaded, roleBindingsError] = useClusterTemplateRoleBindings();
+  const [quotasModel, quotasModelLoading] = useK8sModel(clusterTemplateQuotaGVK);
   const loaded = quotasLoaded && roleBindingsLoaded;
   const error = quotasError || roleBindingsError;
   const data: QuotasData = React.useMemo(() => {
     return {
       getAllQuotasDetails: () => allQuotas.map((quota) => getDetails(quota, rbs)),
-      getQuota: (quotaName: string, quotaNamespace: string) => {
-        return allQuotas.find(
-          (quota) =>
-            quota.metadata?.name === quotaName && quota.metadata?.namespace === quotaNamespace,
+      getQuota: async (quotaName: string, quotaNamespace: string) => {
+        const quota = allQuotas.find(
+          (curQuota) =>
+            curQuota.metadata?.name === quotaName &&
+            curQuota.metadata?.namespace === quotaNamespace,
         );
+        if (quota) {
+          return quota;
+        }
+        return await k8sGet({
+          model: quotasModel,
+          name: quotaName,
+          ns: quotaNamespace,
+        });
       },
       getClusterTemplateQuotasDetails: (clusterTemplateName: string) => {
         return allQuotas
@@ -79,10 +92,13 @@ export const useQuotas = (): [QuotasData, boolean, unknown] => {
       namespaceHasQuota: (namespace: string): boolean =>
         !!allQuotas.find((quota) => quota.metadata?.namespace === namespace),
       getQuotaDetails: (name: string, namespace: string) => {
-        const quota = data.getQuota(name, namespace);
-        return quota ? getDetails(quota, rbs) : null;
+        const quota = allQuotas.find(
+          (curQuota) =>
+            curQuota.metadata?.name === name && curQuota.metadata?.namespace === namespace,
+        );
+        return quota ? getDetails(quota, rbs) : undefined;
       },
     };
   }, [allQuotas, rbs]);
-  return [data, loaded, error];
+  return [data, loaded && !quotasModelLoading, error || quotasError];
 };

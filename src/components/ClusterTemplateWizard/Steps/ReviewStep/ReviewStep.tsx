@@ -18,6 +18,14 @@ import { useTranslation } from '../../../../hooks/useTranslation';
 import { QuotaDetails } from '../../../../types';
 import { QuotaFormikValues, WizardFormikValues } from '../../types';
 
+import {
+  ClusterTemplateCost,
+  InstallationDetails,
+  PostInstallationDetails,
+} from '../../../sharedDetailItems/clusterTemplateDetailItems';
+import { useAlerts } from '../../../../alerts/AlertsContext';
+import toClusterTemplate from '../../../../utils/toClusterTemplate';
+
 export const getQuotaNameAndUsersText = (quotaDetails: QuotaDetails, t: TFunction) => {
   const users = t('{{count}} user', {
     count: quotaDetails.numUsers,
@@ -28,35 +36,55 @@ export const getQuotaNameAndUsersText = (quotaDetails: QuotaDetails, t: TFunctio
   return `${quotaDetails.name}, (${users}, ${groups})`;
 };
 
-const getQuotaText = (
-  quotaFormikValues: QuotaFormikValues,
-  quotaContext: QuotasData,
-  t: TFunction,
-) => {
-  const part1 = getQuotaNameAndUsersText(
-    quotaContext.getQuotaDetails(quotaFormikValues.quota.name, quotaFormikValues.quota.namespace),
-    t,
-  );
+const QuotaSummary = ({
+  quotaFormikValues,
+  quotasData,
+}: {
+  quotaFormikValues: QuotaFormikValues;
+  quotasData: QuotasData;
+}) => {
+  const { addAlert } = useAlerts();
+  const { t } = useTranslation();
+  const [quotaDetails, setQuotaDetails] = React.useState<QuotaDetails>();
+  React.useEffect(() => {
+    if (!quotaFormikValues.quota || !quotaFormikValues.quota.name) {
+      return;
+    }
+    const details = quotasData.getQuotaDetails(
+      quotaFormikValues.quota.name,
+      quotaFormikValues.quota.namespace,
+    );
+    if (!details) {
+      addAlert({
+        title: t('Failed to find quota {{name}}', {
+          name: `${quotaFormikValues.quota.name}/${quotaFormikValues.quota.namespace}`,
+        }),
+      });
+    } else {
+      setQuotaDetails(details);
+    }
+  }, [quotasData, quotaFormikValues]);
+
+  if (!quotaDetails) {
+    return null;
+  }
+  const part1 = getQuotaNameAndUsersText(quotaDetails, t);
 
   if (!quotaFormikValues.limitAllowed) {
-    return part1;
+    return <Text>{part1}</Text>;
   }
   const part2 = t('up to {{clusters}} clusters', { clusters: quotaFormikValues.numAllowed });
-  return `${part1} / ${part2}`;
+  return <Text>{`${part1} / ${part2}`}</Text>;
 };
 
 const ReviewQuotas = ({ quotas }: { quotas: QuotaFormikValues[] }) => {
   const { t } = useTranslation();
-  const [quotasContext, loaded, error] = useQuotas();
-  // t('Failed to load quotas')
-  useAddAlertOnError(error, 'Failed to load quotas');
+  const [quotasData, loaded, error] = useQuotas();
+  useAddAlertOnError(error, t('Failed to load quotas'));
   return (
     <CellLoader loaded={loaded}>
-      {quotas.map((quota) => {
-        if (!quota.quota) {
-          return;
-        }
-        return <Text key={quota.quota.toString()}>{getQuotaText(quota, quotasContext, t)}</Text>;
+      {quotas.map((quota, idx) => {
+        return <QuotaSummary quotasData={quotasData} quotaFormikValues={quota} key={idx} />;
       })}
     </CellLoader>
   );
@@ -64,6 +92,7 @@ const ReviewQuotas = ({ quotas }: { quotas: QuotaFormikValues[] }) => {
 
 const ReviewStep = () => {
   const { values } = useFormikContext<WizardFormikValues>();
+  const clusterTemplate = toClusterTemplate(values);
   const { t } = useTranslation();
   return (
     <Stack hasGutter>
@@ -79,16 +108,20 @@ const ReviewStep = () => {
             <DescriptionListDescription>{values.details.name}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('HELM chart repository')}</DescriptionListTerm>
-            <DescriptionListDescription>{values.installation.repoURL}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('HELM chart')}</DescriptionListTerm>
-            <DescriptionListDescription>{values.installation.chart}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
             <DescriptionListTerm>{t('Cost')}</DescriptionListTerm>
-            <DescriptionListDescription>{values.details.cost}</DescriptionListDescription>
+            <ClusterTemplateCost clusterTemplate={clusterTemplate} />
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('Installation settings')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <InstallationDetails clusterTemplate={clusterTemplate}></InstallationDetails>
+            </DescriptionListDescription>
+          </DescriptionListGroup>
+          <DescriptionListGroup>
+            <DescriptionListTerm>{t('Post-installation settings')}</DescriptionListTerm>
+            <DescriptionListDescription>
+              <PostInstallationDetails clusterTemplate={clusterTemplate} />
+            </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Manage quotas')}</DescriptionListTerm>

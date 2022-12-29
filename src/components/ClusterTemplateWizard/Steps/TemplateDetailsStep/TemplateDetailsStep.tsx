@@ -1,28 +1,27 @@
 import { Flex, FlexItem, Form, Stack, StackItem, Text } from '@patternfly/react-core';
+import { useField } from 'formik';
 import { InputField } from 'formik-pf';
 import React from 'react';
 import ErrorBoundary from '../../../../helpers/ErrorBoundary';
 import { useTranslation } from '../../../../hooks/useTranslation';
-import NamespaceField from '../../../fields/NamespaceField';
+import ArgocdNamespaceField from './ArgocdNamespaceField';
 import '../styles.css';
+import PopoverHelpIcon from '../../../../helpers/PopoverHelpIcon';
 
 const DetailsForm = () => {
   const { t } = useTranslation();
+  const [{ value: isCreateFlow }] = useField('isCreateFlow');
   return (
     <Form>
       <InputField
         fieldId="details.name"
+        isDisabled={!isCreateFlow}
         isRequired
         name="details.name"
         label={t('Cluster template name')}
         placeholder={t('Enter a name')}
       />
-      <NamespaceField
-        isRequired
-        name="details.argocdNamespace"
-        label={t('Argocd namespace')}
-        popoverHelpText={t('Select a namespace where ArgoCD Application resource will be created.')}
-      />
+      <ArgocdNamespaceField />
       <Flex className="cluster-templates-cost-field">
         <FlexItem spacer={{ default: 'spacerSm' }}>
           <InputField
@@ -30,9 +29,13 @@ const DetailsForm = () => {
             isRequired
             name="details.cost"
             label={t('Cost')}
-            labelIcon={t(
-              'Specify how much money to spend on each usage of this cluster template. You can use any type of currency.',
-            )}
+            labelIcon={
+              <PopoverHelpIcon
+                helpText={t(
+                  'Specify how much money to spend on each usage of this cluster template. You can use any type of currency.',
+                )}
+              />
+            }
           />
         </FlexItem>
         <FlexItem>

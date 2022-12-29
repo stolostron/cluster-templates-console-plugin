@@ -73,8 +73,9 @@
     "exposedModules": {
       "templates": "./components/ClusterTemplatesPage/ClusterTemplatesPage.tsx",
       "helmRepositoryForm": "./components/HelmRepositories/HelmRepositoryForm.tsx",
-      "createTemplate": "./components/CreateClusterTemplateWizard/CreateClusterTemplateWizard.tsx",
-      "templateDetails": "./components/ClusterTemplateDetails/ClusterTemplateDetailsPage.tsx"
+      "createTemplate": "./components/ClusterTemplateCreatePage.tsx",
+      "editTemplate": "./components/ClusterTemplateEditPage.tsx",
+      "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx"
     },
     "dependencies": {
       "@console/pluginAPI": "^4.11"

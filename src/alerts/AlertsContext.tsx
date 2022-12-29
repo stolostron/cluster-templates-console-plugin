@@ -8,7 +8,7 @@ export type AlertData = {
 
 export type AlertsContextData = {
   alerts: AlertData[];
-  addAlert: (AlertData) => void;
+  addAlert: (alert: AlertData) => void;
 };
 
 const AlertsContext = React.createContext<AlertsContextData>(null);

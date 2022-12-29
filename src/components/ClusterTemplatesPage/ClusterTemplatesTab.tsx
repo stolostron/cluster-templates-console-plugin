@@ -23,14 +23,17 @@ import {
 import { clusterTemplateGVK } from '../../constants';
 import { ClusterTemplate, RowProps, TableColumn } from '../../types';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';
 import TableLoader from '../../helpers/TableLoader';
 
 import {
-  ClusterTemplateHelmChart,
-  ClusterTemplateHelmResourceLink,
+  ClusterTemplateCost,
   ClusterTemplateUsage,
-} from '../ClusterTemplateDetails/clusterTemplateComponents';
+} from '../sharedDetailItems/clusterTemplateDetailItems';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
+import { useHistory } from 'react-router';
+import { getEditClusterTemplateUrl } from '../../utils/utils';
+import { useTranslation } from '../../hooks/useTranslation';
 
 function getTableColumns(t: TFunction): TableColumn[] {
   return [
@@ -39,12 +42,8 @@ function getTableColumns(t: TFunction): TableColumn[] {
       id: 'name',
     },
     {
-      title: t('HELM repository'),
-      id: 'helm-repo',
-    },
-    {
-      title: t('HELM chart'),
-      id: 'helm-chart',
+      title: t('Cost estimation'),
+      id: 'cost',
     },
     {
       title: t('Template uses'),
@@ -61,11 +60,16 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
   const { t } = useTranslation();
   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
   const [model] = useK8sModel(clusterTemplateGVK);
+  const history = useHistory();
 
   const getRowActions = (): IAction[] => [
     {
       title: t('Delete template'),
       onClick: () => setDeleteOpen(true),
+    },
+    {
+      title: t('Edit template'),
+      onClick: () => history.push(getEditClusterTemplateUrl(obj.metadata?.name)),
     },
   ];
 
@@ -82,15 +86,12 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
         />
       </Td>
       <Td data-testid={columns[1].id} dataLabel={columns[1].title}>
-        <ClusterTemplateHelmResourceLink clusterTemplate={obj} />
+        <ClusterTemplateCost clusterTemplate={obj} />
       </Td>
       <Td data-testid={columns[2].id} dataLabel={columns[2].title}>
-        <ClusterTemplateHelmChart clusterTemplate={obj} />
-      </Td>
-      <Td data-testid={columns[4].id} dataLabel={columns[4].title}>
         <ClusterTemplateUsage clusterTemplate={obj} />
       </Td>
-      <Td data-testid={columns[4].id} isActionCell>
+      <Td data-testid={columns[3].id} isActionCell>
         <ActionsColumn
           items={getRowActions()}
           actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
@@ -134,37 +135,39 @@ const ClusterTemplatesTab = () => {
   const { t } = useTranslation();
   const [templates, loaded, loadError] = useClusterTemplates();
   return (
-    <Page>
-      <PageSection>
-        <TableLoader
-          loaded={loaded}
-          error={loadError}
-          errorId="templates-load-error"
-          errorMessage={t('The cluster templates could not be loaded.')}
-        >
-          <Card>
-            <TableComposable
-              aria-label="Cluster templates table"
-              data-testid="cluster-templates-table"
-              variant="compact"
-            >
-              <Thead>
-                <Tr>
-                  {getTableColumns(t).map((column) => (
-                    <Th key={column.id}>{column.title}</Th>
+    <AlertsContextProvider>
+      <Page>
+        <PageSection>
+          <TableLoader
+            loaded={loaded}
+            error={loadError}
+            errorId="templates-load-error"
+            errorMessage={t('The cluster templates could not be loaded.')}
+          >
+            <Card>
+              <TableComposable
+                aria-label="Cluster templates table"
+                data-testid="cluster-templates-table"
+                variant="compact"
+              >
+                <Thead>
+                  <Tr>
+                    {getTableColumns(t).map((column) => (
+                      <Th key={column.id}>{column.title}</Th>
+                    ))}
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {templates.map((template) => (
+                    <ClusterTemplateRow key={template.metadata?.name} obj={template} />
                   ))}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {templates.map((template) => (
-                  <ClusterTemplateRow key={template.metadata?.name} obj={template} />
-                ))}
-              </Tbody>
-            </TableComposable>
-          </Card>
-        </TableLoader>
-      </PageSection>
-    </Page>
+                </Tbody>
+              </TableComposable>
+            </Card>
+          </TableLoader>
+        </PageSection>
+      </Page>
+    </AlertsContextProvider>
   );
 };
 

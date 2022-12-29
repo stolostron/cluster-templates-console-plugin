@@ -56,10 +56,12 @@ export const _ManageQuotasStep = () => {
   );
 };
 
-const ManageQuotasStep = () => (
-  <ErrorBoundary>
-    <_ManageQuotasStep />
-  </ErrorBoundary>
-);
+const ManageQuotasStep = () => {
+  return (
+    <ErrorBoundary>
+      <_ManageQuotasStep />
+    </ErrorBoundary>
+  );
+};
 
 export default ManageQuotasStep;

@@ -4,6 +4,7 @@ export const TEMPLATES_HELM_REPO_LABEL = 'clustertemplates.openshift.io/helm-rep
 
 export const clusterTemplateVersion = 'v1alpha1';
 export const clusterTemplateGroup = 'clustertemplate.openshift.io';
+export const INSTANCE_NAMESPACE_VAR = '${instance_ns}';
 
 export const helmRepoGVK: K8sGroupVersionKind = {
   kind: 'HelmChartRepository',
@@ -82,4 +83,10 @@ export const clusterTemplatesRoleRef: RoleRef = {
   apiGroup: RBAC_API_GROUP,
   kind: 'ClusterRole',
   name: CLUSTER_TEMPLATES_ROLE,
+};
+
+export const argoCDGVK: K8sGroupVersionKind = {
+  group: 'argoproj.io',
+  kind: 'ArgoCD',
+  version: 'v1alpha1',
 };

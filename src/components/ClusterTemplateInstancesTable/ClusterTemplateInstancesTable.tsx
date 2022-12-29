@@ -3,9 +3,10 @@ import { ClusterTemplateInstance } from '../../types';
 import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { clusterTemplateInstanceGVK, namespaceGVK } from '../../constants';
 import ClusterTemplateInstanceStatus from './ClusterTemplateInstanceStatus';
-import { TFunction, useTranslation } from 'react-i18next';
+import { TFunction } from 'react-i18next';
 import React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type TableColumn = {
   title: string;

@@ -178,3 +178,15 @@ export type QuotaDetails = {
 
 export type Group = K8sResourceCommon & { users?: string[] };
 export type User = K8sResourceCommon;
+
+export type ApiError = {
+  code: number;
+  message: string;
+  json: {
+    reason: string;
+  };
+};
+
+export const isApiError = (err: unknown): err is ApiError => {
+  return typeof err === 'object' && typeof err['json'] === 'object';
+};

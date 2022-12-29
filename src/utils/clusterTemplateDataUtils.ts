@@ -5,8 +5,6 @@ import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../ty
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
 
 export const TEMPLATE_LABELS = {
-  location: `${TEMPLATES_LABEL_PREFIX}/location`,
-  infra: `${TEMPLATES_LABEL_PREFIX}/infra`,
   description: `${TEMPLATES_LABEL_PREFIX}/description`,
   vendor: `${TEMPLATES_LABEL_PREFIX}/vendor`,
 };
@@ -19,7 +17,7 @@ export const getClusterTemplateVendor = (
 ): ClusterTemplateVendor | undefined => {
   const labelValue = getLabelValue(clusterTemplate, TEMPLATE_LABELS.vendor);
   if (!labelValue) {
-    return undefined;
+    return ClusterTemplateVendor.CUSTOM;
   }
   return labelValue === ClusterTemplateVendor.REDHAT
     ? ClusterTemplateVendor.REDHAT
@@ -31,12 +29,6 @@ export const getClusterTemplateDescription = (
 ): string | undefined => {
   return get(clusterTemplate, ['metadata', 'annotations', TEMPLATE_LABELS.description]);
 };
-
-export const getClusterTemplateLocation = (clusterTemplate: ClusterTemplate): string | undefined =>
-  getLabelValue(clusterTemplate, TEMPLATE_LABELS.location);
-
-export const getClusterTemplateInfraType = (clusterTemplate: ClusterTemplate): string | undefined =>
-  getLabelValue(clusterTemplate, TEMPLATE_LABELS.infra);
 
 export const isHelmAppSpec = (source: ApplicationSource) => !!source.chart;
 
