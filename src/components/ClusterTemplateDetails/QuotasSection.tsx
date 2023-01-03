@@ -29,9 +29,6 @@ const QuotasSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ cluster
     () => quotasData.getClusterTemplateQuotasDetails(clusterTemplate.metadata?.name),
     [quotasData, clusterTemplate],
   );
-  if (quotasDetails.length === 0) {
-    return <QuotasEmptyState />;
-  }
   return (
     <Stack hasGutter>
       <StackItem>
@@ -45,7 +42,8 @@ const QuotasSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ cluster
       </StackItem>
       <StackItem>
         <TableLoader loaded={loaded} error={error}>
-          <ClusterTemplateQuotasTable quotaDetails={quotasDetails} />
+          {quotasDetails.length === 0 && <QuotasEmptyState />}
+          {quotasDetails.length > 0 && <ClusterTemplateQuotasTable quotaDetails={quotasDetails} />}
         </TableLoader>
       </StackItem>
     </Stack>

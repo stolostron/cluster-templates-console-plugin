@@ -85,7 +85,12 @@ const ClusterTemplateQuotasTable: React.FC<{
       </Thead>
       <Tbody>
         {quotaDetails.map((quotaDetails, index) => (
-          <QuotaRow quotaDetails={quotaDetails} columns={columns} index={index} key={index} />
+          <QuotaRow
+            quotaDetails={quotaDetails}
+            columns={columns}
+            index={index}
+            key={quotaDetails.uid}
+          />
         ))}
       </Tbody>
     </TableComposable>

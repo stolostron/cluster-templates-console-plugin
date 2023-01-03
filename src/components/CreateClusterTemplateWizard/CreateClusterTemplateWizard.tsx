@@ -22,18 +22,16 @@ import { clusterTemplateGVK } from '../../constants';
 
 const CustomFooter = () => {
   const history = useHistory();
-  const { values, isSubmitting, errors, submitForm, setErrors, setTouched } =
+  const { values, isSubmitting, errors, submitForm, setTouched } =
     useFormikContext<WizardFormikValues>();
   const [submitError, setSubmitError] = React.useState();
   const [submitClicked, setSubmitClicked] = React.useState(false);
   const { activeStep, onBack, onNext } = React.useContext(WizardContext);
   const { t } = useTranslation();
   const invalid = !!errors[activeStep.id];
-
   const reset = () => {
     setSubmitError(undefined);
     setSubmitClicked(false);
-    setErrors({});
     setTouched({});
   };
 
@@ -43,9 +41,7 @@ const CustomFooter = () => {
       //submitForm will set all the fields as touched
       submitForm();
       setSubmitClicked(true);
-      return;
-    }
-    if (activeStep.id === 'review') {
+    } else if (activeStep.id === 'review') {
       try {
         await submitForm();
         history.push(getResourceUrl(clusterTemplateGVK, values.details.name));
@@ -139,7 +135,6 @@ const _CreateClusterTemplateWizard = () => {
         steps={steps}
         footer={<CustomFooter />}
         hideClose
-        startAtStep={4}
       />
     </Formik>
   );

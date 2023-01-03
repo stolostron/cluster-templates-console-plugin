@@ -47,6 +47,7 @@ const getDetails = (quota: Quota, rbs: RoleBinding[]): QuotaDetails => {
     namespace: quota.metadata?.namespace,
     budget: quota.spec?.budget,
     budgetSpent: quota.status?.budgetSpent,
+    uid: quota.metadata?.uid,
     numGroups,
     numUsers,
   };

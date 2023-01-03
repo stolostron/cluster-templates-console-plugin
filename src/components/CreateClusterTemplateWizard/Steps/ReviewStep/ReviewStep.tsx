@@ -48,7 +48,8 @@ const getQuotaText = (
 const ReviewQuotas = ({ quotas }: { quotas: QuotaFormikValues[] }) => {
   const { t } = useTranslation();
   const [quotasContext, loaded, error] = useQuotas();
-  useAddAlertOnError(error, t('Failed to load quotas'));
+  // t('Failed to load quotas')
+  useAddAlertOnError(error, 'Failed to load quotas');
   return (
     <CellLoader loaded={loaded}>
       {quotas.map((quota) => {

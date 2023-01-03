@@ -78,7 +78,8 @@ const NewQuotaDialog = ({
   isOpen: boolean;
 }) => {
   const { t } = useTranslation();
-  const [createQuota, loaded] = useCreateQuota();
+  const [createQuota, loaded, createQuotaError] = useCreateQuota();
+
   const [error, setError] = React.useState<unknown>();
   const onSubmit = async (values: NewQuotaFormikValues) => {
     try {
@@ -109,7 +110,7 @@ const NewQuotaDialog = ({
           validationSchema={getNewQuotaValidationSchema(t, clusterTemplateCost)}
         >
           {({ isSubmitting, handleSubmit }) => (
-            <Loader loaded={loaded}>
+            <Loader loaded={loaded} error={createQuotaError}>
               <ModalBoxBody>
                 <NewQuotaFormFields clusterTemplateCost={clusterTemplateCost} />
                 <Alerts />

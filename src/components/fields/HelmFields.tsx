@@ -36,8 +36,10 @@ const HelmFields = ({
   const [{ value: chart }, , { setValue: setChart }] = useField<string>(chartFieldName);
   const [repositories, repositoriesLoaded, repositoriesError] = useHelmRepositories();
   const [repoIndex, indexLoaded, indexError] = useHelmRepositoryIndex();
-  useAddAlertOnError(repositoriesError, t('Failed to load repositories'));
-  useAddAlertOnError(indexError, t('Failed to load charts'));
+  // t('Failed to load repositories')
+  useAddAlertOnError(repositoriesError, 'Failed to load repositories');
+  // t('Failed to load charts')
+  useAddAlertOnError(indexError, 'Failed to load charts');
 
   const repoOptions = repositories.map((r) => ({
     value: r.metadata?.name || '',

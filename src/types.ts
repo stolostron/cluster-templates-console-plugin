@@ -173,6 +173,7 @@ export type QuotaDetails = {
   budgetSpent?: number;
   numUsers: number;
   numGroups: number;
+  uid: string;
 };
 
 export type Group = K8sResourceCommon & { users?: string[] };

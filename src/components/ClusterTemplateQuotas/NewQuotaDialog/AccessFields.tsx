@@ -53,6 +53,7 @@ const UsersHelpText = () => {
 export const UsersField = () => {
   const { t } = useTranslation();
   const [users, loaded, error] = useUsers();
+  // t('Failed to load users')
   useAddAlertOnError(error, t('Failed to load users'));
   const userOptions = React.useMemo<SelectInputOption[]>(() => getOptions(users), [users]);
   return (
@@ -72,7 +73,8 @@ export const UsersField = () => {
 export const GroupsField = () => {
   const { t } = useTranslation();
   const [groups, loaded, error] = useGroups();
-  useAddAlertOnError(error, t('Failed to load groups'));
+  // t('Failed to load groups')
+  useAddAlertOnError(error, 'Failed to load groups');
   const groupOptions = React.useMemo<SelectInputOption[]>(() => getOptions(groups), [groups]);
   return (
     <MultiSelectField

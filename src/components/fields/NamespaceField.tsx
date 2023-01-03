@@ -30,7 +30,8 @@ const NamespaceField = ({
 }: NamespaceFieldProps) => {
   const [namespaces, loaded, error] = useNamespaces();
   const { t } = useTranslation();
-  useAddAlertOnError(error, t('Failed to load namespace options'));
+  // t('Failed to load charts')
+  useAddAlertOnError(error, 'Failed to load charts');
   const namespaceOptions = React.useMemo(
     () => (options ? options : getNamespaceOptions(namespaces)),
     [namespaces, options],

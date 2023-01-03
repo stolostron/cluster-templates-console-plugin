@@ -31,7 +31,8 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
 
   const { t } = useTranslation();
   const [quotasContext, loaded, error] = useQuotas();
-  useAddAlertOnError(error, t('Failed to load quota options'));
+  // t('Failed to load quota options')
+  useAddAlertOnError(error, 'Failed to load quota options');
   const [newQuotaDialogOpen, setNewQuotaDialogOpen] = React.useState(false);
   const getSelectOptions = (): SelectInputOption[] => {
     return quotasContext.getAllQuotasDetails().map((quotaDetails) => ({

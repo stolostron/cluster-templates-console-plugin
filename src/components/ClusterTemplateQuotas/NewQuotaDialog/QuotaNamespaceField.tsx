@@ -28,9 +28,11 @@ const getNamespaceOptions = (
 const QuotaNamespaceField = () => {
   const { t } = useTranslation();
   const [namespaces, namespacesLoaded, namespaceError] = useNamespaces();
-  useAddAlertOnError(namespaceError, t('Failed to load namespace options'));
+  // t('Failed to load namespace options')
+  useAddAlertOnError(namespaceError, 'Failed to load namespace options');
   const [quotasData, quotasLoaded, quotasError] = useQuotas();
-  useAddAlertOnError(quotasError, t('Failed to load namespace options'));
+  // t('Failed to load quotas')
+  useAddAlertOnError(quotasError, 'Failed to load quotas');
   const options = React.useMemo(
     () => getNamespaceOptions(namespaces, quotasData, t),
     [namespaces, quotasData, t],

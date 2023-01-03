@@ -58,7 +58,7 @@ const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, bo
   const [roleBindingModel, roleBindingModelLoading] = useK8sModel(roleBindingGVK);
   const [nsModel, nsModelLoading] = useK8sModel(namespaceGVK);
   const [quotaModel, quotaModelLoading] = useK8sModel(clusterTemplateQuotaGVK);
-  const [namespaces, namespacesLoaded, namespacesEror] = useNamespaces();
+  const [namespaces, namespacesLoaded, namespacesError] = useNamespaces();
   const createQuota = async (values: NewQuotaFormikValues): Promise<Quota> => {
     if (!namespaces.includes(values.namespace)) {
       await k8sCreate({
@@ -77,7 +77,7 @@ const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, bo
   return [
     createQuota,
     !roleBindingModelLoading && !quotaModelLoading && !nsModelLoading && namespacesLoaded,
-    namespacesEror,
+    namespacesError,
   ];
 };
 
