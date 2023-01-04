@@ -1,40 +1,30 @@
 import * as React from 'react';
 import { Skeleton } from '@patternfly/react-core';
-import ErrorState, { ErrorStateProps } from './ErrorState';
+import Loader, { LoaderProps } from './Loader';
 
 type TableLoaderProps = {
   children: React.ReactNode;
   loaded?: boolean;
   error?: unknown;
-} & Omit<ErrorStateProps, 'error'>;
+} & Omit<LoaderProps, 'loaderContent'>;
 
-function TableLoader({
-  loaded = false,
-  children,
-  error,
-  ...restErrorStateProps
-}: TableLoaderProps) {
-  if (!loaded) {
-    return (
-      <div data-testid="table-skeleton">
-        <Skeleton />
-        <br />
-        <Skeleton />
-        <br />
-        <Skeleton />
-        <br />
-        <Skeleton />
-        <br />
-        <Skeleton />
-        <br />
-        <Skeleton />
-      </div>
-    );
-  }
-  if (error) {
-    return <ErrorState error={error} {...restErrorStateProps} />;
-  }
-  return <>{children}</>;
+function TableLoader(props: TableLoaderProps) {
+  const loadingState = (
+    <div data-testid="table-skeleton">
+      <Skeleton />
+      <br />
+      <Skeleton />
+      <br />
+      <Skeleton />
+      <br />
+      <Skeleton />
+      <br />
+      <Skeleton />
+      <br />
+      <Skeleton />
+    </div>
+  );
+  return <Loader {...props} loadingState={loadingState} />;
 }
 
 export default TableLoader;

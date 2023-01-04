@@ -22,13 +22,13 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { Buffer } from 'buffer';
 import { configMapGVK, helmRepoGVK, secretGVK } from '../../constants';
-import TableLoader from '../../helpers/TableLoader';
 import { InputField, CheckboxField, TextAreaField } from 'formik-pf';
 import SelectField from '../../helpers/SelectField';
 import { Formik, FormikProps } from 'formik';
 import { TFunction } from 'react-i18next';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getErrorMessage } from '../../utils/utils';
+import ModalDialogLoader from '../../helpers/ModalDialogLoader';
 
 export type NewHelmRepositoryFormValues = {
   name: string;
@@ -320,7 +320,7 @@ const NewHelmRepositoryDialog = ({ closeDialog }: NewHelmRepositoryDialogProps) 
       showClose
       hasNoBodyWrapper
     >
-      <TableLoader loaded={dataLoaded}>
+      <ModalDialogLoader loaded={dataLoaded}>
         <Formik<NewHelmRepositoryFormValues>
           initialValues={getInitialValues()}
           onSubmit={handleSubmit}
@@ -335,7 +335,7 @@ const NewHelmRepositoryDialog = ({ closeDialog }: NewHelmRepositoryDialogProps) 
             />
           )}
         />
-      </TableLoader>
+      </ModalDialogLoader>
     </Modal>
   );
 };

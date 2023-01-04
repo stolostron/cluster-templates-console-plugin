@@ -22,7 +22,7 @@ import {
 } from '@openshift-console/dynamic-plugin-sdk';
 import { Buffer } from 'buffer';
 import { configMapGVK, helmRepoGVK, secretGVK } from '../../constants';
-import TableLoader from '../../helpers/TableLoader';
+import ModalDialogLoader from '../../helpers/ModalDialogLoader';
 import { InputField, CheckboxField, TextAreaField } from 'formik-pf';
 import SelectField from '../../helpers/SelectField';
 import { Formik, FormikProps } from 'formik';
@@ -327,7 +327,7 @@ const EditHelmRepositoryDialog = ({
       showClose
       hasNoBodyWrapper
     >
-      <TableLoader loaded={dataLoaded}>
+      <ModalDialogLoader loaded={dataLoaded}>
         <Formik<EditHelmRepoCredsValues>
           initialValues={getInitialValues(helmChartRepository, initialSecret, initialConfigMap)}
           onSubmit={handleSubmit}
@@ -342,7 +342,7 @@ const EditHelmRepositoryDialog = ({
             />
           )}
         />
-      </TableLoader>
+      </ModalDialogLoader>
     </Modal>
   );
 };
