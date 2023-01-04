@@ -54,7 +54,7 @@ export const UsersField = () => {
   const { t } = useTranslation();
   const [users, loaded, error] = useUsers();
   // t('Failed to load users')
-  useAddAlertOnError(error, t('Failed to load users'));
+  useAddAlertOnError(error, 'Failed to load users');
   const userOptions = React.useMemo<SelectInputOption[]>(() => getOptions(users), [users]);
   return (
     <MultiSelectField

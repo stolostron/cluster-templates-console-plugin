@@ -42,8 +42,11 @@ const QuotasSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ cluster
       </StackItem>
       <StackItem>
         <TableLoader loaded={loaded} error={error}>
-          {quotasDetails.length === 0 && <QuotasEmptyState />}
-          {quotasDetails.length > 0 && <ClusterTemplateQuotasTable quotaDetails={quotasDetails} />}
+          {quotasDetails.length === 0 ? (
+            <QuotasEmptyState />
+          ) : (
+            <ClusterTemplateQuotasTable quotaDetails={quotasDetails} />
+          )}
         </TableLoader>
       </StackItem>
     </Stack>

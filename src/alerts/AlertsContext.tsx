@@ -18,7 +18,13 @@ export const AlertsContextProvider = ({ children }: { children: React.ReactNode 
 
   const addAlert = React.useCallback(
     (alert: AlertData) => {
-      setAlerts([...alerts, alert]);
+      if (
+        !alerts.find(
+          (curAlert) => curAlert.title === alert.title && curAlert.message === alert.message,
+        )
+      ) {
+        setAlerts([...alerts, alert]);
+      }
     },
     [alerts],
   );
