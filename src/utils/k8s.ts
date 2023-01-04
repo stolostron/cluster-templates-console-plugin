@@ -20,3 +20,27 @@ export const getReference = ({
 }: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');
 
 export const getApiVersion = (gvk: K8sGroupVersionKind) => `${gvk.group}/${gvk.version}`;
+
+export const getResourceUrl = (
+  groupVersionKind: K8sGroupVersionKind,
+  name?: string,
+  namespace?: string,
+) => {
+  let url = '/k8s/';
+
+  if (namespace) {
+    url += `ns/${namespace}/`;
+  } else {
+    url += 'cluster/';
+  }
+
+  url += getReference(groupVersionKind);
+
+  if (name) {
+    // Some resources have a name that needs to be encoded. For instance,
+    // Users can have special characters in the name like `#`.
+    url += `/${encodeURIComponent(name)}`;
+  }
+
+  return url;
+};

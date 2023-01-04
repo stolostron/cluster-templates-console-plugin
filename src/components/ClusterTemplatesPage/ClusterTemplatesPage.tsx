@@ -5,13 +5,12 @@ import { Tab, Tabs, TabTitleText } from '@patternfly/react-core';
 import ClusterTemplatesTab from './ClusterTemplatesTab';
 import HelmRepositoriesTab from './HelmRepositoriesTab';
 import { useClusterTemplatesCount } from '../../hooks/useClusterTemplates';
-import { useHelmRepositoriesCount } from '../../hooks/useHelmRepositories';
+
 import { clusterTemplateGVK } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getNavLabelWithCount } from '../../utils/utils';
-import { getReference } from '../../utils/k8s';
-
-const clusterTemplateReference = getReference(clusterTemplateGVK);
+import { getReference, getResourceUrl } from '../../utils/k8s';
+import { useHelmRepositoriesCount } from '../../hooks/useHelmRepositories';
 
 const useActiveTab = () => {
   const { search } = useLocation();
@@ -40,20 +39,20 @@ const ClusterTemplatesPage = () => {
   const handleTabSelect: React.ComponentProps<typeof Tabs>['onSelect'] = (_, eventKey) => {
     switch (eventKey) {
       case 'repositories':
-        history.push(`/k8s/cluster/${clusterTemplateReference}?tab=repositories`);
+        history.push(`${getResourceUrl(clusterTemplateGVK)}?tab=repositories`);
         break;
       default:
-        history.push(`/k8s/cluster/${clusterTemplateReference}`);
+        history.push(getResourceUrl(clusterTemplateGVK));
     }
   };
 
   const handleCreateDropdownActionClick = (item: string) => {
     switch (item) {
       case 'NEW_CLUSTER_TEMPLATE':
-        history.push(`/k8s/cluster/${clusterTemplateReference}/~new`);
+        history.push(`${getResourceUrl(clusterTemplateGVK)}/~new`);
         break;
       case 'NEW_HELM_CHART_REPOSITORY':
-        history.push(`/k8s/cluster/${clusterTemplateReference}/~newRepository`);
+        history.push(`${getResourceUrl(clusterTemplateGVK)}/~newRepository`);
         break;
     }
   };
@@ -62,7 +61,7 @@ const ClusterTemplatesPage = () => {
     <>
       <ListPageHeader title="Cluster templates">
         <ListPageCreateDropdown
-          createAccessReview={{ groupVersionKind: clusterTemplateReference }}
+          createAccessReview={{ groupVersionKind: getReference(clusterTemplateGVK) }}
           items={actionItems}
           onClick={handleCreateDropdownActionClick}
         >

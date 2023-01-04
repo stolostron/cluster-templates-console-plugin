@@ -19,7 +19,7 @@
     "podman:deploy": "npm run podman:build && podman tag caas-ui quay.io/$USER/caas-ui:latest && podman push quay.io/$USER/caas-ui:latest && ./scripts/patch-deployment.sh"
   },
   "devDependencies": {
-    "@openshift-console/dynamic-plugin-sdk": "0.0.12",
+    "@openshift-console/dynamic-plugin-sdk": "0.0.18",
     "@openshift-console/dynamic-plugin-sdk-webpack": "0.0.7",
     "@patternfly/react-core": "4.221.3",
     "@testing-library/dom": "^8.19.0",
@@ -44,7 +44,6 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.2.1",
     "jest-environment-jsdom": "^29.2.1",
-    "jest-preview": "^0.3.1",
     "prettier": "^2.7.1",
     "prettier-stylelint": "^0.4.2",
     "react": "^17.0.1",
@@ -90,7 +89,6 @@
     "i18next": "^21.8.14",
     "js-yaml": "4.1.0",
     "lodash": "4.17.21",
-    "lodash-es": "4.17.21",
     "recoil": "^0.7.6",
     "yup": "^0.32.11"
   }

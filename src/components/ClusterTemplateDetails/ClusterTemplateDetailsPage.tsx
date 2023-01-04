@@ -15,6 +15,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { useClusterTemplate } from '../../hooks/useClusterTemplates';
 import ClusterTemplateDetailsSections from './ClusterTemplateDetailsSections';
 import PageLoader from '../../helpers/PageLoader';
+import ErrorBoundary from '../../helpers/ErrorBoundary';
 
 const PageBreadcrumb: React.FC<{ clusterTemplateName: string }> = ({ clusterTemplateName }) => {
   const { t } = useTranslation();
@@ -58,14 +59,16 @@ const ClusterTemplateDetailsPage: React.FC<{
   const [clusterTemplate, loaded, loadError] = useClusterTemplate(name);
 
   return (
-    <PageLoader loaded={loaded} error={loadError}>
-      <Page>
-        <PageHeader clusterTemplateName={name} />
-        <PageSection>
-          <ClusterTemplateDetailsSections clusterTemplate={clusterTemplate} />
-        </PageSection>
-      </Page>
-    </PageLoader>
+    <ErrorBoundary>
+      <PageLoader loaded={loaded} error={loadError}>
+        <Page>
+          <PageHeader clusterTemplateName={name} />
+          <PageSection>
+            <ClusterTemplateDetailsSections clusterTemplate={clusterTemplate} />
+          </PageSection>
+        </Page>
+      </PageLoader>
+    </ErrorBoundary>
   );
 };
 

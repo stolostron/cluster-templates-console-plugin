@@ -1,5 +1,5 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
-import * as _ from 'lodash';
+import get from 'lodash/get';
 import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types';
 
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
@@ -12,7 +12,7 @@ export const TEMPLATE_LABELS = {
 };
 
 const getLabelValue = (resource: K8sResourceCommon, labelName: string): string | undefined =>
-  _.get(resource, ['metadata', 'labels', labelName]);
+  get(resource, ['metadata', 'labels', labelName]);
 
 export const getClusterTemplateVendor = (
   clusterTemplate: ClusterTemplate,
@@ -29,7 +29,7 @@ export const getClusterTemplateVendor = (
 export const getClusterTemplateDescription = (
   clusterTemplate: ClusterTemplate,
 ): string | undefined => {
-  return _.get(clusterTemplate, ['metadata', 'annotations', TEMPLATE_LABELS.description]);
+  return get(clusterTemplate, ['metadata', 'annotations', TEMPLATE_LABELS.description]);
 };
 
 export const getClusterTemplateLocation = (clusterTemplate: ClusterTemplate): string | undefined =>

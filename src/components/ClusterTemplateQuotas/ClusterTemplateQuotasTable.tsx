@@ -1,14 +1,11 @@
-import { ClusterTemplateQuota } from '../../types';
+import { QuotaDetails } from '../../types';
 
 import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateQuotaGVK, namespaceGVK } from '../../constants';
-import {
-  ClusterTemplateQuotaAccessSummary,
-  ClusterTemplateQuotaCostSummary,
-} from './clusterTemplateQuotaComponents';
+import { ClusterTemplateQuotaCostSummary } from './clusterTemplateQuotaComponents';
 import { useTranslation } from '../../hooks/useTranslation';
 
 type TableColumn = {
@@ -26,8 +23,12 @@ const getTableColumns = (t: TFunction): TableColumn[] => [
     id: 'namespace',
   },
   {
-    title: t('User management'),
-    id: 'user-management',
+    title: t('Users'),
+    id: 'users',
+  },
+  {
+    title: t('Groups'),
+    id: 'groups',
   },
   {
     title: t('Cost'),
@@ -36,42 +37,41 @@ const getTableColumns = (t: TFunction): TableColumn[] => [
 ];
 
 const QuotaRow: React.FC<{
-  quota: ClusterTemplateQuota;
+  quotaDetails: QuotaDetails;
   columns: TableColumn[];
   index: number;
-}> = ({ quota, columns, index }) => {
+}> = ({ quotaDetails, columns, index }) => {
   return (
     <Tr data-index={index} data-testid="quotas-table-row">
       <Td dataLabel={columns[0].title} data-testid="name">
         <ResourceLink
           groupVersionKind={clusterTemplateQuotaGVK}
-          name={quota.metadata?.name}
-          namespace={quota.metadata?.namespace}
+          name={quotaDetails.name}
+          namespace={quotaDetails.namespace}
           hideIcon
-          data-testid={`quota-${quota.metadata?.name}`}
+          data-testid={`quota-${quotaDetails.name}`}
         />
       </Td>
       <Td dataLabel={columns[1].title} data-testid="namespace">
         <ResourceLink
           groupVersionKind={namespaceGVK}
-          name={quota.metadata?.namespace}
+          name={quotaDetails.namespace}
           hideIcon
-          data-testid={`namespace-${quota.metadata?.namespace}`}
+          data-testid={`namespace-${quotaDetails.namespace}`}
         />
       </Td>
-      <Td dataLabel={columns[2].title} data-testid="user-management">
-        <ClusterTemplateQuotaAccessSummary quota={quota} />
-      </Td>
+      <Td dataLabel={columns[2].title}>{quotaDetails.numUsers}</Td>
+      <Td dataLabel={columns[2].title}>{quotaDetails.numGroups}</Td>
       <Td dataLabel={columns[3].title} data-testid="cost">
-        <ClusterTemplateQuotaCostSummary quota={quota} />
+        <ClusterTemplateQuotaCostSummary quotaDetails={quotaDetails} />
       </Td>
     </Tr>
   );
 };
 
 const ClusterTemplateQuotasTable: React.FC<{
-  quotas: ClusterTemplateQuota[];
-}> = ({ quotas }) => {
+  quotaDetails: QuotaDetails[];
+}> = ({ quotaDetails }) => {
   const { t } = useTranslation();
   const columns = getTableColumns(t);
   return (
@@ -84,8 +84,13 @@ const ClusterTemplateQuotasTable: React.FC<{
         </Tr>
       </Thead>
       <Tbody>
-        {quotas.map((quota, index) => (
-          <QuotaRow quota={quota} columns={columns} index={index} key={index} />
+        {quotaDetails.map((quotaDetails, index) => (
+          <QuotaRow
+            quotaDetails={quotaDetails}
+            columns={columns}
+            index={index}
+            key={quotaDetails.uid}
+          />
         ))}
       </Tbody>
     </TableComposable>

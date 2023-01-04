@@ -1,6 +1,7 @@
 import { Label } from '@patternfly/react-core';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
+import CellLoader from '../../helpers/CellLoader';
 
 import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInstances';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -10,7 +11,6 @@ import {
   getClusterTemplateVendor,
   isHelmClusterDefinition,
 } from '../../utils/clusterTemplateDataUtils';
-import { LoadingHelper } from '../../utils/utils';
 
 export const ClusterTemplateUsage: React.FC<{
   clusterTemplate: ClusterTemplate;
@@ -20,11 +20,11 @@ export const ClusterTemplateUsage: React.FC<{
     clusterTemplate.metadata?.name,
   );
   return (
-    <LoadingHelper isLoaded={loaded} error={loadError}>
+    <CellLoader loaded={loaded} error={loadError}>
       {t('{{count}} cluster', {
         count: instances.length,
       })}
-    </LoadingHelper>
+    </CellLoader>
   );
 };
 

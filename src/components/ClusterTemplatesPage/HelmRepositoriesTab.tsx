@@ -32,7 +32,6 @@ import {
 import { TFunction } from 'react-i18next';
 import { helmRepoGVK } from '../../constants';
 import { ClusterTemplate, HelmChartRepository, RowProps, TableColumn } from '../../types';
-import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 import {
   useHelmRepositoryIndex,
   getRepoCharts,
@@ -44,7 +43,8 @@ import TableLoader from '../../helpers/TableLoader';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
 import EditHelmRepositoryDialog from '../HelmRepositories/EditHelmRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
-import { LoadingHelper } from '../../utils/utils';
+import CellLoader from '../../helpers/CellLoader';
+import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -157,21 +157,21 @@ export const HelmRepoRow = ({
         {obj.spec.connectionConfig.tlsClientConfig ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].title}>
-        <LoadingHelper isLoaded={repoIndexLoaded} error={repoIndexError}>
+        <CellLoader loaded={repoIndexLoaded} error={repoIndexError}>
           {repoChartsUpdatedAt}
-        </LoadingHelper>
+        </CellLoader>
       </Td>
       <Td dataLabel={columns[4].title}>
-        <LoadingHelper isLoaded={repoIndexLoaded} error={repoIndexError}>
+        <CellLoader loaded={repoIndexLoaded} error={repoIndexError}>
           {repoChartsCount}
-        </LoadingHelper>
+        </CellLoader>
       </Td>
       <Td dataLabel={columns[5].title}>
-        <LoadingHelper isLoaded={templatesLoaded} error={templatesLoadError}>
+        <CellLoader loaded={templatesLoaded} error={templatesLoadError}>
           <Label color="green" icon={<CheckCircleIcon />}>
             {templatesFromRepo.length}
           </Label>
-        </LoadingHelper>
+        </CellLoader>
       </Td>
       <Td dataLabel={columns[6].title}>-</Td>
       <Td isActionCell>
@@ -221,7 +221,7 @@ export const HelmRepoRow = ({
 };
 
 const HelmRepositoriesTab = () => {
-  const [repositories, repositoriesLoaded, repositoriesError] = useHelmRepositories();
+  const [repositories, loaded, error] = useHelmRepositories();
   const helmRepoIndexResult = useHelmRepositoryIndex();
   const clusterTemplatesResult = useClusterTemplates();
   const { t } = useTranslation();
@@ -230,8 +230,8 @@ const HelmRepositoriesTab = () => {
     <Page>
       <PageSection>
         <TableLoader
-          loaded={repositoriesLoaded}
-          error={repositoriesError}
+          loaded={loaded}
+          error={error}
           errorId="helm-repositories-load-error"
           errorMessage={t('The Helm repositories could not be loaded.')}
         >

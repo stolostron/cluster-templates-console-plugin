@@ -33,18 +33,24 @@ export type ApplicationSource = {
   targetRevision?: string;
 };
 
+export type ArgoCDSpec = {
+  source: ApplicationSource;
+  destination: {
+    namespace?: string;
+    server: 'https://kubernetes.default.svc';
+  };
+  project: 'default';
+};
+
 export type ClusterTemplate = K8sResourceCommon & {
   spec: {
     cost: number;
-    clusterDefinition: {
-      source: ApplicationSource;
-      propertyDetails?: ClusterTemplateProperty[];
-    };
+    clusterDefinition: ArgoCDSpec;
     clusterSetup?: {
-      source: ApplicationSource;
+      spec: ArgoCDSpec;
       name: string;
-      propertyDetails?: ClusterTemplateProperty[];
     }[];
+    argocdNamespace: string;
   };
 };
 
@@ -112,10 +118,10 @@ export type HelmRepoIndex = {
   generated: string;
 };
 
-export type ClusterTemplateQuota = K8sResourceCommon & {
+export type Quota = K8sResourceCommon & {
   spec?: {
     budget?: number;
-    allowedTemplates?: {
+    allowedTemplates: {
       name: string;
       count: number;
     }[];
@@ -147,20 +153,28 @@ export type RowProps<D> = {
   obj: D;
 };
 
-export type ClusterTemplateQuotaAccess = {
-  users: string[];
-  groups: string[];
+export type RoleRef = { apiGroup: string; kind: string; name: string };
+
+export type Subject = {
+  kind: 'User' | 'Group';
+  apiGroup: 'rbac.authorization.k8s.io';
+  name: string;
 };
 
-export type ClusterRoleBinding = K8sResourceCommon & {
-  subjects: {
-    kind: 'User' | 'Group';
-    apiGroup: 'rbac.authorization.k8s.io';
-    name: string;
-  }[];
-  roleRef: {
-    apiGroup: 'rbac.authorization.k8s.io';
-    kind: 'ClusterRole';
-    name: string;
-  };
+export type RoleBinding = K8sResourceCommon & {
+  subjects?: Subject[];
+  roleRef: RoleRef;
 };
+
+export type QuotaDetails = {
+  name: string;
+  namespace: string;
+  budget?: number;
+  budgetSpent?: number;
+  numUsers: number;
+  numGroups: number;
+  uid: string;
+};
+
+export type Group = K8sResourceCommon & { users?: string[] };
+export type User = K8sResourceCommon;

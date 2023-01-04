@@ -1,34 +1,11 @@
-import * as React from 'react';
-import { Skeleton } from '@patternfly/react-core';
 import isString from 'lodash/isString';
+import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 
 export const getNavLabelWithCount = (label: string, count?: number) => {
   if (count === undefined) {
     return label;
   }
   return `${label} (${count})`;
-};
-
-type LoadingHelperProps = {
-  isLoaded: boolean;
-  error?: unknown;
-  children: React.ReactNode;
-};
-
-export const LoadingHelper = ({ isLoaded, error, children }: LoadingHelperProps) => {
-  if (!isLoaded) return <Skeleton />;
-  if (error) return <>-</>;
-  return <>{children}</>;
-};
-
-export const getErrorMessage = (error: unknown) => {
-  if (error instanceof Error) {
-    return error.message;
-  }
-  if (isString(error)) {
-    return error;
-  }
-  return 'Unexpected error';
 };
 
 /* istanbul ignore next */
@@ -45,4 +22,17 @@ export const createDownloadFile = (filename: string, content: string, type?: str
   a.download = filename;
   a.dispatchEvent(event);
   window.URL.revokeObjectURL(url);
+};
+
+export const sortByResourceName = <T extends K8sResourceCommon>(crs: T[]) =>
+  crs.sort((cr1, cr2) => (cr1.metadata?.name || '').localeCompare(cr2.metadata?.name || ''));
+
+export const getErrorMessage = (error: unknown) => {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  if (isString(error)) {
+    return error;
+  }
+  return 'Unexpected error';
 };

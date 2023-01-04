@@ -1,47 +1,94 @@
 import * as React from 'react';
 import { Alert, Button, Wizard, WizardContext, WizardFooter } from '@patternfly/react-core';
 import { Formik, useFormikContext } from 'formik';
-import ManageAccessStep from './Steps/ManageAccessStep/ManageAccessStep';
 import ReviewStep from './Steps/ReviewStep/ReviewStep';
-import { WizardFormikValues } from './formikTypes';
+import { StepId, WizardFormikValues } from './types';
 import { useHistory } from 'react-router';
 import { getFormikInitialValues } from './initialValues';
 import { useCreateClusterTemplate } from './useCreateClusterTemplate';
-import { getErrorMessage } from '../../utils/utils';
-import { AccessContextProvider } from './Steps/ManageAccessStep/AccessContextProvider';
-import { NamespacesContextProvider } from './Steps/ManageAccessStep/NamespaceContextProvider';
 
 import TemplateDetailsStep from './Steps/TemplateDetailsStep/TemplateDetailsStep';
+import getWizardValidationSchema from './wizardValidationSchema';
+import { getErrorMessage } from '../../utils/utils';
+import { useTranslation } from '../../hooks/useTranslation';
+import Loader from '../../helpers/Loader';
+import ManageQuotasStep from './Steps/ManageQuotasStep/ManageQuotasStep';
+import Alerts from '../../alerts/Alerts';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
+import InstallationSettingsStep from './Steps/InstallationSettingsStep/InstallationSettingsStep';
+import PostInstallationStep from './Steps/PostInsallationSettingsStep/PostInstallationSettingsStep';
+import { getResourceUrl } from '../../utils/k8s';
+import { clusterTemplateGVK } from '../../constants';
 
-const CustomFooter = ({ error }: { error: unknown }) => {
+const CustomFooter = () => {
   const history = useHistory();
-  const { submitForm, isSubmitting } = useFormikContext();
-  const { activeStep, onNext, onBack } = React.useContext(WizardContext);
+  const { values, isSubmitting, errors, submitForm, setTouched } =
+    useFormikContext<WizardFormikValues>();
+  const [submitError, setSubmitError] = React.useState();
+  const [submitClicked, setSubmitClicked] = React.useState(false);
+  const { activeStep, onBack, onNext } = React.useContext(WizardContext);
+  const { t } = useTranslation();
+  const invalid = !!errors[activeStep.id];
+  const reset = () => {
+    setSubmitError(undefined);
+    setSubmitClicked(false);
+    setTouched({});
+  };
+
+  const onClickSubmit = async () => {
+    if (invalid) {
+      //call submitForm also when there are input errors, so errors will be visible to users
+      //submitForm will set all the fields as touched
+      submitForm();
+      setSubmitClicked(true);
+    } else if (activeStep.id === 'review') {
+      try {
+        await submitForm();
+        history.push(getResourceUrl(clusterTemplateGVK, values.details.name));
+      } catch (err) {
+        setSubmitError(err);
+      }
+    } else {
+      reset();
+      onNext();
+    }
+  };
+
+  const onClickedBack = () => {
+    reset();
+    onBack();
+  };
+
   return (
     <>
-      {error && (
-        <Alert title="Failed to create the cluster template" variant="danger" isInline>
-          {getErrorMessage(error)}
+      <Alerts />
+      {submitError && (
+        <Alert title={t('Failed to create the cluster template')} variant="danger" isInline>
+          {getErrorMessage(submitError)}
         </Alert>
+      )}
+      {submitClicked && invalid && (
+        <Alert title={t('Please fix the form errors')} variant="danger" isInline />
       )}
       <WizardFooter>
         <Button
           variant="primary"
           type="submit"
-          onClick={activeStep.name === 'Review' ? submitForm : onNext}
+          onClick={onClickSubmit}
           isLoading={isSubmitting}
+          isDisabled={submitClicked && invalid}
         >
-          {activeStep.name === 'Review' ? 'Create' : 'Next'}
+          {activeStep.id === StepId.REVIEW ? t('Create') : t('Next')}
         </Button>
         <Button
           variant="secondary"
-          onClick={onBack}
-          isDisabled={activeStep.name === 'Template details'}
+          onClick={onClickedBack}
+          isDisabled={activeStep.id === StepId.DETAILS}
         >
-          Back
+          {t('Back')}
         </Button>
         <Button variant="link" onClick={history.goBack}>
-          Cancel
+          {t('Cancel')}
         </Button>
       </WizardFooter>
     </>
@@ -49,31 +96,44 @@ const CustomFooter = ({ error }: { error: unknown }) => {
 };
 
 const _CreateClusterTemplateWizard = () => {
-  const { createClusterTemplate } = useCreateClusterTemplate();
-  const [error, setError] = React.useState();
+  const [createClusterTemplate, loaded] = useCreateClusterTemplate();
+  const { t } = useTranslation();
+  const reviewStep = (
+    <Loader loaded={loaded}>
+      <ReviewStep />
+    </Loader>
+  );
   const steps = [
-    { name: 'Template details', component: <TemplateDetailsStep /> },
-    { name: 'Manage access', component: <ManageAccessStep /> },
-    { name: 'Review', component: <ReviewStep /> },
+    { name: t('Template details'), component: <TemplateDetailsStep />, id: StepId.DETAILS },
+    { name: t('Installation'), component: <InstallationSettingsStep />, id: StepId.INSTALLATION },
+    {
+      name: t('Post-installation'),
+      component: <PostInstallationStep />,
+      id: StepId.INSTALLATION,
+    },
+    { name: t('Manage quotas'), component: <ManageQuotasStep />, id: StepId.QUOTAS },
+    { name: t('Review'), component: reviewStep, id: StepId.REVIEW },
   ];
   const title = 'Create cluster template';
 
   const onSubmit = async (values: WizardFormikValues) => {
-    try {
-      await createClusterTemplate(values);
-    } catch (err) {
-      setError(err);
-    }
+    await createClusterTemplate(values);
   };
 
+  const validationSchema = React.useMemo(() => getWizardValidationSchema(t), [t]);
+
   return (
-    <Formik<WizardFormikValues> initialValues={getFormikInitialValues()} onSubmit={onSubmit}>
+    <Formik<WizardFormikValues>
+      initialValues={getFormikInitialValues()}
+      onSubmit={onSubmit}
+      validationSchema={validationSchema}
+    >
       <Wizard
         title={title}
         navAriaLabel={`${title} steps`}
         mainAriaLabel={`${title} content`}
         steps={steps}
-        footer={<CustomFooter error={error} />}
+        footer={<CustomFooter />}
         hideClose
       />
     </Formik>
@@ -81,11 +141,9 @@ const _CreateClusterTemplateWizard = () => {
 };
 
 const CreateClusterTemplateWizard = () => (
-  <NamespacesContextProvider>
-    <AccessContextProvider>
-      <_CreateClusterTemplateWizard />
-    </AccessContextProvider>
-  </NamespacesContextProvider>
+  <AlertsContextProvider>
+    <_CreateClusterTemplateWizard />
+  </AlertsContextProvider>
 );
 
 export default CreateClusterTemplateWizard;

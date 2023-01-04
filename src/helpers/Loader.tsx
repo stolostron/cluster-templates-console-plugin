@@ -7,21 +7,23 @@ type PageLoaderProps = {
   children: React.ReactNode;
   loaded?: boolean;
   error?: unknown;
+  loadingState?: React.ReactNode;
 } & Omit<ErrorStateProps, 'error'>;
 
-const DefaultLoader = ({
+const Loader = ({
   loaded = false,
   children,
   error,
+  loadingState = <LoadingState />,
   ...restErrorStateProps
 }: PageLoaderProps) => {
   if (error) {
     return <ErrorState error={error} {...restErrorStateProps} />;
   }
   if (!loaded) {
-    return <LoadingState />;
+    return <>{loadingState}</>;
   }
   return <>{children}</>;
 };
 
-export default DefaultLoader;
+export default Loader;
