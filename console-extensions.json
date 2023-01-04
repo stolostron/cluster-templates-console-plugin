@@ -108,16 +108,6 @@
   {
     "type": "console.page/route",
     "properties": {
-      "path": "/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate/~newRepository",
-      "component": { "$codeRef": "helmRepositoryForm.default" }
-    },
-    "flags": {
-      "required": ["CLUSTER_TEMPLATES_FLAG"]
-    }
-  },
-  {
-    "type": "console.page/route",
-    "properties": {
       "path": ["/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate/:name/edit"],
       "component": { "$codeRef": "editTemplate.default" }
     },

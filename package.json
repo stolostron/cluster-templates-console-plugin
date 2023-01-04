@@ -72,7 +72,6 @@
     "description": "Cluster Templates console plugin",
     "exposedModules": {
       "templates": "./components/ClusterTemplatesPage/ClusterTemplatesPage.tsx",
-      "helmRepositoryForm": "./components/HelmRepositories/HelmRepositoryForm.tsx",
       "createTemplate": "./components/ClusterTemplateCreatePage.tsx",
       "editTemplate": "./components/ClusterTemplateEditPage.tsx",
       "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx"
