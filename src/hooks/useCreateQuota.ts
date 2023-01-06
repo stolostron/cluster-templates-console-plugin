@@ -1,15 +1,14 @@
-import { k8sCreate, K8sResourceCommon, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sCreate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import {
   clusterTemplateQuotaGVK,
   clusterTemplatesRoleRef,
-  namespaceGVK,
   RBAC_API_GROUP,
   roleBindingGVK,
-} from '../../../constants';
-import { useNamespaces } from '../../../hooks/useNamespaces';
-import { Quota, RoleBinding, Subject } from '../../../types';
-import { getApiVersion } from '../../../utils/k8s';
-import { NewQuotaFormikValues } from '../types';
+} from '../constants';
+import { Quota, RoleBinding, Subject } from '../types';
+import { getApiVersion } from '../utils/k8s';
+import { NewQuotaFormikValues } from '../components/ClusterTemplateQuotas/types';
+import { useCreateNamespace } from './useCreateNamespace';
 
 const getQuota = (values: NewQuotaFormikValues): Quota => {
   return {
@@ -22,16 +21,6 @@ const getQuota = (values: NewQuotaFormikValues): Quota => {
     spec: {
       budget: values.hasBudget ? values.budget : undefined,
       allowedTemplates: [],
-    },
-  };
-};
-
-const getNamespace = (name: string): K8sResourceCommon => {
-  return {
-    apiVersion: namespaceGVK.version,
-    kind: namespaceGVK.kind,
-    metadata: {
-      name,
     },
   };
 };
@@ -54,18 +43,12 @@ const getRoleBinding = (namespace: string, users: string[], groups: string[]): R
   roleRef: clusterTemplatesRoleRef,
 });
 
-const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, boolean, unknown] => {
+const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, boolean] => {
   const [roleBindingModel, roleBindingModelLoading] = useK8sModel(roleBindingGVK);
-  const [nsModel, nsModelLoading] = useK8sModel(namespaceGVK);
   const [quotaModel, quotaModelLoading] = useK8sModel(clusterTemplateQuotaGVK);
-  const [namespaces, namespacesLoaded, namespacesError] = useNamespaces();
+  const [createNamespace, createNamespaceLoading] = useCreateNamespace();
   const createQuota = async (values: NewQuotaFormikValues): Promise<Quota> => {
-    if (!namespaces.includes(values.namespace)) {
-      await k8sCreate({
-        data: getNamespace(values.namespace),
-        model: nsModel,
-      });
-    }
+    await createNamespace(values.namespace);
     if (values.users.length || values.groups.length) {
       await k8sCreate({
         data: getRoleBinding(values.namespace, values.users, values.groups),
@@ -74,11 +57,7 @@ const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, bo
     }
     return await k8sCreate({ data: getQuota(values), model: quotaModel });
   };
-  return [
-    createQuota,
-    !roleBindingModelLoading && !quotaModelLoading && !nsModelLoading && namespacesLoaded,
-    namespacesError,
-  ];
+  return [createQuota, !roleBindingModelLoading && !quotaModelLoading && !createNamespaceLoading];
 };
 
 export default useCreateQuota;

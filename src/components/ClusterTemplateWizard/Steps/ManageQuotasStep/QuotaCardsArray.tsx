@@ -4,11 +4,11 @@ import { Button, Divider, Stack, StackItem } from '@patternfly/react-core';
 import { PlusIcon } from '@patternfly/react-icons';
 import { FieldArray, FieldArrayRenderProps, useField } from 'formik';
 import { QuotaFormikValues } from '../../types';
-import { getQuotaFormikInitialValues } from '../../initialValues';
 import QuotaCard from './QuotaCard';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { WithRemoveButton } from '../../../../helpers/WithRemoveButton';
 import '../styles.css';
+import { getNewQuotaFormValues } from '../../../../utils/toWizardFormValues';
 
 const fieldName = 'quotas';
 
@@ -19,7 +19,7 @@ const _QuotaCardsArray = ({ push, remove }: FieldArrayRenderProps) => {
 
   const { t } = useTranslation();
   const onAddQuota = () => {
-    push(getQuotaFormikInitialValues());
+    push(getNewQuotaFormValues());
   };
 
   return (

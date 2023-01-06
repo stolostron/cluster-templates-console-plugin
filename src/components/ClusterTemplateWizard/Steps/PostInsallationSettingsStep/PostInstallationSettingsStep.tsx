@@ -13,13 +13,14 @@ import {
 } from '@patternfly/react-core';
 import { PlusIcon } from '@patternfly/react-icons';
 import { FieldArray, FieldArrayRenderProps, useField } from 'formik';
-import { ArgoCDSpecFormikValues } from '../../types';
-import { getArgoCDSpecFormikInitialValues } from '../../initialValues';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { RemoveButton } from '../../../../helpers/WithRemoveButton';
 import '../styles.css';
-import HelmFields from '../../../fields/HelmFields';
+import HelmFields from '../../../sharedFields/HelmFields';
 import { InputField } from 'formik-pf';
+import PopoverHelpIcon from '../../../../helpers/PopoverHelpIcon';
+import { getNewArgoCDSpecFormValues } from '../../../../utils/toWizardFormValues';
+import { ArgoCDSpecFormikValues } from '../../types';
 
 const fieldName = 'postInstallation';
 
@@ -50,6 +51,13 @@ const ArgoCDSpec = ({
         <InputField
           name={`${fieldName}.destinationNamespace`}
           label={t('Destination namespace')}
+          labelIcon={
+            <PopoverHelpIcon
+              helpText={t(
+                "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
+              )}
+            />
+          }
           helperText={t(
             "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
           )}
@@ -67,7 +75,7 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
 
   const { t } = useTranslation();
   const onAddArgoCDSpec = () => {
-    push(getArgoCDSpecFormikInitialValues());
+    push(getNewArgoCDSpecFormValues());
   };
 
   return (

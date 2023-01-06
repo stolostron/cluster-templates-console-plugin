@@ -5,6 +5,10 @@ import { HelmRepoIndex } from '../types';
 
 export type HelmRepositoryIndexResult = [HelmRepoIndex | undefined, boolean, unknown];
 
+export type HelmRepositoryChartsMap = {
+  [chartName: string]: string[];
+};
+
 export const useHelmRepositoryIndex = (): HelmRepositoryIndexResult => {
   const [repoIndex, setRepoIndex] = React.useState<HelmRepoIndex>();
   const [repoLoaded, setRepoLoaded] = React.useState(false);
@@ -37,3 +41,18 @@ export const getRepoCharts = (index: HelmRepoIndex | undefined, repoName: string
     .reduce((acc, k) => {
       return [...acc, ...(index?.entries?.[k] || [])];
     }, [] as { name: string; version: string; created: string }[]);
+
+export const getRepoChartsMap = (
+  index: HelmRepoIndex | undefined,
+  repoName: string,
+): HelmRepositoryChartsMap => {
+  const map: HelmRepositoryChartsMap = {};
+  const repoCharts = getRepoCharts(index, repoName);
+  for (const chart of repoCharts) {
+    if (!(chart.name in map)) {
+      map[chart.name] = [];
+    }
+    map[chart.name].push(chart.version);
+  }
+  return map;
+};

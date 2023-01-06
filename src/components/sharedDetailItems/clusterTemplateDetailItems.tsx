@@ -1,16 +1,16 @@
+import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import { Label } from '@patternfly/react-core';
 import * as React from 'react';
-import { Link } from 'react-router-dom';
+import { namespaceGVK } from '../../constants';
 import CellLoader from '../../helpers/CellLoader';
 
 import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInstances';
 import { useTranslation } from '../../hooks/useTranslation';
 import { ClusterTemplate, ClusterTemplateVendor } from '../../types';
-import {
-  getClusterDefinitionHelmChart,
-  getClusterTemplateVendor,
-  isHelmClusterDefinition,
-} from '../../utils/clusterTemplateDataUtils';
+import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
+import ArgoCDSpecDetails from './ArgoCDSpecDetails';
+
+const NotAvailable = () => <>-</>;
 
 export const ClusterTemplateUsage: React.FC<{
   clusterTemplate: ClusterTemplate;
@@ -34,7 +34,7 @@ export const ClusterTemplateVendorLabel: React.FC<{
   const { t } = useTranslation();
   const vendor = getClusterTemplateVendor(clusterTemplate);
   if (!vendor) {
-    return <>-</>;
+    return <NotAvailable />;
   }
   const color = vendor === ClusterTemplateVendor.REDHAT ? 'green' : 'purple';
   const labelText =
@@ -42,34 +42,35 @@ export const ClusterTemplateVendorLabel: React.FC<{
   return <Label color={color}>{labelText}</Label>;
 };
 
-export const ClusterTemplateHelmResourceLink: React.FC<{
-  clusterTemplate: ClusterTemplate;
-}> = ({ clusterTemplate }) => {
-  return isHelmClusterDefinition(clusterTemplate) ? (
-    <Link
-      to={{
-        pathname: clusterTemplate.spec.clusterDefinition.source.repoURL,
-      }}
-    >
-      {clusterTemplate.spec.clusterDefinition.source.repoURL}
-    </Link>
-  ) : (
-    <>-</>
-  );
-};
-
-export const ClusterTemplateHelmChart: React.FC<{
-  clusterTemplate: ClusterTemplate;
-}> = ({ clusterTemplate }) => (
-  <>
-    {isHelmClusterDefinition(clusterTemplate)
-      ? getClusterDefinitionHelmChart(clusterTemplate)
-      : '-'}
-  </>
-);
 export const ClusterTemplateCost: React.FC<{
   clusterTemplate: ClusterTemplate;
 }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
   return <>{`${clusterTemplate.spec.cost} / ${t('Per use')}`}</>;
 };
+
+export const ArgocdNamespace = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => (
+  <ResourceLink
+    hideIcon
+    groupVersionKind={namespaceGVK}
+    name={clusterTemplate.spec.argocdNamespace}
+  />
+);
+
+export const PostInstallationDetails = ({
+  clusterTemplate,
+}: {
+  clusterTemplate: ClusterTemplate;
+}) => {
+  return clusterTemplate.spec.clusterSetup ? (
+    <>
+      {clusterTemplate.spec.clusterSetup.map(({ spec }) => (
+        <ArgoCDSpecDetails argocdSpec={spec} key={spec.source.repoURL} />
+      ))}
+    </>
+  ) : null;
+};
+
+export const InstallationDetails = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => (
+  <ArgoCDSpecDetails argocdSpec={clusterTemplate.spec.clusterDefinition} />
+);

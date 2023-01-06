@@ -22,7 +22,7 @@ import { UsersField, GroupsField } from './AccessFields';
 import getNewQuotaValidationSchema from './newQuotaValidationSchema';
 import BudgetField from './BudgetField';
 import Loader from '../../../helpers/Loader';
-import useCreateQuota from './useCreateQuota';
+import useCreateQuota from '../../../hooks/useCreateQuota';
 import { AlertsContextProvider } from '../../../alerts/AlertsContext';
 import Alerts from '../../../alerts/Alerts';
 import QuotaNamespaceField from './QuotaNamespaceField';
@@ -78,7 +78,7 @@ const NewQuotaDialog = ({
   isOpen: boolean;
 }) => {
   const { t } = useTranslation();
-  const [createQuota, loaded, createQuotaError] = useCreateQuota();
+  const [createQuota, loaded] = useCreateQuota();
 
   const [error, setError] = React.useState<unknown>();
   const onSubmit = async (values: NewQuotaFormikValues) => {
@@ -110,7 +110,7 @@ const NewQuotaDialog = ({
           validationSchema={getNewQuotaValidationSchema(t, clusterTemplateCost)}
         >
           {({ isSubmitting, handleSubmit }) => (
-            <Loader loaded={loaded} error={createQuotaError}>
+            <Loader loaded={loaded}>
               <ModalBoxBody>
                 <NewQuotaFormFields clusterTemplateCost={clusterTemplateCost} />
                 <Alerts />

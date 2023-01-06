@@ -8,12 +8,18 @@ export enum StepId {
   REVIEW = 'review',
 }
 
+export interface RepoOptionObject extends SelectOptionObject {
+  resourceName: string;
+  url: string;
+}
+
 export type ArgoCDSpecFormikValues = {
-  repoURL: string;
+  repo: RepoOptionObject;
   chart: string;
   version: string;
   destinationNamespace?: string;
 };
+
 export interface QuotaOptionObject extends SelectOptionObject {
   name: string;
   namespace: string;
@@ -31,9 +37,15 @@ export type DetailsFormikValues = {
   cost: number;
 };
 
+export type InstallationFormikValues = {
+  useInstanceNamespace: boolean;
+  spec: ArgoCDSpecFormikValues;
+};
+
 export type WizardFormikValues = {
   details: DetailsFormikValues;
   quotas: QuotaFormikValues[];
-  installation: ArgoCDSpecFormikValues;
+  installation: InstallationFormikValues;
   postInstallation: ArgoCDSpecFormikValues[];
+  isCreateFlow: boolean;
 };

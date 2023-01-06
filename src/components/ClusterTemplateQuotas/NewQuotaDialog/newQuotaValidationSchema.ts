@@ -4,8 +4,8 @@ import { nameSchema } from '../../../utils/commonValidationSchemas';
 
 const getNewQuotaValidationSchema = (t: TFunction, clusterTemplateCost: number) =>
   objectSchema().shape({
-    name: nameSchema(t),
-    namespace: nameSchema(t),
+    name: nameSchema(t).required(t('Required')),
+    namespace: nameSchema(t).required(t('Required')),
     budget: numberSchema().when('hasBudget', {
       is: true,
       then: (schema) =>
