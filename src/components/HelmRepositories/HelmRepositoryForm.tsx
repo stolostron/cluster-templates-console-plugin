@@ -1,96 +1,136 @@
-import * as React from 'react';
-import { k8sCreate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import {
-  Form,
-  Button,
+  ModalBoxBody,
   TextInputTypes,
   Alert,
-  ActionGroup,
-  PageSection,
-  Grid,
-  GridItem,
-  TextContent,
-  Text,
+  AlertVariant,
+  ModalBoxFooter,
+  Button,
+  ButtonVariant,
+  Form,
 } from '@patternfly/react-core';
-import { Formik } from 'formik';
-import { InputField } from 'formik-pf';
-import { useHistory } from 'react-router-dom';
-import { helmRepoGVK, TEMPLATES_HELM_REPO_LABEL } from '../../constants';
+import { FormikProps } from 'formik';
+import { InputField, TextAreaField, CheckboxField, SelectField } from 'formik-pf';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { HelmChartRepository, Secret, ConfigMap } from '../../types';
+import { HelmRepositoryFormValues, FormError } from './types';
+import { useFieldChangeHandlers } from './utils';
 
-const HelmRepositoryForm = () => {
-  const [error, setError] = React.useState();
-  const [model] = useK8sModel(helmRepoGVK);
-  const history = useHistory();
+type FormikContentProps = FormikProps<HelmRepositoryFormValues> & {
+  helmChartRepository?: HelmChartRepository;
+  availableTlsSecrets: Secret[];
+  configMaps: ConfigMap[];
+  closeDialog: () => void;
+  formError?: FormError;
+};
+
+const HelmRepositoryForm = ({
+  helmChartRepository,
+  availableTlsSecrets,
+  configMaps,
+  formError,
+  closeDialog,
+  ...formikProps
+}: FormikContentProps) => {
+  const { t } = useTranslation();
+  const { errors, values, isSubmitting, isValid, handleSubmit } = formikProps;
+  useFieldChangeHandlers(formikProps, configMaps, availableTlsSecrets);
+
   return (
     <>
-      <PageSection>
-        <TextContent>
-          <Text component="h1">Create HELM Repository</Text>
-        </TextContent>
-      </PageSection>
-      <PageSection>
-        <Grid>
-          <GridItem span={6}>
-            <Formik
-              initialValues={{ name: '', url: '' }}
-              onSubmit={async (values) => {
-                setError(undefined);
-                try {
-                  await k8sCreate({
-                    model,
-                    data: {
-                      apiVersion: 'helm.openshift.io/v1beta1',
-                      kind: 'HelmChartRepository',
-                      metadata: {
-                        name: values.name,
-                        labels: {
-                          [TEMPLATES_HELM_REPO_LABEL]: 'true',
-                        },
-                      },
-                      spec: {
-                        connectionConfig: {
-                          url: values.url,
-                        },
-                      },
-                    },
-                  });
-                  history.goBack();
-                } catch (e) {
-                  setError(e);
-                }
-              }}
-            >
-              {({ handleSubmit }) => (
-                <Form onSubmit={handleSubmit}>
-                  <InputField
-                    fieldId="name"
-                    isRequired
-                    name="name"
-                    label="Name"
-                    type={TextInputTypes.text}
-                    placeholder="Enter your name"
-                  />
-                  <InputField
-                    fieldId="url"
-                    isRequired
-                    name="url"
-                    label="URL"
-                    type={TextInputTypes.text}
-                    placeholder="Repository URL"
-                  />
-                  {error && <Alert title="error" />}
-                  <ActionGroup>
-                    <Button type="submit">Create</Button>
-                    <Button variant="link" onClick={history.goBack}>
-                      Cancel
-                    </Button>
-                  </ActionGroup>
-                </Form>
-              )}
-            </Formik>
-          </GridItem>
-        </Grid>
-      </PageSection>
+      <ModalBoxBody>
+        <Form data-testid="helm-repo-form" onSubmit={handleSubmit}>
+          <InputField
+            fieldId="name"
+            name="name"
+            label={t('Name')}
+            type={TextInputTypes.text}
+            helperTextInvalid={errors.name}
+            isDisabled={!!helmChartRepository}
+            isRequired
+          />
+          <InputField
+            fieldId="url"
+            name="url"
+            label={t('HELM chart repository URL')}
+            type={TextInputTypes.text}
+            placeholder="Repository URL"
+            helperTextInvalid={errors.url}
+            isRequired
+          />
+          <TextAreaField fieldId="description" name="description" label={t('Description')} />
+          <CheckboxField
+            fieldId="useCredentials"
+            name="useCredentials"
+            label={t('Requires authentication')}
+            helperText={t(
+              'Add credentials and custom certificate authority (CA) certificates to connect to private helm chart repository.',
+            )}
+          />
+          {values.useCredentials && (
+            <>
+              <SelectField
+                name="existingConfigMapName"
+                fieldId="existingConfigMapName"
+                label={t('CA certificate config map')}
+                placeholder={t('Select a ConfigMap')}
+                options={configMaps.map((cm) => ({
+                  value: cm.metadata?.name || '',
+                  disabled: false,
+                }))}
+              />
+              <TextAreaField
+                fieldId="caCertificate"
+                name="caCertificate"
+                label={t('CA certificate')}
+                helperTextInvalid={errors.tlsClientKey}
+                isRequired
+              />
+              <SelectField
+                name="existingSecretName"
+                fieldId="existingSecretName"
+                label={t('TLS config secret')}
+                placeholder={t('Select a credential')}
+                options={availableTlsSecrets.map((secret) => ({
+                  value: secret.metadata?.name || '',
+                  disabled: false,
+                }))}
+              />
+              <TextAreaField
+                fieldId="tlsClientCert"
+                name="tlsClientCert"
+                label={t('TLS client certificate')}
+                helperTextInvalid={errors.tlsClientCert}
+                isRequired
+              />
+              <TextAreaField
+                fieldId="tlsClientKey"
+                name="tlsClientKey"
+                label={t('TLS client key')}
+                helperTextInvalid={errors.tlsClientKey}
+                isRequired
+              />
+            </>
+          )}
+          {formError && (
+            <Alert variant={AlertVariant.danger} title={formError?.title} isInline>
+              {formError?.message}
+            </Alert>
+          )}
+        </Form>
+      </ModalBoxBody>
+      <ModalBoxFooter>
+        <Button
+          onClick={() => handleSubmit()}
+          variant={ButtonVariant.primary}
+          isDisabled={isSubmitting || !isValid}
+        >
+          {t('Submit')}
+        </Button>
+        <Button onClick={closeDialog} variant={ButtonVariant.link}>
+          {t('Cancel')}
+        </Button>
+      </ModalBoxFooter>
     </>
   );
 };

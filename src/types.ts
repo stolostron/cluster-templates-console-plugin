@@ -7,6 +7,9 @@ export enum ClusterTemplateVendor {
 
 export type HelmChartRepository = K8sResourceCommon & {
   spec: {
+    description?: string;
+    disabled?: false;
+    name?: string;
     connectionConfig: {
       url: string;
       tlsClientConfig?: { name: string };

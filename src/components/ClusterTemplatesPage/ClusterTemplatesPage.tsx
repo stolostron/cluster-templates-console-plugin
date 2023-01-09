@@ -11,6 +11,11 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { getNavLabelWithCount } from '../../utils/utils';
 import { getReference, getResourceUrl } from '../../utils/k8s';
 import { useHelmRepositoriesCount } from '../../hooks/useHelmRepositories';
+import useDialogsReducer from '../../hooks/useDialogsReducer';
+import NewHelmRepositoryDialog from '../HelmRepositories/NewHelmRepositoryDialog';
+
+type ActionDialogIds = 'newHelmRepositoryDialog';
+const actionDialogIds: ActionDialogIds[] = ['newHelmRepositoryDialog'];
 
 const useActiveTab = () => {
   const { search } = useLocation();
@@ -27,6 +32,7 @@ const ClusterTemplatesPage = () => {
   const templatesCount = useClusterTemplatesCount();
   const helmRepositoriesCount = useHelmRepositoriesCount();
   const activeTab = useActiveTab();
+  const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(actionDialogIds);
 
   const actionItems = React.useMemo(
     () => ({
@@ -52,7 +58,7 @@ const ClusterTemplatesPage = () => {
         history.push(`${getResourceUrl(clusterTemplateGVK)}/~new`);
         break;
       case 'NEW_HELM_CHART_REPOSITORY':
-        history.push(`${getResourceUrl(clusterTemplateGVK)}/~newRepository`);
+        openDialog('newHelmRepositoryDialog');
         break;
     }
   };
@@ -92,6 +98,9 @@ const ClusterTemplatesPage = () => {
           />
         </Tabs>
         {activeTab === 'repositories' ? <HelmRepositoriesTab /> : <ClusterTemplatesTab />}
+        {isDialogOpen('newHelmRepositoryDialog') && (
+          <NewHelmRepositoryDialog closeDialog={() => closeDialog('newHelmRepositoryDialog')} />
+        )}
       </div>
     </>
   );

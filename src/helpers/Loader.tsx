@@ -1,9 +1,8 @@
-/* Copyright Contributors to the Open Cluster Management project */
 import * as React from 'react';
 import ErrorState, { ErrorStateProps } from './ErrorState';
 import { LoadingState } from './LoadingState';
 
-type PageLoaderProps = {
+export type LoaderProps = {
   children: React.ReactNode;
   loaded?: boolean;
   error?: unknown;
@@ -16,7 +15,7 @@ const Loader = ({
   error,
   loadingState = <LoadingState />,
   ...restErrorStateProps
-}: PageLoaderProps) => {
+}: LoaderProps) => {
   if (error) {
     return <ErrorState error={error} {...restErrorStateProps} />;
   }

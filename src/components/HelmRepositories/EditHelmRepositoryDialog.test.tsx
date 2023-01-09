@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import EditHelmRepositoryDialog, {
-  EditHelmRepoCredsValues,
+  HelmRepositoryFormValues,
   getDecodedSecretData,
   getDefaultConfigMapName,
   getDefaultSecretName,
@@ -165,7 +165,7 @@ describe('getDecodedSecretData', () => {
 
 describe('getInitialValues', () => {
   test('returns initial form values for helm chart repository with credentials', () => {
-    const expected: EditHelmRepoCredsValues = {
+    const expected: HelmRepositoryFormValues = {
       url: 'https://rawagner.github.io/helm-demo/index.yaml',
       useCredentials: true,
       existingSecretName: 'with-creds-cluster-templates-repo-tls-configs',
@@ -179,7 +179,7 @@ describe('getInitialValues', () => {
     ).toEqual(expected);
   });
   test('returns initial form values for helm chart repository with no credentials', () => {
-    const expected: EditHelmRepoCredsValues = {
+    const expected: HelmRepositoryFormValues = {
       url: 'https://rawagner.github.io/helm-demo/index.yaml',
       useCredentials: false,
       existingSecretName: '',
