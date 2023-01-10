@@ -99,6 +99,24 @@ OC_PASS=<password>
 3. `yarn run start`
 4. Navigate to <http://localhost:9000/example>
 
+### Running and updating the cluster as a service operator
+
+#### Install/update the operator
+
+1. Install `operator-sdk` (<https://sdk.operatorframework.io/docs/installation/>)
+2. `oc login` to the development cluster
+3. `oc project cluster-aas-operator`
+4. `operator-sdk run bundle quay.io/stolostron/cluster-templates-bundle:2.7.0-125bb4a8e82d8bce3e66ff4f083cf63e24292bbf --timeout 5m` (Use desired version from <https://quay.io/repository/stolostron/cluster-templates-bundle?tab=tags>)
+5. Once the operator bundle is installed, there is a service called `cluster-aas-operator-repo-bridge-service` in the `cluster-aas-operator` namespace
+
+#### Setup proxy to the bridge service
+
+To allow the development UI connecting to the bridge service via proxy, the service needs to be exposed via a route:
+
+`oc process -f scripts/start-ocp-console/ocp-console-oauth-client.yaml | oc apply -f -`
+
+Available endpoints are defined here: <https://github.com/stolostron/cluster-templates-operator/blob/main/bridge/server.go#L175-L176>
+
 ## Docker image
 
 Before you can deploy your plugin on a cluster, you must build an image and
