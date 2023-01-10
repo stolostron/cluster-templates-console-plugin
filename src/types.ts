@@ -144,6 +144,18 @@ export type Secret = K8sResourceCommon & {
   type?: string;
 };
 
+export type ArgoCDSecretData = {
+  name?: string;
+  url?: string;
+  description?: string;
+  username?: string;
+  password?: string;
+  project?: string;
+  tlsClientCertData?: string;
+  tlsClientCertKey?: string;
+  type?: 'helm' | 'git';
+};
+
 export type ConfigMap = {
   data?: { [key: string]: string };
 } & K8sResourceCommon;
