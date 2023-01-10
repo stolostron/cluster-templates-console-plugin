@@ -30,6 +30,7 @@ BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER=$(oc -n openshift-config-managed get co
 set -e
 BRIDGE_K8S_AUTH_BEARER_TOKEN=$(oc whoami --show-token 2>/dev/null)
 BRIDGE_USER_SETTINGS_LOCATION="localstorage"
+CLUSTER_DOMAIN=$(oc get ingresses.config/cluster -o jsonpath={.spec.domain} 2>/dev/null)
 
 # Don't fail if the cluster doesn't have gitops.
 set +e
@@ -52,7 +53,7 @@ if [ -x "$(command -v podman)" ]; then
           --pull always --rm --network=host \
           -v $PWD/ocp-console/console-client-secret:/tmp/console-client-secret:Z \
           -v $PWD/ocp-console/ca.crt:/tmp/ca.crt:Z \
-          --env BRIDGE_PLUGIN_PROXY='{"services":[{"consoleAPIPath":"/api/proxy/plugin/clustertemplates-plugin/repositories/","endpoint":"https://claas-helm-repo-cluster-aas-operator.apps.rawagner3.cyty.p1.openshiftapps.com","authorize": true}]}' \
+          --env BRIDGE_PLUGIN_PROXY='{"services":[{"consoleAPIPath":"/api/proxy/plugin/clustertemplates-plugin/repositories/","endpoint":"https://claas-helm-repo-cluster-aas-operator.'${CLUSTER_DOMAIN}'","authorize": true}]}' \
           --env-file <(set | grep BRIDGE) \
           $CONSOLE_IMAGE
     else
@@ -61,7 +62,7 @@ if [ -x "$(command -v podman)" ]; then
           --pull always --rm -p "$CONSOLE_PORT":9000 \
           -v $PWD/ocp-console/console-client-secret:/tmp/console-client-secret \
           -v $PWD/ocp-console/ca.crt:/tmp/ca.crt \
-          --env BRIDGE_PLUGIN_PROXY='{"services":[{"consoleAPIPath":"/api/proxy/plugin/clustertemplates-plugin/repositories/","endpoint":"https://claas-helm-repo-cluster-aas-operator.apps.rawagner3.cyty.p1.openshiftapps.com","authorize": true}]}' \
+          --env BRIDGE_PLUGIN_PROXY='{"services":[{"consoleAPIPath":"/api/proxy/plugin/clustertemplates-plugin/repositories/","endpoint":"https://claas-helm-repo-cluster-aas-operator.'${CLUSTER_DOMAIN}'","authorize": true}]}' \
           --env-file <(set | grep BRIDGE) \
           $CONSOLE_IMAGE
     fi
@@ -71,7 +72,7 @@ else
       --pull always --rm -p "$CONSOLE_PORT":9000 \
       -v $PWD/ocp-console/console-client-secret:/tmp/console-client-secret \
       -v $PWD/ocp-console/ca.crt:/tmp/ca.crt \
-      --env BRIDGE_PLUGIN_PROXY='{"services":[{"consoleAPIPath":"/api/proxy/plugin/clustertemplates-plugin/repositories/","endpoint":"https://claas-helm-repo-cluster-aas-operator.apps.rawagner3.cyty.p1.openshiftapps.com","authorize": true}]}' \
+      --env BRIDGE_PLUGIN_PROXY='{"services":[{"consoleAPIPath":"/api/proxy/plugin/clustertemplates-plugin/repositories/","endpoint":"https://claas-helm-repo-cluster-aas-operator.'${CLUSTER_DOMAIN}'","authorize": true}]}' \
       --env-file <(set | grep BRIDGE) \
       $CONSOLE_IMAGE
 fi
