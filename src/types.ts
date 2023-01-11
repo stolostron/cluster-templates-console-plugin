@@ -144,6 +144,10 @@ export type Secret = K8sResourceCommon & {
   type?: string;
 };
 
+export type DecodedSecret<DecodedDataType> = Omit<Secret, 'data'> & {
+  data?: DecodedDataType;
+};
+
 export type ArgoCDSecretData = {
   name?: string;
   url?: string;
@@ -154,6 +158,7 @@ export type ArgoCDSecretData = {
   tlsClientCertData?: string;
   tlsClientCertKey?: string;
   type?: 'helm' | 'git';
+  insecure?: boolean;
 };
 
 export type ConfigMap = {

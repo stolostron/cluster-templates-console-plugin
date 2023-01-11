@@ -21,9 +21,7 @@ export const useArgoCDRepositories = (): ArgoCDRepositoryListResult => {
     const fetch = async () => {
       try {
         const res = await consoleFetch(REPOSITORIES_ENDPOINT);
-        console.log('res', res);
         const yaml = await res.text();
-        console.log('yaml', yaml);
         setRepoList(load(yaml) as HelmRepoIndex);
       } catch (e) {
         setError(e);
@@ -48,9 +46,7 @@ export const useArgoCDRepository = (repositoryName: string): ArgoCDRepositoryRes
     const fetch = async () => {
       try {
         const res = await consoleFetch(getRepositoryEndpoint(repositoryName));
-        console.log('res', res);
         const yaml = await res.text();
-        console.log('yaml', yaml);
         setRepository(load(yaml) as HelmRepoIndex);
       } catch (e) {
         setError(e);

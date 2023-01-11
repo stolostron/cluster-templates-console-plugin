@@ -1,7 +1,7 @@
 import { useK8sWatchResource, WatchK8sResult } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { ARGOCD_NAMESPACE, secretGVK } from '../constants';
-import { ArgoCDSecretData, Secret } from '../types';
+import { ArgoCDSecretData, DecodedSecret, Secret } from '../types';
 import { getDecodedSecretData } from '../utils/secrets';
 
 const initResource = {
@@ -11,7 +11,7 @@ const initResource = {
   selector: { matchLabels: { 'argocd.argoproj.io/secret-type': 'repository' } },
 };
 
-export const useArgoCDSecrets = (): WatchK8sResult<Secret[]> => {
+export const useArgoCDSecrets = (): WatchK8sResult<DecodedSecret<ArgoCDSecretData>[]> => {
   const [secrets, loaded, loadError] = useK8sWatchResource<Secret[]>(initResource);
 
   const decodedSecrets = secrets.map((secret) => ({
@@ -27,7 +27,9 @@ export const useArgoCDSecretsCount = () => {
   return loaded && !loadError ? secrets.length : undefined;
 };
 
-export const useArgoCDSecretByRepoUrl = (repoUrl: string): [Secret, boolean, unknown] => {
+export const useArgoCDSecretByRepoUrl = (
+  repoUrl: string,
+): [DecodedSecret<ArgoCDSecretData>, boolean, unknown] => {
   const [secrets, loaded, loadError] = useArgoCDSecrets();
   const secret = React.useMemo(
     () => secrets.find((secret) => secret.data.url === repoUrl),

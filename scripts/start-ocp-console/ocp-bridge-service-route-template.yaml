@@ -1,0 +1,30 @@
+apiVersion: template.openshift.io/v1
+kind: Template
+metadata:
+  name: ocp-bridge-service-route-template
+objects:
+  - apiVersion: route.openshift.io/v1
+    kind: Route
+    metadata:
+      name: cluster-aas-operator-repo-bridge-service-route
+      namespace: cluster-aas-operator
+      labels:
+        caas-repo-bridge: 'true'
+        operators.coreos.com/cluster-aas-operator.cluster-aas-operator: ''
+      annotations:
+        openshift.io/host.generated: 'true'
+    spec:
+      host: claas-helm-repo-cluster-aas-operator.${DOMAIN}
+      to:
+        kind: Service
+        name: cluster-aas-operator-repo-bridge-service
+        weight: 100
+      port:
+        targetPort: https
+      tls:
+        termination: passthrough
+        insecureEdgeTerminationPolicy: None
+      wildcardPolicy: None
+parameters:
+  - description: Cluster default ingress domain
+    name: DOMAIN
