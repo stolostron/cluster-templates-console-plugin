@@ -11,9 +11,9 @@ import {
 } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import { InputField, TextAreaField, CheckboxField } from 'formik-pf';
-import { useTranslation } from 'react-i18next';
 import { DecodedSecret, ArgoCDSecretData } from '../../types';
 import { FormError, RepositoryFormValues } from './types';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type RepositoryFormProps = FormikProps<RepositoryFormValues> & {
   argoCDSecret?: DecodedSecret<ArgoCDSecretData>;
@@ -107,10 +107,11 @@ const RepositoryForm = ({
           onClick={() => handleSubmit()}
           variant={ButtonVariant.primary}
           isDisabled={isSubmitting || !isValid}
+          isLoading={isSubmitting}
         >
           {t('Submit')}
         </Button>
-        <Button onClick={closeDialog} variant={ButtonVariant.link}>
+        <Button onClick={() => closeDialog()} variant={ButtonVariant.link}>
           {t('Cancel')}
         </Button>
       </ModalBoxFooter>

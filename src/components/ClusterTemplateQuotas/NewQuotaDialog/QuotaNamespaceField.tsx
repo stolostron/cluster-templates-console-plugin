@@ -1,42 +1,24 @@
 import React from 'react';
-import { TFunction } from 'react-i18next';
 import { useNamespaces } from '../../../hooks/useNamespaces';
-import { QuotasData, useQuotas } from '../../../hooks/useQuotas';
 import PopoverHelpIcon from '../../../helpers/PopoverHelpIcon';
 import SelectField, { SelectInputOption } from '../../../helpers/SelectField';
 import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
 import { useTranslation } from '../../../hooks/useTranslation';
 
-const getNamespaceOptions = (
-  namespaces: string[],
-  quotasData: QuotasData,
-  t: TFunction,
-): SelectInputOption[] => {
-  return namespaces.sort().map((namespace: string) => {
-    const namespaceHasQuota = quotasData.namespaceHasQuota(namespace);
-    const ret: SelectInputOption = {
-      value: namespace,
-      disabled: namespaceHasQuota,
-      description: namespaceHasQuota
-        ? t('This namespace already has a quota associated to it')
-        : undefined,
-    };
-    return ret;
-  });
-};
+const getNamespaceOptions = (namespaces: string[]): SelectInputOption[] =>
+  namespaces
+    .sort((n1, n2) => n1.localeCompare(n2))
+    .map((name) => ({
+      value: name,
+      disabled: false,
+    }));
 
 const QuotaNamespaceField = () => {
   const { t } = useTranslation();
   const [namespaces, namespacesLoaded, namespaceError] = useNamespaces();
+  const options = React.useMemo(() => getNamespaceOptions(namespaces), [namespaces]);
   // t('Failed to load namespace options')
   useAddAlertOnError(namespaceError, 'Failed to load namespace options');
-  const [quotasData, quotasLoaded, quotasError] = useQuotas();
-  // t('Failed to load quotas')
-  useAddAlertOnError(quotasError, 'Failed to load quotas');
-  const options = React.useMemo(
-    () => getNamespaceOptions(namespaces, quotasData, t),
-    [namespaces, quotasData, t],
-  );
   return (
     <SelectField
       name="namespace"
@@ -44,16 +26,16 @@ const QuotaNamespaceField = () => {
       labelIcon={
         <PopoverHelpIcon
           helpText={t(
-            'Set the namespace from the list of available namespaces, or enter a name to create a namespace. Each namespace can only have one quota.',
+            'Each namespace can only have one quota, only available ones appear in the list.',
           )}
         />
       }
       isRequired
       options={options}
       isCreatable={true}
-      placeholder={t('Enter namespace')}
-      isDisabled={!!quotasError || !!namespaceError}
-      loadingVariant={quotasLoaded && namespacesLoaded ? undefined : 'spinner'}
+      placeholderText={t('Enter a namespace')}
+      isDisabled={!!namespaceError}
+      loadingVariant={namespacesLoaded ? undefined : 'spinner'}
     />
   );
 };

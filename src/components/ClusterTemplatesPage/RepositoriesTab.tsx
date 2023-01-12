@@ -38,7 +38,7 @@ import {
   RowProps,
   TableColumn,
 } from '../../types';
-import { getRepoCharts } from '../../hooks/useHelmChartRepositories';
+import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
 import TableLoader from '../../helpers/TableLoader';
@@ -114,7 +114,8 @@ export const RepositoryRow = ({
 
   const repository = repositories.find((r) => r.url === obj.data?.url);
 
-  const repoChartsCount = repository?.index ? getRepoCharts(repository.index).length ?? '-' : '-';
+  const numCharts = getNumRepoCharts(repository);
+  const repoChartsCount = numCharts || '-';
 
   const repoChartsUpdatedAt = repository?.index
     ? new Date(repository.index.generated).toLocaleString()

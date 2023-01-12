@@ -43,6 +43,7 @@
     "identity-obj-proxy": "^3.0.0",
     "jest": "^29.2.1",
     "jest-environment-jsdom": "^29.2.1",
+    "monaco-editor-webpack-plugin": "^7.0.1",
     "prettier": "^2.7.1",
     "prettier-stylelint": "^0.4.2",
     "react": "^17.0.1",
@@ -51,7 +52,7 @@
     "react-i18next": "^11.7.3",
     "react-router": "5.2.0",
     "react-router-dom": "5.2.0",
-    "showdown": "^2.1.0",
+    "showdown": "1.8.6",
     "style-loader": "^3.3.1",
     "stylelint": "^14.9.1",
     "stylelint-config-prettier": "^9.0.3",
@@ -80,14 +81,20 @@
     }
   },
   "dependencies": {
+    "@openshift-console/plugin-shared": "^0.0.3",
+    "@patternfly/react-code-editor": "4.82.82",
     "@patternfly/react-icons": "^4.92.6",
     "@patternfly/react-table": "^4.111.4",
+    "@types/humanize-plus": "^1.8.0",
     "classnames": "2.2.6",
     "formik": "^2.2.9",
     "formik-pf": "^0.0.1-alpha9",
+    "humanize-plus": "^1.8.2",
     "i18next": "^21.8.14",
     "js-yaml": "4.1.0",
     "lodash": "4.17.21",
+    "monaco-editor-core": "^0.34.1",
+    "react-monaco-editor": "^0.41.2",
     "recoil": "^0.7.6",
     "yup": "^0.32.11"
   }

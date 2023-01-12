@@ -1,8 +1,7 @@
 import React from 'react';
 import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
-import { secretGVK } from '../../constants';
 import CellLoader from '../../helpers/CellLoader';
-import InlineResourceLink from '../../helpers/InlineResourceLink';
+import { InlineLinkButton } from '../../helpers/Links';
 import { ArgoCDSpec } from '../../types';
 import { Text } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -26,7 +25,7 @@ const ArgoCDSpecDetails = ({ argocdSpec }: { argocdSpec: ArgoCDSpec }) => {
     <CellLoader loaded={loaded} error={error}>
       {secret && secret.metadata?.name ? (
         <Text>
-          <InlineResourceLink groupVersionKind={secretGVK} name={secret.metadata?.name} />
+          <InlineLinkButton text={secret.metadata?.name} url={argocdSpec.source.repoURL} />
           {argocdSpec.source.chart && <span> / {argocdSpec.source.chart}</span>}
           {argocdSpec.source.targetRevision && <span> / {argocdSpec.source.targetRevision}</span>}
         </Text>

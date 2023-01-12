@@ -1,3 +1,4 @@
+import { Stack } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { CheckboxField } from 'formik-pf';
 import React from 'react';
@@ -6,6 +7,7 @@ import PopoverHelpIcon from '../../../../helpers/PopoverHelpIcon';
 import SelectField, { SelectInputOption } from '../../../../helpers/SelectField';
 import { useNamespaces } from '../../../../hooks/useNamespaces';
 import { useTranslation } from '../../../../hooks/useTranslation';
+import '../styles.css';
 
 const getNamespaceOptions = (namespaces: string[]): SelectInputOption[] =>
   namespaces
@@ -30,7 +32,7 @@ const DestinationNamespaceField = () => {
     }
   }, [useInstanceNamespace]);
   return (
-    <>
+    <Stack hasGutter className="installation-destination-namespace">
       <SelectField
         name={'installation.spec.destinationNamespace'}
         label={t('Destination namespace')}
@@ -46,13 +48,14 @@ const DestinationNamespaceField = () => {
         loadingVariant={loaded ? undefined : 'spinner'}
         isDisabled={useInstanceNamespace}
         isCreatable={true}
+        placeholderText={useInstanceNamespace ? undefined : t('Enter a namespace')}
       />
       <CheckboxField
         name={useInstanceNamespaceFieldName}
         fieldId={useInstanceNamespaceFieldName}
         label={t('Use the same as the cluster template instance')}
       />
-    </>
+    </Stack>
   );
 };
 

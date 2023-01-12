@@ -5,19 +5,6 @@ export enum ClusterTemplateVendor {
   REDHAT = 'RedHat',
 }
 
-export type HelmChartRepository = K8sResourceCommon & {
-  spec: {
-    description?: string;
-    disabled?: false;
-    name?: string;
-    connectionConfig: {
-      url: string;
-      tlsClientConfig?: { name: string };
-      ca?: { name: string };
-    };
-  };
-};
-
 export type ClusterTemplateProperty = {
   description: string;
   name: string;
@@ -40,9 +27,9 @@ export type ArgoCDSpec = {
   source: ApplicationSource;
   destination: {
     namespace?: string;
-    server: 'https://kubernetes.default.svc';
+    server: string;
   };
-  project: 'default';
+  project: string;
 };
 
 export type ClusterTemplate = K8sResourceCommon & {
@@ -53,7 +40,6 @@ export type ClusterTemplate = K8sResourceCommon & {
       spec: ArgoCDSpec;
       name: string;
     }[];
-    argocdNamespace: string;
   };
 };
 
@@ -102,7 +88,6 @@ export type ClusterTemplateInstance = K8sResourceCommon & {
 
 export type HelmRepoIndexChartEntry = {
   annotations?: { [key in string]: string };
-  name: string;
   created: string;
   apiVersion: string;
   appVersion: string;
@@ -113,12 +98,19 @@ export type HelmRepoIndexChartEntry = {
   version: string;
 };
 
+export type HelmRepositoryChartEntries = { [key: string]: HelmRepoIndexChartEntry[] };
+
 export type HelmRepoIndex = {
   apiVersion: string;
-  entries: {
-    [key: string]: HelmRepoIndexChartEntry[];
-  };
+  entries: HelmRepositoryChartEntries;
   generated: string;
+};
+
+export type HelmRepository = {
+  name: string;
+  url: string;
+  index?: HelmRepoIndex;
+  error?: string;
 };
 
 export type Quota = K8sResourceCommon & {

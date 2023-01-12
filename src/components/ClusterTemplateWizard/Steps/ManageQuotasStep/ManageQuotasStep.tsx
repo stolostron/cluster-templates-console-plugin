@@ -5,7 +5,7 @@ import { useTranslation } from '../../../../hooks/useTranslation';
 
 import QuotaCardsArray from './QuotaCardsArray';
 import { clusterTemplateQuotaGVK } from '../../../../constants';
-import InlineResourceLink from '../../../../helpers/InlineResourceLink';
+import InlineResourceLink from '../../../../helpers/Links';
 import { WithHelpIcon } from '../../../../helpers/PopoverHelpIcon';
 import ErrorBoundary from '../../../../helpers/ErrorBoundary';
 import { Trans } from 'react-i18next';
@@ -15,11 +15,12 @@ const Description = () => {
   return (
     <Trans ns="plugin__clustertemplates-plugin">
       Choose a quota you want be assosiated with this cluster template. You can manage the existing
-      quotas in the &nbsp;
+      quotas in the{' '}
       <InlineResourceLink
         groupVersionKind={clusterTemplateQuotaGVK}
-        displayName={t('Quotas tab.')}
+        displayName={t('Quotas tab')}
       />
+      {'.'}
       <br />
       Quotas can also be set and changed after the cluster template has been added.
     </Trans>

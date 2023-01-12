@@ -16,29 +16,42 @@ import { FieldArray, FieldArrayRenderProps, useField } from 'formik';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { RemoveButton } from '../../../../helpers/WithRemoveButton';
 import '../styles.css';
-import HelmFields from '../../../sharedFields/HelmFields';
 import { InputField } from 'formik-pf';
 import PopoverHelpIcon from '../../../../helpers/PopoverHelpIcon';
 import { getNewArgoCDSpecFormValues } from '../../../../utils/toWizardFormValues';
-import { ArgoCDSpecFormikValues } from '../../types';
+import { HelmFormikValues } from '../../types';
+import {
+  HelmChartRepositoryListResult,
+  useHelmChartRepositories,
+} from '../../../../hooks/useHelmChartRepositories';
+import { useAddAlertOnError } from '../../../../alerts/useAddAlertOnError';
+import HelmFields from '../../../sharedFields/HelmFields';
+import Loader from '../../../../helpers/Loader';
 
 const fieldName = 'postInstallation';
 
-const ArgoCDSpec = ({
+const PostInstallationSettings = ({
   idx,
   remove,
   isRemoveDisabled,
+  reposListResult,
 }: {
   idx: number;
   remove: (number) => void;
   isRemoveDisabled: boolean;
+  reposListResult: HelmChartRepositoryListResult;
 }) => {
   const { t } = useTranslation();
   const fieldName = `postInstallation[${idx}]`;
+
   return (
     <Grid hasGutter>
       <GridItem span={11}>
-        <HelmFields fieldNamePrefix={fieldName} horizontal={true} />
+        <HelmFields
+          fieldNamePrefix={fieldName}
+          horizontal={true}
+          reposListResult={reposListResult}
+        />
       </GridItem>
       <GridItem className="cluster-templates-argoc-remove-button" span={1}>
         <RemoveButton
@@ -58,10 +71,9 @@ const ArgoCDSpec = ({
               )}
             />
           }
-          helperText={t(
-            "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
-          )}
           fieldId={`${fieldName}.destinationNamespace`}
+          placeholder={t('Enter a destination namespace')}
+          autoComplete="off"
         />
       </GridItem>
     </Grid>
@@ -69,7 +81,7 @@ const ArgoCDSpec = ({
 };
 
 const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) => {
-  const [field] = useField<ArgoCDSpecFormikValues[]>({
+  const [field] = useField<HelmFormikValues[]>({
     name: fieldName,
   });
 
@@ -77,34 +89,46 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
   const onAddArgoCDSpec = () => {
     push(getNewArgoCDSpecFormValues());
   };
-
+  const reposListResult = useHelmChartRepositories();
+  const [, loaded, error] = reposListResult;
+  // t('Failed to load Helm chart repositories')
+  useAddAlertOnError(error, 'Failed to load Helm chart repositories');
   return (
-    <Stack hasGutter>
-      {field.value.map((data, idx) => {
-        return (
-          <React.Fragment key={idx}>
-            <Stack hasGutter>
-              <StackItem>
-                <ArgoCDSpec isRemoveDisabled={field.value.length === 1} remove={remove} idx={idx} />
-              </StackItem>
-              <StackItem>
-                <Divider />
-              </StackItem>
-            </Stack>
-          </React.Fragment>
-        );
-      })}
-      <StackItem>
-        <Button
-          variant="link"
-          onClick={onAddArgoCDSpec}
-          icon={<PlusIcon />}
-          className="cluster-templates-field-array__btn"
-        >
-          {t('Add more')}
-        </Button>
-      </StackItem>
-    </Stack>
+    <Loader loaded={loaded}>
+      <Stack hasGutter>
+        {field.value.map((data, idx) => {
+          return (
+            <React.Fragment key={idx}>
+              <Stack hasGutter>
+                <StackItem>
+                  <PostInstallationSettings
+                    isRemoveDisabled={false}
+                    remove={remove}
+                    idx={idx}
+                    reposListResult={reposListResult}
+                  />
+                </StackItem>
+                <StackItem>
+                  <Divider />
+                </StackItem>
+              </Stack>
+            </React.Fragment>
+          );
+        })}
+        <StackItem>
+          <Button
+            variant="link"
+            onClick={onAddArgoCDSpec}
+            icon={<PlusIcon />}
+            className="cluster-templates-field-array__btn"
+          >
+            {field.value && field.value.length
+              ? t('Add more')
+              : t('Add the first post-installation settings')}
+          </Button>
+        </StackItem>
+      </Stack>
+    </Loader>
   );
 };
 
@@ -121,7 +145,7 @@ const Description = () => {
   return (
     <Text>
       {t(
-        'Run post-installation configurations of your cluster. Once this cluster template is used to create a cluster, the cluster will not be made available until all of the selected post-installation items have been installed successfully. Choose the HELM chart repository that will be marked as post-installation for this template.',
+        'Select the helm charts to install on clusters created by this template. The cluster will only be available after they are installed.',
       )}
     </Text>
   );
@@ -133,7 +157,7 @@ const PostInstallationStep = () => {
     <Stack hasGutter>
       <StackItem>
         <TextContent>
-          <Text component="h2">{t('Post-installation Settings')}</Text>
+          <Text component="h2">{t('Post-installation settings (optional)')}</Text>
         </TextContent>
       </StackItem>
       <StackItem>

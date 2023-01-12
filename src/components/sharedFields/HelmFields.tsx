@@ -1,18 +1,13 @@
-import { Flex, FlexItem, Form } from '@patternfly/react-core';
-import { useField } from 'formik';
-import * as React from 'react';
-import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
-import SelectField, { SelectInputOption } from '../../helpers/SelectField';
-import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
-import {
-  useHelmChartRepository,
-  getRepoChartsMap,
-  HelmRepositoryChartsMap,
-} from '../../hooks/useHelmChartRepositories';
-
+import React from 'react';
+import { HelmRepository } from '../../types';
+import get from 'lodash/get';
+import { useFormikContext } from 'formik';
+import { HelmChartRepositoryListResult } from '../../hooks/useHelmChartRepositories';
+import HelmRepositoryField from './HelmRepositoryField';
 import { useTranslation } from '../../hooks/useTranslation';
-import { getRepoOptionObject } from '../../utils/toWizardFormValues';
-import { RepoOptionObject } from '../ClusterTemplateWizard/types';
+import SelectField from '../../helpers/SelectField';
+import { Flex, FlexItem } from '@patternfly/react-core';
+import Loader from '../../helpers/Loader';
 
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
   return (
@@ -25,112 +20,98 @@ const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
     </Flex>
   );
 };
-
 const HelmFields = ({
   fieldNamePrefix,
-  horizontal = false,
+  reposListResult,
+  horizontal,
 }: {
+  reposListResult: HelmChartRepositoryListResult;
   fieldNamePrefix: string;
-  horizontal?: boolean;
+  horizontal: boolean;
 }) => {
-  const { t } = useTranslation();
-  const repoFieldName = `${fieldNamePrefix}.repo`;
   const chartFieldName = `${fieldNamePrefix}.chart`;
   const versionFieldName = `${fieldNamePrefix}.version`;
-  const [{ value: repo }, { error: repoError }] = useField<RepoOptionObject>(repoFieldName);
-  const [{ value: chart }, , { setValue: setChart }] = useField<string>(chartFieldName);
-  const [{ value: version }, , { setValue: setVersion }] = useField<string>(versionFieldName);
-  const [argoCDSecrets, argoCDSecretsLoaded, argoCDSecretsError] = useArgoCDSecrets();
+  const { values, setFieldValue } = useFormikContext();
+  const { t } = useTranslation();
+  const [chartToVersions, setChartToVersions] = React.useState<Record<string, string[]>>();
+  const chart = get(values, chartFieldName);
+  const [, loaded] = reposListResult;
+  const clearChartFields = () => {
+    setFieldValue(chartFieldName, '');
+    setFieldValue(versionFieldName, '');
+  };
 
-  const [helmRepository, helmRepositoryLoaded, helmRepositoryError] = useHelmChartRepository(
-    repo.toString(),
-  );
-
-  // t('Failed to load repositories')
-  useAddAlertOnError(argoCDSecretsError, 'Failed to load repositories');
-  // t('Failed to load charts')
-  useAddAlertOnError(helmRepositoryError, 'Failed to load charts');
-
-  const error = argoCDSecretsError || helmRepositoryError;
-
-  const repoOptions: SelectInputOption[] = React.useMemo(
-    () =>
-      argoCDSecrets.map((s) => ({
-        value: getRepoOptionObject(s),
-        disabled: false,
-      })),
-    [argoCDSecrets],
-  );
-
-  const chartsMap = React.useMemo<HelmRepositoryChartsMap>(() => {
-    if (!helmRepository?.index || !repo) {
-      return {};
+  const setRepo = (repo: HelmRepository): Record<string, string[]> => {
+    let chartToVersions: Record<string, string[]> = undefined;
+    if (!repo.index) {
+      clearChartFields();
+    } else {
+      const map: Record<string, string[]> = {};
+      for (const [key, charts] of Object.entries(repo.index.entries)) {
+        map[key] = charts
+          .map((chart) => chart.version)
+          .sort((v1, v2) => v2.localeCompare(v1, undefined, { numeric: true }));
+      }
+      chartToVersions = map;
     }
-    return getRepoChartsMap(helmRepository.index);
-  }, [helmRepository?.index, repo]);
+    setChartToVersions(chartToVersions);
+    return chartToVersions;
+  };
 
-  const chartOptions = React.useMemo<SelectInputOption[]>(() => {
-    if (!helmRepository?.index || !repo) {
-      return [];
-    }
-    return Object.keys(chartsMap).map((chart) => ({
-      value: chart,
-      disabled: false,
-    }));
-  }, [helmRepository?.index, chartsMap]);
+  const onSelectRepo = (repo: HelmRepository) => {
+    setRepo(repo);
+    clearChartFields();
+  };
 
-  const versionOptions = React.useMemo<SelectInputOption[]>(() => {
-    if (!chart || !chartsMap[chart]) {
-      return [];
+  const onInitializeRepo = (repo: HelmRepository | undefined) => {
+    if (repo) {
+      setRepo(repo);
+    } else {
+      clearChartFields();
     }
-    return chartsMap[chart].map((version) => ({
-      value: version,
-      disabled: false,
-    }));
-  }, [chartsMap, chart]);
-
-  React.useEffect(() => {
-    if (!chart && chartOptions.length === 1) {
-      setChart(chartOptions[0].value as string);
-    }
-  }, [chart, chartOptions]);
-
-  React.useEffect(() => {
-    if (!version && versionOptions.length === 1) {
-      setVersion(versionOptions[0].value as string);
-    }
-  }, [version, versionOptions]);
+  };
 
   const fields = [
-    <SelectField
-      name={repoFieldName}
-      options={repoOptions}
-      isRequired
-      label={t('HELM chart repository')}
-      key={repoFieldName}
-      loadingVariant={argoCDSecretsLoaded ? undefined : 'spinner'}
-      isDisabled={argoCDSecretsError}
-      validate={() => (repoError as unknown as RepoOptionObject)?.resourceName}
+    <HelmRepositoryField
+      fieldName={`${fieldNamePrefix}.url`}
+      key={`${fieldNamePrefix}.url`}
+      reposListResult={reposListResult}
+      showLabelIcon={!horizontal}
+      onSelectRepo={onSelectRepo}
+      onInitializeRepo={onInitializeRepo}
     />,
     <SelectField
       name={chartFieldName}
-      options={chartOptions}
+      options={
+        chartToVersions
+          ? Object.keys(chartToVersions).sort((key1, key2) => key1.localeCompare(key2))
+          : []
+      }
       isRequired
-      label={t('HELM chart')}
-      loadingVariant={helmRepositoryLoaded ? undefined : 'spinner'}
-      isDisabled={!repo || !repo.resourceName || error}
+      label={t('Helm chart')}
+      isDisabled={!chartToVersions}
       key={chartFieldName}
+      placeholderText={!chartToVersions ? t('Select a repository first') : t('Select a chart')}
+      onSelectValue={(chart: string) => {
+        if (chartToVersions[chart] && chartToVersions[chart].length) {
+          setFieldValue(versionFieldName, chartToVersions[chart][0]);
+        }
+      }}
     />,
     <SelectField
       name={versionFieldName}
-      label={t('HELM chart version')}
+      label={t('Helm chart version')}
       key={versionFieldName}
-      isDisabled={!chart || error}
-      options={versionOptions}
+      isDisabled={!chartToVersions || !chart}
+      options={chart && chartToVersions ? chartToVersions[chart] : []}
+      isRequired
+      placeholderText={
+        !chartToVersions ? t('Select a repository first') : !chart ? t('Select a chart first') : ''
+      }
     />,
   ];
   const helmFields = horizontal ? <WithFlex flexItems={fields} /> : <>{fields}</>;
-  return <Form>{helmFields}</Form>;
+  return <Loader loaded={loaded}>{helmFields}</Loader>;
 };
 
 export default HelmFields;

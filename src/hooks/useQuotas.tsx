@@ -29,7 +29,6 @@ export type QuotasData = {
   getAllQuotasDetails(): QuotaDetails[];
   getQuota(quotaName, quotaNamespace): Promise<Quota>;
   getClusterTemplateQuotasDetails: (clusterTemplateName: string) => QuotaDetails[];
-  namespaceHasQuota: (namespace: string) => boolean;
   getQuotaDetails: (quotaName: string, quotaNamespace: string) => QuotaDetails;
 };
 
@@ -89,8 +88,6 @@ export const useQuotas = (): [QuotasData, boolean, unknown] => {
           .filter((quota) => getQuotaTemplateNames(quota).includes(clusterTemplateName))
           .map((quota) => getDetails(quota, rbs));
       },
-      namespaceHasQuota: (namespace: string): boolean =>
-        !!allQuotas.find((quota) => quota.metadata?.namespace === namespace),
       getQuotaDetails: (name: string, namespace: string) => {
         const quota = allQuotas.find(
           (curQuota) =>

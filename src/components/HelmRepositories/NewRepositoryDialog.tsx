@@ -13,7 +13,7 @@ import RepositoryForm from './RepositoryForm';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 
 type NewRepositoryDialogProps = {
-  closeDialog: () => void;
+  closeDialog: (repoName?: string) => Promise<void>;
 };
 
 export function getInitialValues(): RepositoryFormValues {
@@ -82,8 +82,8 @@ const NewRepositoryDialog = ({ closeDialog }: NewRepositoryDialogProps) => {
     });
 
     try {
-      await createArgoCDSecret;
-      closeDialog();
+      const secret = await createArgoCDSecret;
+      await closeDialog(secret.metadata?.name);
     } catch (e) {
       setFormError({
         title: t('Something went wrong'),
@@ -97,7 +97,7 @@ const NewRepositoryDialog = ({ closeDialog }: NewRepositoryDialogProps) => {
       variant={ModalVariant.medium}
       isOpen
       title={t('Add a repository')}
-      onClose={closeDialog}
+      onClose={() => closeDialog()}
       aria-label="Add repository dialog"
       showClose
       hasNoBodyWrapper

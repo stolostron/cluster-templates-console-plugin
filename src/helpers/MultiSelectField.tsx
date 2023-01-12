@@ -5,7 +5,6 @@ import {
   Select,
   SelectOption,
   SelectOptionObject,
-  SelectOptionProps,
   SelectProps,
   SelectVariant,
   ValidatedOptions,
@@ -14,7 +13,7 @@ import { selectValuesEqual } from './formikFieldUtils';
 import { FieldProps } from './types';
 
 type MultiSelectFieldProps = FieldProps & {
-  options: SelectOptionProps[];
+  options: string[];
 } & Omit<
     SelectProps,
     'variant' | 'validated' | 'isOpen' | 'onToggle' | 'onSelect' | 'selections' | 'onClear'
@@ -74,7 +73,7 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
         {...props}
       >
         {options.map((option, idx) => {
-          return <SelectOption key={idx} {...option} />;
+          return <SelectOption key={idx} value={option} />;
         })}
       </Select>
     </FormGroup>

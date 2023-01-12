@@ -9,19 +9,22 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { getOptionValueStr } from './formikFieldUtils';
 import { FieldProps } from './types';
 
-export type SelectInputOption = {
-  value: string | SelectOptionObject;
-  disabled: boolean;
-  description?: string;
-};
+export type SelectInputOption =
+  | {
+      value: string | SelectOptionObject;
+      disabled: boolean;
+      description?: string;
+    }
+  | string;
 
 type SelectFieldProps = FieldProps & {
   options: SelectInputOption[];
   validate?: () => string;
   helperTextInvalid?: string;
+  onSelectValue?: (value: string | SelectOptionObject) => void;
+  value?: string | SelectOptionObject;
 } & Omit<
     SelectProps,
     | 'variant'
@@ -47,6 +50,8 @@ const SelectField: React.FC<SelectFieldProps> = ({
   helperText,
   isRequired,
   validate,
+  onSelectValue,
+  value,
   ...props
 }) => {
   const [field, { touched, error, initialValue }, { setValue }] = useField<
@@ -59,17 +64,22 @@ const SelectField: React.FC<SelectFieldProps> = ({
     setIsOpen(!isOpen);
   };
 
+  const _setValue = (value) => {
+    setValue(value, true);
+    onSelectValue && onSelectValue(value);
+  };
+
   const onSelect: SelectProps['onSelect'] = (_, value) => {
-    setValue(value);
     setIsOpen(false);
+    _setValue(value);
   };
 
   const onClearSelection = () => {
-    setValue(initialValue);
+    _setValue(initialValue);
   };
 
   const onCreateOption = (newOption: string) => {
-    setValue(newOption);
+    _setValue(newOption);
     setIsOpen(false);
   };
 
@@ -88,9 +98,9 @@ const SelectField: React.FC<SelectFieldProps> = ({
         validated={validated}
         onToggle={onToggle}
         onSelect={onSelect}
-        onClear={onClearSelection}
+        onClear={isRequired ? undefined : onClearSelection}
         isOpen={isOpen}
-        selections={field.value}
+        selections={value || field.value}
         typeAheadAriaLabel={props.typeAheadAriaLabel || name}
         toggleId={name}
         onCreateOption={onCreateOption}
@@ -98,14 +108,14 @@ const SelectField: React.FC<SelectFieldProps> = ({
         {...props}
       >
         {options.map((op, idx) => {
-          const valueStr = getOptionValueStr(op);
+          const isStr = typeof op === 'string';
           return (
             <SelectOption
-              value={op.value}
-              isDisabled={op.disabled}
+              value={isStr ? op : op.value}
+              isDisabled={isStr ? false : op.disabled}
               key={idx}
-              name={valueStr}
-              description={op.description}
+              name={op.toString()}
+              description={isStr ? '' : op.description}
             />
           );
         })}

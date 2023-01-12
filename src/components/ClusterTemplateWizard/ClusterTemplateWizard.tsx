@@ -29,12 +29,13 @@ import { getResourceUrl } from '../../utils/k8s';
 import { clusterTemplateGVK } from '../../constants';
 import findIndex from 'lodash/findIndex';
 import useWizardValidationSchema from './wizardValidationSchema';
+import ConfirmCancelModal from './ConfirmCancelModal';
 
 export type ClusterTemplateWizardProps = {
   clusterTemplate?: ClusterTemplate;
 };
 
-const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
+const CustomFooter = () => {
   const history = useHistory();
   const { values, isSubmitting, submitForm, setTouched, errors } =
     useFormikContext<WizardFormikValues>();
@@ -43,6 +44,7 @@ const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
   const { activeStep, onBack, onNext } = React.useContext(WizardContext);
   const { t } = useTranslation();
   const invalid = activeStep.id === 'review' ? !isEmpty(errors) : !isEmpty(errors[activeStep.id]);
+  const [confirmCancelModalOpen, setConfirmCancelModalOpen] = React.useState(false);
   const reset = () => {
     setSubmitError(undefined);
     setSubmitClicked(false);
@@ -64,7 +66,6 @@ const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
     } else {
       reset();
       onNext();
-      props.onNext(activeStep.id as StepId);
     }
   };
 
@@ -73,11 +74,13 @@ const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
     onBack();
   };
 
+  const onCancel = () => history.goBack();
+
   return (
     <>
       <Alerts />
       {submitError && (
-        <Alert title={t('Failed to create the cluster template')} variant="danger" isInline>
+        <Alert title={t('Failed to save the cluster template')} variant="danger" isInline>
           {getErrorMessage(submitError)}
         </Alert>
       )}
@@ -94,7 +97,7 @@ const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
         >
           {activeStep.id === StepId.REVIEW
             ? values.isCreateFlow
-              ? t('Create')
+              ? t('Create template')
               : t('Save')
             : t('Next')}
         </Button>
@@ -105,9 +108,14 @@ const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
         >
           {t('Back')}
         </Button>
-        <Button variant="link" onClick={history.goBack}>
+        <Button variant="link" onClick={() => setConfirmCancelModalOpen(true)}>
           {t('Cancel')}
         </Button>
+        <ConfirmCancelModal
+          isOpen={confirmCancelModalOpen}
+          onCancel={() => setConfirmCancelModalOpen(false)}
+          onConfirm={onCancel}
+        />
       </WizardFooter>
     </>
   );
@@ -116,7 +124,7 @@ const CustomFooter = (props: { onNext: (curStepId: StepId) => void }) => {
 const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps) => {
   const [initialValues, initialValuesLoaded, initialValuesError] = useFormValues(clusterTemplate);
   const [activeStepIndex, setActiveStepIndex] = React.useState<number>(0);
-  const [validationSchema, loadedValidationSchema] = useWizardValidationSchema(!!clusterTemplate);
+  const validationSchema = useWizardValidationSchema(!clusterTemplate);
   const [saveClusterTemplate, saveClusterTemplateLoaded] = useSaveClusterTemplate(
     initialValues,
     clusterTemplate,
@@ -130,19 +138,19 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
 
   const steps: WizardStep[] = [
     {
-      name: t('Template details'),
+      name: t('Details'),
       component: <TemplateDetailsStep />,
       id: StepId.DETAILS,
       canJumpTo: true,
     },
     {
-      name: t('Installation'),
+      name: t('Installation settings'),
       component: <InstallationSettingsStep />,
       id: StepId.INSTALLATION,
       canJumpTo: activeStepIndex >= 1,
     },
     {
-      name: t('Post-installation'),
+      name: t('Post-installation settings'),
       component: <PostInstallationStep />,
       id: StepId.POST_INSTALLATION,
       canJumpTo: activeStepIndex >= 2,
@@ -173,7 +181,7 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
   };
 
   return (
-    <Loader loaded={initialValuesLoaded && loadedValidationSchema} error={initialValuesError}>
+    <Loader loaded={initialValuesLoaded} error={initialValuesError}>
       <Formik<WizardFormikValues>
         initialValues={initialValues}
         onSubmit={onSubmit}
@@ -181,7 +189,7 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
       >
         <Wizard
           steps={steps}
-          footer={<CustomFooter onNext={(stepId) => console.log('footer on next', stepId)} />}
+          footer={<CustomFooter />}
           hideClose
           onGoToStep={(newStep) => updateActiveStepIndex(newStep.id)}
           onNext={({ id }) => updateActiveStepIndex(id)}
