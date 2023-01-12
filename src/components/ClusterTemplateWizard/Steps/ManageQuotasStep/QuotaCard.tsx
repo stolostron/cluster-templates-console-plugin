@@ -54,7 +54,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
           aria-label={`Quota ${quotaIdx} quota name`}
           validate={() => get(errors, `${quotaFieldName}.name`)}
           isRequired={true}
-          placeholder={t('Select a quota')}
+          placeholderText={t('Select a quota')}
           footer={
             <Button
               variant="link"
@@ -71,7 +71,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
         <BudgetField
           hasBudgetFieldName={checkboxFieldName}
           budgetFieldName={`${fieldName}.numAllowed`}
-          label={t('Limit the number of clusters created from this type')}
+          label={t('Limit the number of clusters created from this template')}
         />
       </Form>
       <NewQuotaDialog

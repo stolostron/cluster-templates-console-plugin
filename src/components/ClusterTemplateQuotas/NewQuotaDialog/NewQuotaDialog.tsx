@@ -10,7 +10,6 @@ import {
   Text,
 } from '@patternfly/react-core';
 import { Formik } from 'formik';
-import { InputField } from 'formik-pf';
 import { TFunction } from 'i18next';
 import React from 'react';
 import { WithHelpIcon } from '../../../helpers/PopoverHelpIcon';
@@ -18,14 +17,16 @@ import { useTranslation } from '../../../hooks/useTranslation';
 import { getErrorMessage } from '../../../utils/utils';
 import QuotaHelpText from '../QuotaHelpTexts';
 import { NewQuotaFormikValues } from '../types';
-import { UsersField, GroupsField } from './AccessFields';
-import getNewQuotaValidationSchema from './newQuotaValidationSchema';
+import AccessFields from './AccessFields';
 import BudgetField from './BudgetField';
 import Loader from '../../../helpers/Loader';
 import useCreateQuota from '../../../hooks/useCreateQuota';
 import { AlertsContextProvider } from '../../../alerts/AlertsContext';
 import Alerts from '../../../alerts/Alerts';
 import QuotaNamespaceField from './QuotaNamespaceField';
+import './styles.css';
+import NameField from '../../sharedFields/NameField';
+import useNewQuotaValidationSchema from './newQuotaValidationSchema';
 
 const getTitleText = (t: TFunction) => t('Create a new quota');
 
@@ -49,21 +50,20 @@ const getInitialValues = (): NewQuotaFormikValues => ({
 const NewQuotaFormFields = ({ clusterTemplateCost }: { clusterTemplateCost: number }) => {
   const { t } = useTranslation();
   const budgetHelpText = t(
-    'Enter the amount you wish to limit for this user/group. The amount specified in the previous step is {{cost}} and is the minimum to enter here.',
+    'Enter the amount you wish to limit for this user/group. The minimum amount is {{cost}}.',
     { cost: clusterTemplateCost },
   );
   return (
-    <Form>
-      <InputField name="name" fieldId="new-quota-name" label={t('Quota name')} isRequired />
+    <Form className="new-quota-form">
+      <NameField name={'name'} label={t('Quota name')} />
       <QuotaNamespaceField />
-      <UsersField />
-      <GroupsField />
       <BudgetField
         budgetFieldName="budget"
         hasBudgetFieldName="hasBudget"
         label={t('Total budget of cluster consumption')}
         popoverHelpText={budgetHelpText}
       />
+      <AccessFields />
     </Form>
   );
 };
@@ -79,8 +79,8 @@ const NewQuotaDialog = ({
 }) => {
   const { t } = useTranslation();
   const [createQuota, loaded] = useCreateQuota();
-
   const [error, setError] = React.useState<unknown>();
+  const validationSchema = useNewQuotaValidationSchema(clusterTemplateCost);
   const onSubmit = async (values: NewQuotaFormikValues) => {
     try {
       await createQuota(values);
@@ -107,7 +107,7 @@ const NewQuotaDialog = ({
         <Formik<NewQuotaFormikValues>
           onSubmit={onSubmit}
           initialValues={getInitialValues()}
-          validationSchema={getNewQuotaValidationSchema(t, clusterTemplateCost)}
+          validationSchema={validationSchema}
         >
           {({ isSubmitting, handleSubmit }) => (
             <Loader loaded={loaded}>

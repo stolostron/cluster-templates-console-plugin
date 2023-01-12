@@ -66,7 +66,7 @@ describe('cluster template details page', () => {
         exampleTemplate.metadata?.labels['clustertemplates.openshift.io/infra'],
       ['Location']: exampleTemplate.metadata?.labels['clustertemplates.openshift.io/location'],
       ['Vendor']: 'Custom template',
-      ['Cost estimation']: `${exampleTemplate.spec.cost} / Per use`,
+      ['Cost']: `${exampleTemplate.spec.cost} / Per instance`,
       ['Template uses']: '0 clusters',
     };
     let error;

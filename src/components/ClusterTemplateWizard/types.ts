@@ -27,14 +27,14 @@ export interface QuotaOptionObject extends SelectOptionObject {
 
 export type QuotaFormikValues = {
   quota: QuotaOptionObject;
-  numAllowed: number;
   limitAllowed: boolean;
+  numAllowed?: number;
 };
 
 export type DetailsFormikValues = {
   name: string;
-  argocdNamespace: string;
   cost: number;
+  description?: string;
 };
 
 export type InstallationFormikValues = {

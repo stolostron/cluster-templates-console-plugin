@@ -1,15 +1,12 @@
 import * as React from 'react';
 import {
-  Button,
   DescriptionList,
   DescriptionListDescription,
   DescriptionListGroup,
   DescriptionListTerm,
   Grid,
   GridItem,
-  Popover,
 } from '@patternfly/react-core';
-import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 
 import {
   ClusterTemplateCost,
@@ -28,23 +25,6 @@ export type ListItem = {
   value?: string | number | React.ReactNode | undefined;
 };
 
-const CostItem: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
-  const { t } = useTranslation();
-  return (
-    <>
-      <ClusterTemplateCost clusterTemplate={clusterTemplate} />
-      <Popover
-        bodyContent={t(
-          'Cost is estimated according to the maximum number of nodes specified for this template',
-        )}
-      >
-        <Button variant="link" style={{ paddingLeft: 'var(--pf-global--spacer--sm)' }}>
-          <OutlinedQuestionCircleIcon />
-        </Button>
-      </Popover>
-    </>
-  );
-};
 const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   return (
     <DescriptionList isHorizontal>
@@ -104,8 +84,8 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clust
       value: <PostInstallationDetails clusterTemplate={clusterTemplate} />,
     },
     {
-      label: t('Cost estimation'),
-      value: <CostItem clusterTemplate={clusterTemplate} />,
+      label: t('Cost'),
+      value: <ClusterTemplateCost clusterTemplate={clusterTemplate} />,
     },
     {
       label: t('Vendor'),

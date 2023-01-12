@@ -1,7 +1,8 @@
-import { Flex, FlexItem, Form } from '@patternfly/react-core';
+import { Flex, FlexItem } from '@patternfly/react-core';
 import { useField } from 'formik';
 import * as React from 'react';
 import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
+import PopoverHelpIcon from '../../helpers/PopoverHelpIcon';
 import SelectField, { SelectInputOption } from '../../helpers/SelectField';
 import { useHelmRepositories } from '../../hooks/useHelmRepositories';
 
@@ -12,6 +13,7 @@ import {
 } from '../../hooks/useHelmRepositoryIndex';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getRepoOptionObject } from '../../utils/toWizardFormValues';
+import { sortByResourceName } from '../../utils/utils';
 import { RepoOptionObject } from '../ClusterTemplateWizard/types';
 
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
@@ -41,21 +43,27 @@ const HelmFields = ({
   const [{ value: chart }, , { setValue: setChart }] = useField<string>(chartFieldName);
   const [{ value: version }, , { setValue: setVersion }] = useField<string>(versionFieldName);
   const [repositories, repositoriesLoaded, repositoriesError] = useHelmRepositories();
-  const [repoIndex, , indexError] = useHelmRepositoryIndex();
+  const [repoIndex, repoIndexLoaded, indexError] = useHelmRepositoryIndex();
   // t('Failed to load repositories')
   useAddAlertOnError(repositoriesError, 'Failed to load repositories');
   // t('Failed to load charts')
   useAddAlertOnError(indexError, 'Failed to load charts');
   const error = repositoriesError || indexError;
 
-  const repoOptions: SelectInputOption[] = React.useMemo(
-    () =>
-      repositories.map((r) => ({
+  const repoOptions: SelectInputOption[] = React.useMemo(() => {
+    if (!repoIndexLoaded || !repositoriesLoaded) {
+      return [];
+    }
+    const sortedRepos = sortByResourceName(repositories);
+    return sortedRepos.map((r) => {
+      const chartsMap = getRepoChartsMap(repoIndex, r.metadata?.name);
+      return {
         value: getRepoOptionObject(r),
         disabled: false,
-      })),
-    [repositories],
-  );
+        description: t('{{numCharts}} HELM charts', { numCharts: Object.keys(chartsMap).length }),
+      };
+    });
+  }, [repositories, repoIndex, repoIndexLoaded, repositoriesLoaded]);
 
   const chartsMap = React.useMemo<HelmRepositoryChartsMap>(() => {
     if (!repoIndex || !repo) {
@@ -68,7 +76,8 @@ const HelmFields = ({
     if (!repoIndex || !repo) {
       return [];
     }
-    return Object.keys(chartsMap).map((chart) => ({
+    const charts = Object.keys(chartsMap).sort((chart1, chart2) => chart1.localeCompare(chart2));
+    return charts.map((chart) => ({
       value: chart,
       disabled: false,
     }));
@@ -78,7 +87,10 @@ const HelmFields = ({
     if (!chart || !chartsMap[chart]) {
       return [];
     }
-    return chartsMap[chart].map((version) => ({
+    const versions = chartsMap[chart].sort((v1, v2) =>
+      v1.localeCompare(v2, undefined, { numeric: true }),
+    );
+    return versions.map((version) => ({
       value: version,
       disabled: false,
     }));
@@ -91,10 +103,13 @@ const HelmFields = ({
   }, [chart, chartOptions]);
 
   React.useEffect(() => {
-    if (!version && versionOptions.length === 1) {
+    if (!version && versionOptions.length > 0) {
       setVersion(versionOptions[0].value as string);
     }
   }, [version, versionOptions]);
+
+  const chartFieldDisabled = !repo || !repo.resourceName || error;
+  const versionFieldDisabled = !chart || error;
 
   const fields = [
     <SelectField
@@ -103,28 +118,47 @@ const HelmFields = ({
       isRequired
       label={t('HELM chart repository')}
       key={repoFieldName}
-      loadingVariant={repositoriesLoaded ? undefined : 'spinner'}
+      loadingVariant={repositoriesLoaded && repoIndexLoaded ? undefined : 'spinner'}
       isDisabled={error}
       validate={() => (repoError as unknown as RepoOptionObject)?.resourceName}
+      placeholderText={t('Select a HELM chart repository')}
+      labelIcon={
+        horizontal ? undefined : (
+          <PopoverHelpIcon
+            helpText={t(
+              'Choose or add a new URL to your HELM repository to access the HELM chart you would like this cluster template to be based on.',
+            )}
+          />
+        )
+      }
     />,
     <SelectField
       name={chartFieldName}
       options={chartOptions}
       isRequired
       label={t('HELM chart')}
-      isDisabled={!repo || !repo.resourceName || error}
+      isDisabled={chartFieldDisabled}
       key={chartFieldName}
+      placeholderText={chartFieldDisabled ? t('Select a repository first') : t('Choose')}
     />,
     <SelectField
       name={versionFieldName}
       label={t('HELM chart version')}
       key={versionFieldName}
-      isDisabled={!chart || error}
+      isDisabled={versionFieldDisabled}
       options={versionOptions}
+      isRequired
+      placeholderText={
+        chartFieldDisabled
+          ? t('Select a repository first')
+          : versionFieldDisabled
+          ? t('Select a chart first')
+          : ''
+      }
     />,
   ];
   const helmFields = horizontal ? <WithFlex flexItems={fields} /> : <>{fields}</>;
-  return <Form>{helmFields}</Form>;
+  return <>{helmFields}</>;
 };
 
 export default HelmFields;

@@ -40,9 +40,9 @@ export type ArgoCDSpec = {
   source: ApplicationSource;
   destination: {
     namespace?: string;
-    server: 'https://kubernetes.default.svc';
+    server: string;
   };
-  project: 'default';
+  project: string;
 };
 
 export type ClusterTemplate = K8sResourceCommon & {
@@ -53,7 +53,6 @@ export type ClusterTemplate = K8sResourceCommon & {
       spec: ArgoCDSpec;
       name: string;
     }[];
-    argocdNamespace: string;
   };
 };
 

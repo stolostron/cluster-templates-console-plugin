@@ -1,7 +1,5 @@
-import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import { Label } from '@patternfly/react-core';
 import * as React from 'react';
-import { namespaceGVK } from '../../constants';
 import CellLoader from '../../helpers/CellLoader';
 
 import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInstances';
@@ -46,29 +44,23 @@ export const ClusterTemplateCost: React.FC<{
   clusterTemplate: ClusterTemplate;
 }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
-  return <>{`${clusterTemplate.spec.cost} / ${t('Per use')}`}</>;
+  return <>{`${clusterTemplate.spec.cost} / ${t('Per instance')}`}</>;
 };
-
-export const ArgocdNamespace = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => (
-  <ResourceLink
-    hideIcon
-    groupVersionKind={namespaceGVK}
-    name={clusterTemplate.spec.argocdNamespace}
-  />
-);
 
 export const PostInstallationDetails = ({
   clusterTemplate,
 }: {
   clusterTemplate: ClusterTemplate;
 }) => {
-  return clusterTemplate.spec.clusterSetup ? (
+  return clusterTemplate.spec.clusterSetup && clusterTemplate.spec.clusterSetup.length > 0 ? (
     <>
       {clusterTemplate.spec.clusterSetup.map(({ spec }) => (
         <ArgoCDSpecDetails argocdSpec={spec} key={spec.source.repoURL} />
       ))}
     </>
-  ) : null;
+  ) : (
+    <>-</>
+  );
 };
 
 export const InstallationDetails = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => (

@@ -13,6 +13,7 @@ import { sortByResourceName } from './utils';
 import { useHelmRepositories } from '../hooks/useHelmRepositories';
 import { useAlerts } from '../alerts/AlertsContext';
 import { useTranslation } from '../hooks/useTranslation';
+import { getClusterTemplateDescription } from './clusterTemplateDataUtils';
 
 export const getRepoOptionObject = (repoCR: HelmChartRepository): RepoOptionObject => ({
   resourceName: repoCR.metadata?.name,
@@ -34,7 +35,6 @@ export const getNewArgoCDSpecFormValues = (): ArgoCDSpecFormikValues => ({
 });
 
 export const getNewQuotaFormValues = (): QuotaFormikValues => ({
-  numAllowed: 0,
   limitAllowed: false,
   quota: {
     name: '',
@@ -48,7 +48,6 @@ export const getNewClusterTemplateFormValues = (): WizardFormikValues => {
     details: {
       cost: 200,
       name: '',
-      argocdNamespace: '',
     },
     quotas: [getNewQuotaFormValues()],
     installation: { spec: getNewArgoCDSpecFormValues(), useInstanceNamespace: false },
@@ -160,8 +159,8 @@ export const useFormValues = (
     return {
       details: {
         name: clusterTemplate.metadata?.name,
-        argocdNamespace: clusterTemplate.spec.argocdNamespace,
         cost: clusterTemplate.spec.cost,
+        description: getClusterTemplateDescription(clusterTemplate),
       },
       installation: getInstallationFormValues(),
       postInstallation: getPostInstallationFormValues(clusterTemplate),

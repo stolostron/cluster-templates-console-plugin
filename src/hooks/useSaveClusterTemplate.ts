@@ -4,8 +4,33 @@ import { clusterTemplateGVK } from '../constants';
 
 import { useCreateNamespace } from './useCreateNamespace';
 import useUpdateQuotas from './useUpdateQuotas';
-import toClusterTemplate, { toClusterTemplateSpec } from '../utils/toClusterTemplate';
+import toClusterTemplate, {
+  getAnnotations,
+  toClusterTemplateSpec,
+} from '../utils/toClusterTemplate';
 import { ClusterTemplate } from '../types';
+
+const getPatchData = (
+  values: WizardFormikValues,
+  originalClusterTemplate: ClusterTemplate,
+): Patch[] => {
+  const patchData: Patch[] = [
+    {
+      value: toClusterTemplateSpec(values),
+      op: 'replace',
+      path: '/spec',
+    },
+  ];
+  const annotations = getAnnotations(values);
+  if (annotations) {
+    patchData.push({
+      value: { ...originalClusterTemplate.metadata?.annotations, ...annotations },
+      path: '/metadata/annotations',
+      op: 'replace',
+    });
+  }
+  return patchData;
+};
 
 export const useSaveClusterTemplate = (
   initialValues: WizardFormikValues,
@@ -18,16 +43,11 @@ export const useSaveClusterTemplate = (
   const saveClusterTemplate = async (values: WizardFormikValues) => {
     const promises = [];
     if (originalClusterTemplate) {
-      const patchData: Patch = {
-        value: toClusterTemplateSpec(values),
-        op: 'replace',
-        path: '/spec',
-      };
       promises.push(
         k8sPatch({
           model: clusterTemplateModel,
           resource: originalClusterTemplate,
-          data: [patchData],
+          data: getPatchData(values, originalClusterTemplate),
         }),
       );
     } else {

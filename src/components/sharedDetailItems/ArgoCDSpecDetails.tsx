@@ -7,6 +7,7 @@ import { useHelmRepoCR } from '../../hooks/useHelmRepositories';
 import { ArgoCDSpec } from '../../types';
 import { Text } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
+
 const ArgoCDSpecDetails = ({ argocdSpec }: { argocdSpec: ArgoCDSpec }) => {
   const { t } = useTranslation();
   const [repoCR, loaded, error] = useHelmRepoCR(argocdSpec.source.repoURL);

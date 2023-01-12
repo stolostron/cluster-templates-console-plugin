@@ -7,7 +7,6 @@ import {
 } from '../../../constants';
 import InlineResourceLink from '../../../helpers/InlineResourceLink';
 import MultiSelectField from '../../../helpers/MultiSelectField';
-import PopoverHelpIcon from '../../../helpers/PopoverHelpIcon';
 import { SelectInputOption } from '../../../helpers/SelectField';
 import { useTranslation } from '../../../hooks/useTranslation';
 
@@ -16,6 +15,7 @@ import { K8sResourceCommon, useK8sWatchResource } from '@openshift-console/dynam
 import { Group, User } from '../../../types';
 import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
 import { Trans } from 'react-i18next';
+import { FormSection, Text } from '@patternfly/react-core';
 
 export const useUsers = () => {
   return useK8sWatchResource<User[]>({
@@ -36,20 +36,6 @@ const getOptions = (resources: K8sResourceCommon[]): SelectInputOption[] =>
     disabled: false,
   }));
 
-const UsersHelpText = () => {
-  return (
-    <Trans ns="plugin__clustertemplates-plugin">
-      Create a RoleBinding granting the selected users the
-      <InlineResourceLink
-        groupVersionKind={clusterRoleGroupVersionKind}
-        name={clusterTemplatesRoleRef.name}
-      />
-      &nbsp; role in the selected namespace. This role provides the minimum permissions needed for
-      using the cluster templates.
-    </Trans>
-  );
-};
-
 export const UsersField = () => {
   const { t } = useTranslation();
   const [users, loaded, error] = useUsers();
@@ -60,12 +46,12 @@ export const UsersField = () => {
     <MultiSelectField
       name="users"
       label={t('Grant quota to specific user(s)')}
-      labelIcon={<PopoverHelpIcon helpText={<UsersHelpText />} />}
       options={userOptions}
       createText={t('Add')}
       isCreatable={true}
       loadingVariant={loaded ? undefined : 'spinner'}
       isDisabled={!!error}
+      placeholderText={t('Type or select user names')}
     />
   );
 };
@@ -80,12 +66,41 @@ export const GroupsField = () => {
     <MultiSelectField
       name="groups"
       label={t('Grant quota to specific group(s)')}
-      labelIcon={<PopoverHelpIcon helpText={<UsersHelpText />} />}
       options={groupOptions}
       isCreatable={true}
       createText={t('Add')}
       loadingVariant={loaded ? undefined : 'spinner'}
       isDisabled={!!error}
+      placeholderText={t('Type or select group names')}
     />
   );
 };
+
+const AccessFieldsDescription = () => {
+  return (
+    <Text>
+      <Trans ns="plugin__clustertemplates-plugin">
+        Create a RoleBinding granting the selected users the{' '}
+        <InlineResourceLink
+          groupVersionKind={clusterRoleGroupVersionKind}
+          name={clusterTemplatesRoleRef.name}
+        />{' '}
+        role in the selected namespace. This role provides the minimum permissions needed for using
+        the cluster templates.
+      </Trans>
+    </Text>
+  );
+};
+
+const AccessFields = () => {
+  const { t } = useTranslation();
+  return (
+    <FormSection title={t('Permissions (optional)')}>
+      <AccessFieldsDescription />
+      <GroupsField />
+      <UsersField />
+    </FormSection>
+  );
+};
+
+export default AccessFields;

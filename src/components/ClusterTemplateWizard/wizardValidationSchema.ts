@@ -1,16 +1,18 @@
-import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
 import {
   object as objectSchema,
   boolean as booleanSchema,
-  number as numberSchema,
   array as arraySchema,
   string as stringSchema,
   SchemaOf,
 } from 'yup';
-import { clusterTemplateGVK } from '../../constants';
-import { nameSchema } from '../../utils/commonValidationSchemas';
+import { useClusterTemplates } from '../../hooks/useClusterTemplates';
+import { useTranslation } from '../../hooks/useTranslation';
+import {
+  nameSchema,
+  NameValidationType,
+  positiveIntegerSchema,
+} from '../../utils/commonValidationSchemas';
 import {
   ArgoCDSpecFormikValues,
   DetailsFormikValues,
@@ -19,68 +21,52 @@ import {
   WizardFormikValues,
 } from './types';
 
-const useWizardValidationSchema = (
-  isEditFlow: boolean,
-): [SchemaOf<WizardFormikValues> | undefined, boolean] => {
-  const [clusterTemplatesModel, loading] = useK8sModel(clusterTemplateGVK);
+const useWizardValidationSchema = (isCreateFlow): SchemaOf<WizardFormikValues> => {
+  //Chose to not handle loading and error of useClusterTemplates
+  //It's used for testing unique names, if it fails or not loaded yet, the backend will block the creation
+  const [clusterTemplates] = useClusterTemplates();
+  const usedTemplateNames = React.useMemo(
+    () => clusterTemplates.map((template) => template.metadata?.name),
+    [clusterTemplates],
+  );
   const { t } = useTranslation();
+
+  const requiredMsg = t('Required');
 
   const getHelmValidationSchema = (): SchemaOf<ArgoCDSpecFormikValues> =>
     objectSchema().shape({
       repo: objectSchema().shape({
-        resourceName: stringSchema().required(t('Required')),
-        url: stringSchema().required(t('Required')),
+        resourceName: stringSchema().required(requiredMsg),
+        url: stringSchema().required(requiredMsg),
         toString: objectSchema(),
         compareTo: objectSchema().optional(),
       }),
-      chart: stringSchema().required(t('Required')),
+      chart: stringSchema().required(requiredMsg),
       version: stringSchema(),
-      destinationNamespace: nameSchema(t),
+      destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL),
     });
 
   const getQuotaValidationSchema = (): SchemaOf<QuotaFormikValues> =>
     objectSchema().shape({
       quota: objectSchema().shape({
-        name: stringSchema().required(t('Required')),
-        namespace: stringSchema().required(t('Required')),
+        name: stringSchema().required(requiredMsg),
+        namespace: stringSchema().required(requiredMsg),
         toString: objectSchema(),
         compareTo: objectSchema().optional(),
       }),
       limitAllowed: booleanSchema(),
-      numAllowed: numberSchema()
-        .integer('Please enter a whole number')
-        .when('limitAllowed', {
-          is: true,
-          then: (schema) => schema.min(0, t(`Please enter a positive value`)),
-          otherwise: (schema) => schema.optional(),
-        }),
+      numAllowed: positiveIntegerSchema(t).when('limitAllowed', {
+        is: true,
+        then: (schema) => schema.required(requiredMsg),
+        otherwise: (schema) => schema.optional(),
+      }),
     });
-
-  const getNameValidationSchema = () => {
-    if (isEditFlow) {
-      return stringSchema();
-    }
-    const conflictErrorMsg = t('Cluster template already exists');
-    return nameSchema(t)
-      .required(t('Required'))
-      .test('cluster-template-exists', conflictErrorMsg, async (value) => {
-        if (!value) {
-          return true;
-        }
-        try {
-          await k8sGet({ model: clusterTemplatesModel, name: value });
-          return false;
-        } catch (err) {
-          return true;
-        }
-      });
-  };
 
   const getDetailsValidationSchema = (): SchemaOf<DetailsFormikValues> =>
     objectSchema().shape({
-      name: getNameValidationSchema(),
-      cost: numberSchema().min(0, t(`Please enter a positive value`)).required(t('Required')),
-      argocdNamespace: stringSchema().required(t('Required')),
+      name: isCreateFlow ? nameSchema(t, usedTemplateNames) : stringSchema(),
+      cost: positiveIntegerSchema(t).required(requiredMsg),
+      description: stringSchema().optional(),
     });
 
   const getInstallationValidationSchema = (): SchemaOf<InstallationFormikValues> =>
@@ -99,12 +85,10 @@ const useWizardValidationSchema = (
     });
 
   const validationSchema = React.useMemo(() => {
-    if (loading) {
-      return undefined;
-    }
     return getWizardValidationSchema();
-  }, [loading]);
-  return [validationSchema, !loading];
+  }, [clusterTemplates]);
+
+  return validationSchema;
 };
 
 export default useWizardValidationSchema;
