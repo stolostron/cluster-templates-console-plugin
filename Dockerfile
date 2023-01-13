@@ -8,3 +8,4 @@ FROM docker.io/library/nginx:stable
 
 RUN chmod g+rwx /var/cache/nginx /var/run /var/log/nginx
 COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+USER 1001
