@@ -14,3 +14,16 @@ export type HelmRepositoryFormValues = {
   tlsClientCert: string;
   tlsClientKey: string;
 };
+
+export type RepositoryFormValues = {
+  useCredentials: boolean;
+  name: string;
+  url: string;
+  type: 'helm' | 'git';
+  username: string;
+  password: string;
+  tlsClientCertData: string;
+  tlsClientCertKey: string;
+  insecure: boolean;
+  description: string;
+};

@@ -1,7 +1,7 @@
 import { load } from 'js-yaml';
 import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
-import { HelmRepoIndex } from '../types';
+import { HelmRepoIndex, HelmRepoIndexChartEntry } from '../types';
 
 const REPOSITORIES_ENDPOINT =
   '/api/proxy/plugin/clustertemplates-plugin/repositories/api/helm-repositories';
@@ -10,10 +10,18 @@ const REPOSITORY_ENDPOINT =
 
 const getRepositoryEndpoint = (name) => `${REPOSITORY_ENDPOINT}/${name}`;
 
-export type ArgoCDRepositoryListResult = [HelmRepoIndex | undefined, boolean, unknown];
+type RepositoryResponse = {
+  name: string;
+  url: string;
+  index?: HelmRepoIndex;
+  error?: string;
+};
+type RepositoriesResponse = RepositoryResponse[];
+
+export type ArgoCDRepositoryListResult = [RepositoriesResponse | undefined, boolean, unknown];
 
 export const useArgoCDRepositories = (): ArgoCDRepositoryListResult => {
-  const [repoList, setRepoList] = React.useState<HelmRepoIndex>();
+  const [repoList, setRepoList] = React.useState<RepositoriesResponse>([]);
   const [repoListLoaded, setRepoListLoaded] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
 
@@ -22,7 +30,7 @@ export const useArgoCDRepositories = (): ArgoCDRepositoryListResult => {
       try {
         const res = await consoleFetch(REPOSITORIES_ENDPOINT);
         const yaml = await res.text();
-        setRepoList(load(yaml) as HelmRepoIndex);
+        setRepoList(load(yaml) as RepositoriesResponse);
       } catch (e) {
         setError(e);
       } finally {
@@ -35,10 +43,10 @@ export const useArgoCDRepositories = (): ArgoCDRepositoryListResult => {
   return [repoList, repoListLoaded, error];
 };
 
-export type ArgoCDRepositoryResult = [HelmRepoIndex | undefined, boolean, unknown];
+export type ArgoCDRepositoryResult = [RepositoryResponse | undefined, boolean, unknown];
 
 export const useArgoCDRepository = (repositoryName: string): ArgoCDRepositoryResult => {
-  const [repository, setRepository] = React.useState<HelmRepoIndex>();
+  const [repository, setRepository] = React.useState<RepositoryResponse>();
   const [repositoryLoaded, setRepositoryLoaded] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
 
@@ -47,7 +55,7 @@ export const useArgoCDRepository = (repositoryName: string): ArgoCDRepositoryRes
       try {
         const res = await consoleFetch(getRepositoryEndpoint(repositoryName));
         const yaml = await res.text();
-        setRepository(load(yaml) as HelmRepoIndex);
+        setRepository(load(yaml) as RepositoryResponse);
       } catch (e) {
         setError(e);
       } finally {
@@ -60,26 +68,18 @@ export const useArgoCDRepository = (repositoryName: string): ArgoCDRepositoryRes
   return [repository, repositoryLoaded, error];
 };
 
-export const getRepoCharts = (index: HelmRepoIndex | undefined, repoName: string) =>
-  Object.keys(index?.entries || {})
-    .filter((k) => {
-      const keyParts = k.split('--');
-      return keyParts[keyParts.length - 1] === repoName;
-    })
-    .reduce((acc, k) => {
-      return [...acc, ...(index?.entries?.[k] || [])];
-    }, [] as { name: string; version: string; created: string }[]);
+export const getRepoCharts = (index: HelmRepoIndex) =>
+  Object.values(index?.entries || {}).reduce((acc, v) => {
+    return [...acc, ...(v || [])];
+  }, [] as HelmRepoIndexChartEntry[]);
 
 export type HelmRepositoryChartsMap = {
   [chartName: string]: string[];
 };
 
-export const getRepoChartsMap = (
-  index: HelmRepoIndex | undefined,
-  repoName: string,
-): HelmRepositoryChartsMap => {
+export const getRepoChartsMap = (index: HelmRepoIndex): HelmRepositoryChartsMap => {
   const map: HelmRepositoryChartsMap = {};
-  const repoCharts = getRepoCharts(index, repoName);
+  const repoCharts = getRepoCharts(index);
   for (const chart of repoCharts) {
     if (!(chart.name in map)) {
       map[chart.name] = [];
