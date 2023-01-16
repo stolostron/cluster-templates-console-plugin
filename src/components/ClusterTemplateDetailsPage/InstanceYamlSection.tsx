@@ -18,12 +18,17 @@ const InstanceYamlSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
       <StackItem>
         <Button
           variant="secondary"
-          onClick={() =>
-            createDownloadFile(
-              `${clusterTemplate.metadata?.name}_instance.yaml`,
-              generateInstanceYaml(clusterTemplate),
-            )
-          }
+          onClick={() => {
+            try {
+              createDownloadFile(
+                `${clusterTemplate.metadata?.name}_instance.yaml`,
+                generateInstanceYaml(clusterTemplate),
+              );
+            } catch (err) {
+              //TODO: decide how to handle errors in details page
+              console.error(err);
+            }
+          }}
           icon={<DownloadIcon />}
         >
           {t('Download')}

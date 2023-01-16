@@ -2,140 +2,51 @@
   "apiVersion": "clustertemplate.openshift.io/v1alpha1",
   "kind": "ClusterTemplate",
   "metadata": {
-    "name": "cluster-template-example",
-    "resourceVersion": "111",
-    "uid": "b2beddd",
-    "labels": {
-      "clustertemplates.openshift.io/location": "location-value",
-      "clustertemplates.openshift.io/infra": "infra-value",
-      "clustertemplates.openshift.io/vendor": "vendor-value"
-    },
-    "annotations": {
-      "clustertemplates.openshift.io/description": "an interesting description"
-    }
+    "name": "with-postinstall"
   },
   "spec": {
     "clusterDefinition": {
       "destination": {
-        "namespace": "instance_ns",
+        "namespace": "",
         "server": "https://kubernetes.default.svc"
       },
       "project": "default",
       "source": {
         "chart": "hypershift-template",
-        "helm": {
-          "parameters": [
-            {
-              "name": "baseDnsDomain",
-              "value": "sampletemplateinstance.com"
-            }
-          ]
-        },
-        "repoURL": "https://repoUrl",
+        "repoURL": "https://stolostron.github.io/cluster-templates-operator",
         "targetRevision": "0.0.2"
-      },
-      "syncPolicy": {
-        "automated": {}
-      },
-      "propertyDetails": [
-        {
-          "defaultValue": "sampletemplateinstance.com",
-          "description": "Base DNS domain of the cluster",
-          "name": "prop1",
-          "overwritable": true,
-          "type": "string"
-        },
-        {
-          "defaultValue": "LoadBalancer",
-          "description": "API Publishing strategy - can be LoadBalancer or NodePort",
-          "name": "APIPublishingStrategy",
-          "overwritable": true
-        },
-        {
-          "defaultValue": "4.11.9-multi",
-          "description": "OCP version to be used",
-          "name": "ocpVersion",
-          "overwritable": true
-        },
-        {
-          "defaultValue": "x86_64",
-          "description": "OCP arch to be used",
-          "name": "ocpArch",
-          "overwritable": true
-        },
-        {
-          "description": "SSH public key to be injected into all cluster node sshd servers",
-          "name": "sshPublicKey",
-          "overwritable": true,
-          "secretRef": {
-            "name": "secert",
-            "namespace": "default"
-          }
-        },
-        {
-          "description": "Base64 encoded pull secret to be injected into the container runtime of all cluster nodes",
-          "name": "pullSecret",
-          "overwritable": false,
-          "secretRef": {
-            "name": "secert",
-            "namespace": "default"
-          }
-        }
-      ]
+      }
     },
     "clusterSetup": [
       {
-        "destination": {
-          "namespace": "default",
-          "server": "server"
-        },
-        "project": "default",
-        "source": {
-          "chart": "chart",
-          "repoURL": "demo",
-          "targetRevision": "0.0.4"
-        },
-        "syncPolicy": {
-          "automated": {}
-        },
-        "propertyDetails": [
-          {
-            "description": "clusterSetupSecretProp1",
-            "name": "clusterSetupSecretProp1",
-            "overwritable": true,
-            "secretRef": {
-              "name": "secert",
-              "namespace": "default"
-            }
+        "name": "https://charts.openshift.io/dotnet",
+        "spec": {
+          "destination": {
+            "namespace": "",
+            "server": "{new_cluster}"
+          },
+          "project": "default",
+          "source": {
+            "chart": "redhat-dotnet",
+            "repoURL": "https://charts.openshift.io",
+            "targetRevision": "0.0.1"
           }
-        ],
-        "name": "setup1"
-      },
-      {
-        "destination": {
-          "namespace": "default",
-          "server": "server"
-        },
-        "project": "default",
-        "source": {
-          "chart": "chart",
-          "repoURL": "demo",
-          "targetRevision": "0.0.4"
-        },
-        "syncPolicy": {
-          "automated": {}
-        },
-        "propertyDetails": [
-          {
-            "description": "prop for testing duplicated property name",
-            "name": "prop1",
-            "overwritable": true,
-            "type": "string"
-          }
-        ],
-        "name": "setup2"
+        }
       }
     ],
-    "cost": 1
+    "cost": 200
+  },
+  "status": {
+    "clusterDefinition": {
+      "schema": "{\n    \"$schema\": \"http://json-schema.org/schema#\",\n    \"type\": \"object\",\n    \"required\": [\n      \"ocpVersion\",\n      \"ocpArch\",\n      \"APIPublishingStrategy\",\n      \"baseDnsDomain\"\n    ],\n    \"properties\": {\n      \"baseDnsDomain\": {\n        \"type\": \"string\"\n      },\n      \"APIPublishingStrategy\": {\n        \"type\": \"string\"\n      },\n      \"ocpArch\": {\n        \"type\": \"string\"\n      },\n      \"ocpVersion\": {\n        \"type\": \"string\"\n      }\n    }\n  }",
+      "values": "# Default values for demo-template.\n# This is a YAML-formatted file.\n# Declare variables to be passed into your templates.\n\n#An OCP version to deploy\nocpVersion: 4.11.9\n\n#An OCP arch to deploy\nocpArch: x86_64\n\n#API publishing stategy that should be used\nAPIPublishingStrategy: LoadBalancer\n\n#Base DNS domain of the cluster\nbaseDnsDomain: sampletemplateinstance.com\n"
+    },
+    "clusterSetup": [
+      {
+        "name": "https://charts.openshift.io/dotnet",
+        "schema": "{\n    \"$schema\": \"http://json-schema.org/draft-07/schema\",\n    \"properties\": {\n        \"image\": {\n            \"type\": \"object\",\n            \"description\": \"Defines the image you want to build/deploy\",\n            \"properties\": {\n                \"name\": {\n                    \"type\": [\"string\", \"null\"],\n                    \"description\": \"Name of the image you want to build/deploy. Defaults to the release name.\"\n                },\n                \"tag\": {\n                    \"type\": \"string\",\n                    \"description\": \"Tag that you want to build/deploy\"\n                }\n            }\n        },\n        \"build\": {\n            \"type\": \"object\",\n            \"description\": \"Values related to the build\",\n            \"properties\": {\n                \"enabled\": {\n                    \"type\": \"boolean\",\n                    \"description\": \"Enable/disable the OCP Build\"\n                },\n                \"uri\": {\n                    \"type\": \"string\",\n                    \"description\": \"URI of GitHub repository\"\n                },\n                \"ref\": {\n                    \"type\": \"string\",\n                    \"description\": \"Git ref\"\n                },\n                \"startupProject\": {\n                    \"type\": \"string\",\n                    \"description\": \"Path to .NET project file or project directory.\"\n                },\n                \"contextDir\": {\n                    \"type\": [\"string\", \"null\"],\n                    \"description\": \"Context directory within your Git repo to use as the root for the build\"\n                },\n                \"imageStreamTag\": {\n                    \"type\": \"object\",\n                    \"description\": \"Values related to the s2i builder's ImageStreamTag\",\n                    \"properties\": {\n                        \"name\": {\n                            \"type\": \"string\",\n                            \"description\": \"Name of the ImageStreamTag\"\n                        },\n                        \"useReleaseNamespace\": {\n                            \"type\": \"boolean\",\n                            \"description\": \"Determines if the ImageStreamTag is in the namespace you are releasing to\"\n                        },\n                        \"namespace\": {\n                            \"type\": \"string\",\n                            \"description\": \"The namespace that contains the ImageStreamTag\"\n                        }\n                    }\n                },\n                \"output\": {\n                    \"type\": \"object\",\n                    \"description\": \"Specifies where the image will be pushed to once built. More information: https://docs.openshift.com/container-platform/4.6/builds/managing-build-output.html\",\n                    \"properties\": {\n                        \"kind\": {\n                            \"type\": \"string\",\n                            \"description\": \"Determines how the image will be pushed\",\n                            \"enum\": [\"ImageStreamTag\", \"DockerImage\"]\n                        },\n                        \"pushSecret\": {\n                            \"type\": [\"string\", \"null\"],\n                            \"description\": \"Push secret name, used only if kind == 'DockerImage'\"\n                        }\n                    }\n                },\n                \"pullSecret\": {\n                    \"type\": [\"string\", \"null\"],\n                    \"description\": \"The image pull secret. More information: https://docs.openshift.com/container-platform/4.6/openshift_images/managing_images/using-image-pull-secrets.html\"\n                },\n                \"env\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Freeform env field. More information: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/\"\n                },\n                \"resources\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"description\": \"Freeform resources field. More information: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\"\n                }\n            }\n        },\n        \"deploy\": {\n            \"type\": \"object\",\n            \"description\": \"Values related to the deployment of your application\",\n            \"properties\": {\n                \"replicas\": {\n                    \"type\": \"integer\",\n                    \"description\": \"Number of pod replicas to deploy\"\n                },\n                \"resources\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"description\": \"Freeform resources field. More information: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\"\n                },\n                \"serviceType\": {\n                    \"type\": \"string\",\n                    \"description\": \"The type of service to create. More information: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types\"\n                },\n                \"ports\": {\n                    \"type\": \"array\",\n                    \"description\": \"Freeform service ports field. More information: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service\"\n                },\n                \"route\": {\n                    \"type\": \"object\",\n                    \"description\": \"Values for creating an OCP route\",\n                    \"properties\": {\n                        \"enabled\": {\n                            \"type\": \"boolean\",\n                            \"description\": \"Determines if the route should be created\"\n                        },\n                        \"targetPort\": {\n                            \"type\": \"string\",\n                            \"description\": \"The port on pods this route points to\"\n                        },\n                        \"tls\": {\n                            \"type\": \"object\",\n                            \"description\": \"Values for configuring TLS on an OCP route. More information: https://docs.openshift.com/container-platform/4.6/networking/routes/secured-routes.html\",\n                            \"properties\": {\n                                \"enabled\": {\n                                    \"type\": \"boolean\",\n                                    \"description\": \"Determines if TLS should be enabled\"\n                                },\n                                \"termination\": {\n                                    \"type\": \"string\",\n                                    \"description\": \"Indicates the termination type\"\n                                },\n                                \"insecureEdgeTerminationPolicy\": {\n                                    \"type\": \"string\",\n                                    \"description\": \"Indicates the desired behavior for insecure connections\"\n                                },\n                                \"key\": {\n                                    \"type\": [\"string\", \"null\"],\n                                    \"description\": \"Key file contents\"\n                                },\n                                \"caCertificate\": {\n                                    \"type\": [\"string\", \"null\"],\n                                    \"description\": \"Certificate authority certificate contents\"\n                                },\n                                \"certificate\": {\n                                    \"type\": [\"string\", \"null\"],\n                                    \"description\": \"Certificate contents\"\n                                },\n                                \"destinationCACertificate\": {\n                                    \"type\": [\"string\", \"null\"],\n                                    \"description\": \"Contents of the CA certificate of the final destination\"\n                                }\n                            }\n                        }\n                    }\n                },\n                \"livenessProbe\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"description\": \"Freeform livenessProbe field. More information: https://docs.openshift.com/container-platform/4.6/applications/application-health.html#application-health-about_application-health\"\n                },\n                \"readinessProbe\": {\n                    \"type\": [\"object\", \"null\"],\n                    \"description\": \"Freeform readinessProbe field. More information: https://docs.openshift.com/container-platform/4.6/applications/application-health.html#application-health-about_application-health\"\n                },\n                \"env\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Freeform env field. More information: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/\"\n                },\n                \"envFrom\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Freeform envFrom field. More information: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables\"\n                },\n                \"applicationProperties\": {\n                    \"type\": \"object\",\n                    \"description\": \"Values for externalizing an application.properties file\",\n                    \"properties\": {\n                        \"enabled\": {\n                            \"type\": \"boolean\",\n                            \"description\": \"Determines if the application.properties file should be externalized in a ConfigMap\"\n                        },\n                        \"mountPath\": {\n                            \"type\": \"string\",\n                            \"description\": \"The location to mount the properties file to\"\n                        },\n                        \"properties\": {\n                            \"type\": [\"string\", \"null\"],\n                            \"description\": \"application.properties file contents\"\n                        }\n                    }\n                },\n                \"volumeMounts\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Freeform volumeMounts field. More information: https://kubernetes.io/docs/concepts/storage/volumes/\"\n                },\n                \"volumes\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Freeform volumes field. More information: https://kubernetes.io/docs/concepts/storage/volumes/\"\n                },\n                \"initContainers\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Freeform initContainers field. More information: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/\"\n                },\n                \"extraContainers\": {\n                    \"type\": [\"array\", \"null\"],\n                    \"description\": \"Adds extra containers to your pod, provided as a list of pod templates. More information: https://kubernetes.io/docs/concepts/workloads/pods/#pod-templates\"\n                }\n            }\n        },\n        \"global\": {\n            \"type\": \"object\",\n            \"description\": \"Values that should be global across parent and dependent Helm charts\",\n            \"properties\": {\n                \"nameOverride\": {\n                    \"type\": [\"string\", \"null\"],\n                    \"description\": \"Overrides the release name. Impacts the image name (if image.name is left blank) and impacts the name of created OCP resources\"\n                }\n            }\n        }\n    }\n }",
+        "values": "image:\n  ## Name of the image you want to build/deploy\n  ## Defaults to the release name\n  name:\n  ## Tag that you want to build/deploy\n  tag: latest\n\n## Build-specific values (for configuring BuildConfig and ImageStream)\nbuild:\n  ## Should build-related resources such as BuildConfig and ImageStream be created?\n  ## Set this to false if you just want to deploy a previously built image.\n  enabled: true\n\n  ## Git URI, Ref, and ContextDir\n  uri: https://github.com/redhat-developer/s2i-dotnetcore-ex\n  ref: dotnetcore-3.1\n  contextDir:\n\n  ## Project to build and deploy\n  ## More information: see DOTNET_STARTUP_PROJECT envvar from the https://github.com/redhat-developer/s2i-dotnetcore image\n  startupProject: app\n\n  ## The ImageStreamTag of the desired builder image\n  imageStreamTag:\n    ## Name of the ImageStreamTag\n    name: dotnet:3.1\n    ## Is this ImageStreamTag in the same namespace you are releasing to?\n    useReleaseNamespace: false\n    ## Namespace containing the ImageStreamTag, is useReleaseNamespace == false\n    namespace: openshift\n\n  ## Specifies where the image will be pushed to once built\n  ## More information: https://docs.openshift.com/container-platform/4.6/builds/managing-build-output.html\n  output:\n    ## Choices: ImageStreamTag, DockerImage\n    ## ImageStreamTag publishes to the internal registry\n    ## DockerImage publishes to an external registry (referred to by image.name and image.tag)\n    kind: ImageStreamTag\n    ## Push secret name, used only if kind == \"DockerImage\"\n    pushSecret:\n\n  ## Image pull secret. More information: https://docs.openshift.com/container-platform/4.6/openshift_images/managing_images/using-image-pull-secrets.html\n  pullSecret:\n\n  ## Freeform env for the OCP build. More information: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/\n  env:\n  #  - name: VAR_NAME\n  #    value: var-value\n\n  ## Freeform resources for the OCP build. More information: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\n  resources:\n  # limits:\n  #   cpu: \"4\"\n  #   memory: 6Gi\n  #  requests:\n  #    cpu: \"2\"\n  #    memory: 4Gi\n\n## Application/Deployment-specific values (For configuring Deployment, Service, Route, ConfigMap, etc)\ndeploy:\n  ## Number of pod replicas to deploy\n  replicas: 1\n\n  ## Freeform resources. More information: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/\n  resources:\n  #  limits:\n  #    cpu: 100m\n  #    memory: 256Mi\n  #  requests:\n  #    cpu: 50m\n  #    memory: 128Mi\n\n  ## Type of service to create. More information: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types\n  serviceType: ClusterIP\n\n  ## Freeform service ports. More information: https://kubernetes.io/docs/concepts/services-networking/service/#defining-a-service\n  ports:\n    - name: http\n      port: 8080\n      targetPort: 8080\n      protocol: TCP\n\n  ## For creating a Route, allowing your application to be accessed from outside the OCP cluster\n  route:\n    enabled: true\n    targetPort: http\n    ## More information: https://docs.openshift.com/container-platform/4.6/networking/routes/secured-routes.html\n    tls:\n      enabled: true\n      termination: edge\n      insecureEdgeTerminationPolicy: Redirect\n      ## IMPORTANT: Do not check 'key' into git!\n      key:\n      caCertificate:\n      certificate:\n      destinationCACertificate:\n\n  ## Freeform Liveness Probe. More information: https://docs.openshift.com/container-platform/4.6/applications/application-health.html#application-health-about_application-health\n  livenessProbe:\n    tcpSocket:\n      port: http\n  ## If you don't want a livenessProbe, override like this in your values file\n  # livenessProbe: ''\n\n  ## Freeform Readiness Probe. More information: https://docs.openshift.com/container-platform/4.6/applications/application-health.html#application-health-about_application-health\n  readinessProbe:\n    httpGet:\n      path: /\n      port: http\n  ## If you don't want a readinessProbe, override like this in your values file\n  # readinessProve: ''\n\n  ## Freeform env. More information: https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/\n  env:\n  #  - name: VAR_NAME\n  #    value: var-value\n\n  ## Freeform envFrom. More information: https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/#configure-all-key-value-pairs-in-a-configmap-as-container-environment-variables\n  envFrom:\n  #  - configMapRef:\n  #      name: special-config\n\n  ## Application properties file for configuring the app\n  applicationProperties:\n    ## Determines if application properties should be created in a configmap and mounted to the application container\n    enabled: false\n    ## Location to mount the properties file\n    mountPath: /deployments/config/\n    ## Application properties file contents\n    properties: |-\n      ## Properties go here\n\n  ## Freeform volume mounts. More information: https://kubernetes.io/docs/concepts/storage/volumes/\n  volumeMounts:\n  #  - name: my-config\n  #    mountPath: /etc/config\n\n  ## Freeform volumes. More information: https://kubernetes.io/docs/concepts/storage/volumes/\n  volumes:\n  #  - name: my-config\n  #    configMap:\n  #      name: my-configmap\n\n  ## Freeform init containers: More information: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/\n  initContainers:\n  #  - name: my-init-container\n  #    command: [\"echo\", \"hello\"]\n  #    image: registry.redhat.io/ubi8/ubi-minimal\n\n  ## Freeform containers: More information: https://kubernetes.io/docs/concepts/workloads/pods/#pod-templates\n  extraContainers:\n  #  - name: my-extra-container\n  #    command: [\"sleep\", \"infinity\"]\n  #    image: registry.redhat.io/ubi8/ubi-minimal\n\nglobal:\n  ## Override the release name\n  nameOverride:\n"
+      }
+    ]
   }
 }

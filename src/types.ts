@@ -32,6 +32,27 @@ export type ArgoCDSpec = {
   project: string;
 };
 
+export type HelmChartProperty = {
+  type: string;
+};
+
+export type HelmChartSchema = {
+  required: string[];
+  properties: {
+    [propName: string]: HelmChartProperty;
+  };
+};
+
+export type ClusterTemplateStatus = {
+  clusterDefinition: {
+    values: string;
+  };
+  clusterSetup?: {
+    name: string;
+    values: string;
+  }[];
+};
+
 export type ClusterTemplate = K8sResourceCommon & {
   spec: {
     cost: number;
@@ -41,6 +62,7 @@ export type ClusterTemplate = K8sResourceCommon & {
       name: string;
     }[];
   };
+  status?: ClusterTemplateStatus;
 };
 
 export enum ConditionType {
@@ -72,7 +94,7 @@ export enum ClusterTemplateInstanceStatusPhase {
 export type ClusterTemplateInstancePropertyValue = {
   clusterSetup?: string;
   name: string;
-  value: string;
+  value: unknown;
 };
 
 export type ClusterTemplateInstance = K8sResourceCommon & {

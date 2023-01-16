@@ -114,8 +114,7 @@ export const RepositoryRow = ({
 
   const repository = repositories.find((r) => r.url === obj.data?.url);
 
-  const numCharts = getNumRepoCharts(repository);
-  const repoChartsCount = numCharts || '-';
+  const repoChartsCount = repository ? getNumRepoCharts(repository) : '-';
 
   const repoChartsUpdatedAt = repository?.index
     ? new Date(repository.index.generated).toLocaleString()
