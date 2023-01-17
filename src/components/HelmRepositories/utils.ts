@@ -17,18 +17,22 @@ export const getValidationSchema = (t: TFunction) =>
       .url(t('URL must be a valid URL starting with "http://" or "https://"'))
       .required(t('Required.')),
     useCredentials: Yup.boolean(),
-    caCertificate: Yup.string().when('useCredentials', {
+    username: Yup.string().when('useCredentials', {
       is: true,
       then: (schema) => schema.required(t('Required.')),
     }),
-    tlsClientCert: Yup.string().when('useCredentials', {
+    password: Yup.string().when('useCredentials', {
       is: true,
       then: (schema) => schema.required(t('Required.')),
     }),
-    tlsClientKey: Yup.string().when('useCredentials', {
-      is: true,
-      then: (schema) => schema.required(t('Required.')),
-    }),
+    // tlsClientCertData: Yup.string().when('useCredentials', {
+    //   is: true,
+    //   then: (schema) => schema.required(t('Required.')),
+    // }),
+    // tlsClientCertKey: Yup.string().when('useCredentials', {
+    //   is: true,
+    //   then: (schema) => schema.required(t('Required.')),
+    // }),
   });
 
 export function getDecodedSecretData(secretData: Secret['data'] = {}) {

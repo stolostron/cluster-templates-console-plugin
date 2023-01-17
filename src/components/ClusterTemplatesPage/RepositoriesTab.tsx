@@ -30,21 +30,29 @@ import {
   Tr,
 } from '@patternfly/react-table';
 import { TFunction } from 'react-i18next';
-import { helmRepoGVK } from '../../constants';
-import { ClusterTemplate, HelmChartRepository, RowProps, TableColumn } from '../../types';
+import { secretGVK } from '../../constants';
 import {
-  useHelmRepositoryIndex,
-  getRepoCharts,
-  HelmRepositoryIndexResult,
-} from '../../hooks/useHelmRepositoryIndex';
+  ArgoCDSecretData,
+  ClusterTemplate,
+  DecodedSecret,
+  RowProps,
+  TableColumn,
+} from '../../types';
+import { getRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
 import TableLoader from '../../helpers/TableLoader';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
-import EditHelmRepositoryDialog from '../HelmRepositories/EditHelmRepositoryDialog';
+import EditRepositoryDialog from '../HelmRepositories/EditRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
-import { useHelmRepositories } from '../../hooks/useHelmRepositories';
+import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
+import {
+  HelmChartRepositoryListResult,
+  useHelmChartRepositories,
+} from '../../hooks/useHelmChartRepositories';
+import RepositoriesEmptyState from '../HelmRepositories/RepositoriesEmptyState';
+import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -72,53 +80,51 @@ const getTableColumns = (t: TFunction): TableColumn[] => [
     id: 'templates',
   },
   {
-    title: t('Group'),
-    id: 'group',
-  },
-  {
     title: '',
     id: 'kebab-menu',
   },
 ];
 
-type HelmRepositoryActionDialogIds = 'deleteDialog' | 'editHelmChartRepositoryDialog';
-const helmRepositoryActionDialogIds: HelmRepositoryActionDialogIds[] = [
+type RepositoryActionDialogIds = 'deleteDialog' | 'editRepositoryDialog';
+const RepositoryActionDialogIds: RepositoryActionDialogIds[] = [
   'deleteDialog',
-  'editHelmChartRepositoryDialog',
+  'editRepositoryDialog',
 ];
 
-type HelmRepoRowProps = RowProps<HelmChartRepository> & {
-  helmRepoIndexResult: HelmRepositoryIndexResult;
+type RepositoryRowProps = RowProps<DecodedSecret<ArgoCDSecretData>> & {
+  helmChartRepositoriesResult: HelmChartRepositoryListResult;
   clusterTemplatesResult: WatchK8sResult<ClusterTemplate[]>;
 };
 
-export const HelmRepoRow = ({
+export const RepositoryRow = ({
   obj,
-  helmRepoIndexResult,
+  helmChartRepositoriesResult,
   clusterTemplatesResult,
-}: HelmRepoRowProps) => {
+}: RepositoryRowProps) => {
   const { t } = useTranslation();
 
-  const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(
-    helmRepositoryActionDialogIds,
-  );
-  const [model] = useK8sModel(helmRepoGVK);
-  const [repoIndex, repoIndexLoaded, repoIndexError] = helmRepoIndexResult;
+  const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
+  const [model] = useK8sModel(secretGVK);
+  const [repositories, repositoriesLoaded, repositoriesError] = helmChartRepositoriesResult;
   const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
 
   const templatesFromRepo = templates.filter(
-    (t) => t.spec.clusterDefinition.source.repoURL === obj.metadata?.name,
+    (t) => t.spec.clusterDefinition.source.repoURL === obj.data?.url,
   );
-  const repoChartsCount = repoIndex
-    ? getRepoCharts(repoIndex, obj.metadata?.name ?? '').length ?? '-'
+
+  const repository = repositories.find((r) => r.url === obj.data?.url);
+
+  const repoChartsCount = repository?.index ? getRepoCharts(repository.index).length ?? '-' : '-';
+
+  const repoChartsUpdatedAt = repository?.index
+    ? new Date(repository.index.generated).toLocaleString()
     : '-';
-  const repoChartsUpdatedAt = repoIndex ? new Date(repoIndex.generated).toLocaleString() : '-';
 
   const getRowActions = (): IAction[] => {
     return [
       {
         title: t('Edit repository'),
-        onClick: () => openDialog('editHelmChartRepositoryDialog'),
+        onClick: () => openDialog('editRepositoryDialog'),
       },
       {
         title: t('Delete repository'),
@@ -133,37 +139,32 @@ export const HelmRepoRow = ({
     <Tr>
       <Td dataLabel={columns[0].title}>
         <ResourceLink
-          groupVersionKind={helmRepoGVK}
+          groupVersionKind={secretGVK}
           name={obj.metadata?.name}
           namespace={obj.metadata?.namespace}
           hideIcon
         />
       </Td>
       <Td dataLabel={columns[1].title}>
-        <Text
-          component="a"
-          href={obj.spec.connectionConfig.url}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Truncate
-            content={obj.spec.connectionConfig.url}
-            position={'middle'}
-            trailingNumChars={10}
-          />
+        <Text component="a" href={obj.data?.url} target="_blank" rel="noopener noreferrer">
+          <Truncate content={obj.data?.url} position={'middle'} trailingNumChars={10} />
         </Text>
       </Td>
       <Td dataLabel={columns[2].title}>
-        {obj.spec.connectionConfig.tlsClientConfig ? t('Authenticated') : t('Not required')}
+        {obj.data?.username ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].title}>
-        <CellLoader loaded={repoIndexLoaded} error={repoIndexError}>
+        <CellLoader loaded={repositoriesLoaded} error={repositoriesError}>
           {repoChartsUpdatedAt}
         </CellLoader>
       </Td>
       <Td dataLabel={columns[4].title}>
-        <CellLoader loaded={repoIndexLoaded} error={repoIndexError}>
-          {repoChartsCount}
+        <CellLoader loaded={repositoriesLoaded} error={repositoriesError}>
+          {repository?.error ? (
+            <RepositoryErrorPopover error={repository.error} />
+          ) : (
+            repoChartsCount
+          )}
         </CellLoader>
       </Td>
       <Td dataLabel={columns[5].title}>
@@ -173,7 +174,6 @@ export const HelmRepoRow = ({
           </Label>
         </CellLoader>
       </Td>
-      <Td dataLabel={columns[6].title}>-</Td>
       <Td isActionCell>
         <ActionsColumn
           items={getRowActions()}
@@ -210,19 +210,23 @@ export const HelmRepoRow = ({
           {t('Are you sure you want to delete?')}
         </Modal>
       )}
-      {isDialogOpen('editHelmChartRepositoryDialog') && (
-        <EditHelmRepositoryDialog
-          helmChartRepository={obj}
-          closeDialog={() => closeDialog('editHelmChartRepositoryDialog')}
+      {isDialogOpen('editRepositoryDialog') && (
+        <EditRepositoryDialog
+          argoCDSecret={obj}
+          closeDialog={() => closeDialog('editRepositoryDialog')}
         />
       )}
     </Tr>
   );
 };
 
-const HelmRepositoriesTab = () => {
-  const [repositories, loaded, error] = useHelmRepositories();
-  const helmRepoIndexResult = useHelmRepositoryIndex();
+type RepositoriesTabProps = {
+  openNewRepositoryDialog: () => void;
+};
+
+const RepositoriesTab = ({ openNewRepositoryDialog }: RepositoriesTabProps) => {
+  const [secrets, loaded, error] = useArgoCDSecrets();
+  const helmChartRepositoriesResult = useHelmChartRepositories();
   const clusterTemplatesResult = useClusterTemplates();
   const { t } = useTranslation();
 
@@ -232,33 +236,37 @@ const HelmRepositoriesTab = () => {
         <TableLoader
           loaded={loaded}
           error={error}
-          errorId="helm-repositories-load-error"
-          errorMessage={t('The Helm repositories could not be loaded.')}
+          errorId="repositories-load-error"
+          errorMessage={t('Repositories could not be loaded.')}
         >
           <Card>
-            <TableComposable
-              aria-label="Helm repositories table"
-              data-testid="helm-repositories-table"
-              variant="compact"
-            >
-              <Thead>
-                <Tr>
-                  {getTableColumns(t).map((column) => (
-                    <Th key={column.id}>{column.title}</Th>
+            {!secrets.length ? (
+              <RepositoriesEmptyState addRepository={openNewRepositoryDialog} />
+            ) : (
+              <TableComposable
+                aria-label="repositories table"
+                data-testid="repositories-table"
+                variant="compact"
+              >
+                <Thead>
+                  <Tr>
+                    {getTableColumns(t).map((column) => (
+                      <Th key={column.id}>{column.title}</Th>
+                    ))}
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {secrets.map((secret) => (
+                    <RepositoryRow
+                      key={secret.data?.name}
+                      obj={secret}
+                      clusterTemplatesResult={clusterTemplatesResult}
+                      helmChartRepositoriesResult={helmChartRepositoriesResult}
+                    />
                   ))}
-                </Tr>
-              </Thead>
-              <Tbody>
-                {repositories.map((repository) => (
-                  <HelmRepoRow
-                    key={repository.metadata?.name}
-                    obj={repository}
-                    clusterTemplatesResult={clusterTemplatesResult}
-                    helmRepoIndexResult={helmRepoIndexResult}
-                  />
-                ))}
-              </Tbody>
-            </TableComposable>
+                </Tbody>
+              </TableComposable>
+            )}
           </Card>
         </TableLoader>
       </PageSection>
@@ -266,4 +274,4 @@ const HelmRepositoriesTab = () => {
   );
 };
 
-export default HelmRepositoriesTab;
+export default RepositoriesTab;

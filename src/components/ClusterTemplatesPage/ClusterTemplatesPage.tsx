@@ -3,19 +3,18 @@ import { ListPageCreateDropdown, ListPageHeader } from '@openshift-console/dynam
 import { useHistory, useLocation } from 'react-router-dom';
 import { Tab, Tabs, TabTitleText } from '@patternfly/react-core';
 import ClusterTemplatesTab from './ClusterTemplatesTab';
-import HelmRepositoriesTab from './HelmRepositoriesTab';
+import RepositoriesTab from './RepositoriesTab';
 import { useClusterTemplatesCount } from '../../hooks/useClusterTemplates';
-
 import { clusterTemplateGVK } from '../../constants';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getNavLabelWithCount } from '../../utils/utils';
 import { getReference, getResourceUrl } from '../../utils/k8s';
-import { useHelmRepositoriesCount } from '../../hooks/useHelmRepositories';
+import { useArgoCDSecretsCount } from '../../hooks/useArgoCDSecrets';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
-import NewHelmRepositoryDialog from '../HelmRepositories/NewHelmRepositoryDialog';
+import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
 
-type ActionDialogIds = 'newHelmRepositoryDialog';
-const actionDialogIds: ActionDialogIds[] = ['newHelmRepositoryDialog'];
+type ActionDialogIds = 'newRepositoryDialog';
+const actionDialogIds: ActionDialogIds[] = ['newRepositoryDialog'];
 
 const useActiveTab = () => {
   const { search } = useLocation();
@@ -30,14 +29,14 @@ const ClusterTemplatesPage = () => {
   const { t } = useTranslation();
   const history = useHistory();
   const templatesCount = useClusterTemplatesCount();
-  const helmRepositoriesCount = useHelmRepositoriesCount();
+  const argoCDSecretsCount = useArgoCDSecretsCount();
   const activeTab = useActiveTab();
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(actionDialogIds);
 
   const actionItems = React.useMemo(
     () => ({
       NEW_CLUSTER_TEMPLATE: t('Cluster template'),
-      NEW_HELM_CHART_REPOSITORY: t('HELM repository'),
+      NEW_REPOSITORY: t('Repository'),
     }),
     [t],
   );
@@ -57,8 +56,8 @@ const ClusterTemplatesPage = () => {
       case 'NEW_CLUSTER_TEMPLATE':
         history.push(`${getResourceUrl(clusterTemplateGVK)}/~new`);
         break;
-      case 'NEW_HELM_CHART_REPOSITORY':
-        openDialog('newHelmRepositoryDialog');
+      case 'NEW_REPOSITORY':
+        openDialog('newRepositoryDialog');
         break;
     }
   };
@@ -91,15 +90,19 @@ const ClusterTemplatesPage = () => {
             eventKey="repositories"
             title={
               <TabTitleText>
-                {getNavLabelWithCount('HELM repositories', helmRepositoriesCount)}
+                {getNavLabelWithCount('Helm repositories', argoCDSecretsCount)}
               </TabTitleText>
             }
-            aria-label="HELM repositories tab"
+            aria-label="Repositories tab"
           />
         </Tabs>
-        {activeTab === 'repositories' ? <HelmRepositoriesTab /> : <ClusterTemplatesTab />}
-        {isDialogOpen('newHelmRepositoryDialog') && (
-          <NewHelmRepositoryDialog closeDialog={() => closeDialog('newHelmRepositoryDialog')} />
+        {activeTab === 'repositories' ? (
+          <RepositoriesTab openNewRepositoryDialog={() => openDialog('newRepositoryDialog')} />
+        ) : (
+          <ClusterTemplatesTab />
+        )}
+        {isDialogOpen('newRepositoryDialog') && (
+          <NewRepositoryDialog closeDialog={() => closeDialog('newRepositoryDialog')} />
         )}
       </div>
     </>

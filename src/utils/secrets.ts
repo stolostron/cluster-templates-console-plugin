@@ -1,4 +1,5 @@
 import { Secret } from '../types';
+import { Buffer } from 'buffer';
 
 export function getDecodedSecretData<T extends Record<string, unknown>>(
   secretData: Secret['data'] = {},
