@@ -15,8 +15,7 @@
     "lint": "eslint ./src && stylelint \"src/**/*.css\" --allow-empty-input",
     "lint:fix": "eslint ./src --fix && stylelint \"src/**/*.css\" --allow-empty-input --fix",
     "test": "jest",
-    "podman:build": "podman build --file Dockerfile --tag caas-ui .",
-    "podman:deploy": "npm run podman:build && podman tag caas-ui quay.io/$USER/caas-ui:latest && podman push quay.io/$USER/caas-ui:latest && ./scripts/patch-deployment.sh"
+    "podman:build": "podman build --file Dockerfile --tag caas-ui ."
   },
   "devDependencies": {
     "@openshift-console/dynamic-plugin-sdk": "0.0.18",
