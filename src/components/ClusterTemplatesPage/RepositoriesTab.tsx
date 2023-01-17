@@ -38,7 +38,7 @@ import {
   RowProps,
   TableColumn,
 } from '../../types';
-import { getRepoCharts } from '../../hooks/useArgoCDRepositories';
+import { getRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
 import TableLoader from '../../helpers/TableLoader';
@@ -48,9 +48,9 @@ import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 import {
-  ArgoCDRepositoryListResult,
-  useArgoCDRepositories,
-} from '../../hooks/useArgoCDRepositories';
+  HelmChartRepositoryListResult,
+  useHelmChartRepositories,
+} from '../../hooks/useHelmChartRepositories';
 import RepositoriesEmptyState from '../HelmRepositories/RepositoriesEmptyState';
 import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
 
@@ -92,20 +92,20 @@ const RepositoryActionDialogIds: RepositoryActionDialogIds[] = [
 ];
 
 type RepositoryRowProps = RowProps<DecodedSecret<ArgoCDSecretData>> & {
-  argoCDRepositoriesResult: ArgoCDRepositoryListResult;
+  helmChartRepositoriesResult: HelmChartRepositoryListResult;
   clusterTemplatesResult: WatchK8sResult<ClusterTemplate[]>;
 };
 
 export const RepositoryRow = ({
   obj,
-  argoCDRepositoriesResult,
+  helmChartRepositoriesResult,
   clusterTemplatesResult,
 }: RepositoryRowProps) => {
   const { t } = useTranslation();
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
   const [model] = useK8sModel(secretGVK);
-  const [repositories, repositoriesLoaded, repositoriesError] = argoCDRepositoriesResult;
+  const [repositories, repositoriesLoaded, repositoriesError] = helmChartRepositoriesResult;
   const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
 
   const templatesFromRepo = templates.filter(
@@ -226,7 +226,7 @@ type RepositoriesTabProps = {
 
 const RepositoriesTab = ({ openNewRepositoryDialog }: RepositoriesTabProps) => {
   const [secrets, loaded, error] = useArgoCDSecrets();
-  const argoCDRepositoriesResult = useArgoCDRepositories();
+  const helmChartRepositoriesResult = useHelmChartRepositories();
   const clusterTemplatesResult = useClusterTemplates();
   const { t } = useTranslation();
 
@@ -261,7 +261,7 @@ const RepositoriesTab = ({ openNewRepositoryDialog }: RepositoriesTabProps) => {
                       key={secret.data?.name}
                       obj={secret}
                       clusterTemplatesResult={clusterTemplatesResult}
-                      argoCDRepositoriesResult={argoCDRepositoriesResult}
+                      helmChartRepositoriesResult={helmChartRepositoriesResult}
                     />
                   ))}
                 </Tbody>

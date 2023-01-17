@@ -4,9 +4,12 @@ import { InputField } from 'formik-pf';
 import * as React from 'react';
 import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
 import SelectField from '../../helpers/SelectField';
-import { useHelmRepositories } from '../../hooks/useHelmRepositories';
-
-import { getRepoCharts, useHelmRepositoryIndex } from '../../hooks/useHelmRepositoryIndex';
+import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
+import {
+  useHelmChartRepository,
+  getRepoCharts,
+  HelmChartRepositoryResult,
+} from '../../hooks/useHelmChartRepositories';
 import { useTranslation } from '../../hooks/useTranslation';
 
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
@@ -34,28 +37,35 @@ const HelmFields = ({
   const versionFieldName = `${fieldNamePrefix}.version`;
   const [{ value: repo }] = useField<string>(repoFieldName);
   const [{ value: chart }, , { setValue: setChart }] = useField<string>(chartFieldName);
-  const [repositories, repositoriesLoaded, repositoriesError] = useHelmRepositories();
-  const [repoIndex, indexLoaded, indexError] = useHelmRepositoryIndex();
-  // t('Failed to load repositories')
-  useAddAlertOnError(repositoriesError, 'Failed to load repositories');
-  // t('Failed to load charts')
-  useAddAlertOnError(indexError, 'Failed to load charts');
+  const [argoCDSecrets, argoCDSecretsLoaded, argoCDSecretsError] = useArgoCDSecrets();
+  const [[helmRepository, helmRepositoryLoaded, helmRepositoryError], setRepositoriesResult] =
+    React.useState<HelmChartRepositoryResult>();
 
-  const repoOptions = repositories.map((r) => ({
+  // t('Failed to load repositories')
+  useAddAlertOnError(argoCDSecretsError, 'Failed to load repositories');
+  // t('Failed to load charts')
+  useAddAlertOnError(helmRepositoryError, 'Failed to load charts');
+
+  const repoOptions = argoCDSecrets.map((r) => ({
     value: r.metadata?.name || '',
     label: r.metadata?.name || '',
     disabled: false,
   }));
 
-  const chartsFromRepo = repoIndex ? getRepoCharts(repoIndex, repo) : [];
-
+  const chartsFromRepo = helmRepository.index ? getRepoCharts(helmRepository.index) : [];
   const firstChart = chartsFromRepo[0]?.name;
 
   React.useEffect(() => {
-    if (indexLoaded && repo && !chart && firstChart) {
+    const helmChartRepositoryResult = useHelmChartRepository(repo);
+    console.log(helmChartRepositoryResult[0]);
+    setRepositoriesResult(helmChartRepositoryResult);
+  }, [repo]);
+
+  React.useEffect(() => {
+    if (helmRepositoryLoaded && repo && !chart && firstChart) {
       setChart(firstChart);
     }
-  }, [indexLoaded, firstChart, repo, chart]);
+  }, [helmRepositoryLoaded, firstChart, repo, chart]);
 
   const chartOptions = chartsFromRepo.map((c) => ({
     value: c.name,
@@ -70,8 +80,8 @@ const HelmFields = ({
       isRequired
       label={t('HELM chart repository')}
       key={repoFieldName}
-      loadingVariant={repositoriesLoaded ? undefined : 'spinner'}
-      isDisabled={repositoriesError}
+      loadingVariant={argoCDSecretsLoaded ? undefined : 'spinner'}
+      isDisabled={argoCDSecretsError}
     />,
     <SelectField
       name={chartFieldName}
@@ -80,6 +90,7 @@ const HelmFields = ({
       label={t('HELM chart')}
       isDisabled={!repo}
       key={chartFieldName}
+      loadingVariant={helmRepositoryLoaded ? undefined : 'spinner'}
     />,
     <InputField
       name={versionFieldName}

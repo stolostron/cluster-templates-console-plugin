@@ -3,34 +3,38 @@ import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 import { HelmRepoIndex, HelmRepoIndexChartEntry } from '../types';
 
-const REPOSITORIES_ENDPOINT =
+const HELM_REPOSITORIES_ENDPOINT =
   '/api/proxy/plugin/clustertemplates-plugin/repositories/api/helm-repositories';
-const REPOSITORY_ENDPOINT =
+const HELM_REPOSITORY_ENDPOINT =
   '/api/proxy/plugin/clustertemplates-plugin/repositories/api/helm-repository';
 
-const getRepositoryEndpoint = (name) => `${REPOSITORY_ENDPOINT}/${name}`;
+const getHelmRepositoryEndpoint = (name) => `${HELM_REPOSITORY_ENDPOINT}/${name}`;
 
-type RepositoryResponse = {
+type HelmRepositoryResponse = {
   name: string;
   url: string;
   index?: HelmRepoIndex;
   error?: string;
 };
-type RepositoriesResponse = RepositoryResponse[];
+type HelmRepositoriesResponse = HelmRepositoryResponse[];
 
-export type ArgoCDRepositoryListResult = [RepositoriesResponse | undefined, boolean, unknown];
+export type HelmChartRepositoryListResult = [
+  HelmRepositoriesResponse | undefined,
+  boolean,
+  unknown,
+];
 
-export const useArgoCDRepositories = (): ArgoCDRepositoryListResult => {
-  const [repoList, setRepoList] = React.useState<RepositoriesResponse>([]);
+export const useHelmChartRepositories = (): HelmChartRepositoryListResult => {
+  const [repoList, setRepoList] = React.useState<HelmRepositoriesResponse>([]);
   const [repoListLoaded, setRepoListLoaded] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
 
   React.useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await consoleFetch(REPOSITORIES_ENDPOINT);
+        const res = await consoleFetch(HELM_REPOSITORIES_ENDPOINT);
         const yaml = await res.text();
-        setRepoList(load(yaml) as RepositoriesResponse);
+        setRepoList(load(yaml) as HelmRepositoriesResponse);
       } catch (e) {
         setError(e);
       } finally {
@@ -43,27 +47,28 @@ export const useArgoCDRepositories = (): ArgoCDRepositoryListResult => {
   return [repoList, repoListLoaded, error];
 };
 
-export type ArgoCDRepositoryResult = [RepositoryResponse | undefined, boolean, unknown];
+export type HelmChartRepositoryResult = [HelmRepositoryResponse | undefined, boolean, unknown];
 
-export const useArgoCDRepository = (repositoryName: string): ArgoCDRepositoryResult => {
-  const [repository, setRepository] = React.useState<RepositoryResponse>();
+export const useHelmChartRepository = (repositoryName: string): HelmChartRepositoryResult => {
+  const [repository, setRepository] = React.useState<HelmRepositoryResponse>();
   const [repositoryLoaded, setRepositoryLoaded] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
 
   React.useEffect(() => {
     const fetch = async () => {
+      setError(undefined);
       try {
-        const res = await consoleFetch(getRepositoryEndpoint(repositoryName));
+        const res = await consoleFetch(getHelmRepositoryEndpoint(repositoryName));
         const yaml = await res.text();
-        setRepository(load(yaml) as RepositoryResponse);
+        setRepository(load(yaml) as HelmRepositoryResponse);
       } catch (e) {
         setError(e);
       } finally {
         setRepositoryLoaded(true);
       }
     };
-    fetch();
-  }, []);
+    if (repositoryName) fetch();
+  }, [repositoryName]);
 
   return [repository, repositoryLoaded, error];
 };
@@ -77,7 +82,7 @@ export type HelmRepositoryChartsMap = {
   [chartName: string]: string[];
 };
 
-export const getRepoChartsMap = (index: HelmRepoIndex): HelmRepositoryChartsMap => {
+export const getRepoChartsMap = (index: HelmRepoIndex | undefined): HelmRepositoryChartsMap => {
   const map: HelmRepositoryChartsMap = {};
   const repoCharts = getRepoCharts(index);
   for (const chart of repoCharts) {

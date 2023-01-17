@@ -33,7 +33,7 @@ const RepositoryForm = ({
   return (
     <>
       <ModalBoxBody>
-        <Form data-testid="helm-repo-form" onSubmit={handleSubmit}>
+        <Form data-testid="repository-form" onSubmit={handleSubmit}>
           <InputField
             fieldId="name"
             name="name"
@@ -58,7 +58,7 @@ const RepositoryForm = ({
             name="useCredentials"
             label={t('Requires authentication')}
             helperText={t(
-              'Add credentials and certificates to connect to private helm chart repository.',
+              'Add credentials and certificates to connect to private Helm chart repository.',
             )}
           />
           {values.useCredentials && (

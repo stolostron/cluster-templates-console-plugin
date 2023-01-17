@@ -90,7 +90,7 @@ const ClusterTemplatesPage = () => {
             eventKey="repositories"
             title={
               <TabTitleText>
-                {getNavLabelWithCount('Repositories', argoCDSecretsCount)}
+                {getNavLabelWithCount('Helm repositories', argoCDSecretsCount)}
               </TabTitleText>
             }
             aria-label="Repositories tab"

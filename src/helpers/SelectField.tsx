@@ -49,7 +49,9 @@ const SelectField: React.FC<SelectFieldProps> = ({
   validate,
   ...props
 }) => {
-  const [field, { touched, error }, { setValue }] = useField<string | SelectOptionObject>(name);
+  const [field, { touched, error, initialValue }, { setValue }] = useField<
+    string | SelectOptionObject
+  >(name);
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const errorMessage = validate ? validate() : error;
   const validated = touched && errorMessage ? ValidatedOptions.error : ValidatedOptions.default;
@@ -63,7 +65,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   };
 
   const onClearSelection = () => {
-    setValue(undefined);
+    setValue(initialValue);
   };
 
   const onCreateOption = (newOption: string) => {

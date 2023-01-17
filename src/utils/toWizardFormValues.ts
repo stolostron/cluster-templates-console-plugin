@@ -1,7 +1,7 @@
 import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
 import { clusterTemplateQuotaGVK, INSTANCE_NAMESPACE_VAR } from '../constants';
-import { ArgoCDSpec, ClusterTemplate, HelmChartRepository, Quota } from '../types';
+import { ArgoCDSecretData, ArgoCDSpec, ClusterTemplate, DecodedSecret, Quota } from '../types';
 import {
   WizardFormikValues,
   QuotaFormikValues,
@@ -10,14 +10,16 @@ import {
   ArgoCDSpecFormikValues,
 } from '../components/ClusterTemplateWizard/types';
 import { sortByResourceName } from './utils';
-import { useHelmRepositories } from '../hooks/useHelmRepositories';
 import { useAlerts } from '../alerts/AlertsContext';
 import { useTranslation } from '../hooks/useTranslation';
+import { useArgoCDSecrets } from '../hooks/useArgoCDSecrets';
 
-export const getRepoOptionObject = (repoCR: HelmChartRepository): RepoOptionObject => ({
-  resourceName: repoCR.metadata?.name,
-  url: repoCR.spec.connectionConfig.url,
-  toString: () => repoCR.metadata?.name,
+export const getRepoOptionObject = (
+  argoCDSecret: DecodedSecret<ArgoCDSecretData>,
+): RepoOptionObject => ({
+  resourceName: argoCDSecret.metadata?.name,
+  url: argoCDSecret.data?.url,
+  toString: () => argoCDSecret.metadata?.name,
 });
 
 export const getEmptyRepoOptionObject = (): RepoOptionObject => ({
@@ -107,7 +109,7 @@ export const useFormValues = (
   const [quotaFormValues, quotasLoaded, quotasError] = useQuotasStepFormValues(
     clusterTemplate?.metadata?.name,
   );
-  const [repositories, reposLoaded, reposError] = useHelmRepositories();
+  const [argoCDSecrets, reposLoaded, reposError] = useArgoCDSecrets();
   const [formValues, setFormValues] = React.useState<WizardFormikValues>();
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
@@ -116,8 +118,8 @@ export const useFormValues = (
     source: ArgoCDSpec['source'],
     destinationNamespace?: string,
   ): ArgoCDSpecFormikValues => {
-    const repoCR = repositories.find((repo) => repo.spec.connectionConfig.url === source.repoURL);
-    if (!repoCR) {
+    const argoCDSecret = argoCDSecrets.find((secret) => secret.data?.url === source.repoURL);
+    if (!argoCDSecret) {
       addAlert({
         title: t(`Failed to find HelmChartRepository with url {{url}}`, {
           url: source.repoURL,
@@ -125,9 +127,9 @@ export const useFormValues = (
       });
     }
     return {
-      repo: repoCR ? getRepoOptionObject(repoCR) : getEmptyRepoOptionObject(),
-      chart: repoCR ? source.chart : '',
-      version: repoCR ? source.targetRevision : '',
+      repo: argoCDSecret ? getRepoOptionObject(argoCDSecret) : getEmptyRepoOptionObject(),
+      chart: argoCDSecret ? source.chart : '',
+      version: argoCDSecret ? source.targetRevision : '',
       destinationNamespace: destinationNamespace,
     };
   };
