@@ -5,7 +5,7 @@ import {
 import { INSTANCE_NAMESPACE_VAR } from '../constants';
 import { ArgoCDSpec, ClusterTemplate } from '../types';
 
-const getArgoCDSpec = (values: ArgoCDSpecFormikValues): ArgoCDSpec => {
+const getArgoCDSpec = (values: ArgoCDSpecFormikValues, day2: boolean): ArgoCDSpec => {
   return {
     source: {
       repoURL: values.repo.url,
@@ -14,7 +14,7 @@ const getArgoCDSpec = (values: ArgoCDSpecFormikValues): ArgoCDSpec => {
     },
     destination: {
       namespace: values.destinationNamespace,
-      server: 'https://kubernetes.default.svc',
+      server: day2 ? '${new_cluster}' : 'https://kubernetes.default.svc',
     },
     project: 'default',
   };
@@ -24,8 +24,8 @@ export const toClusterTemplateSpec = (values: WizardFormikValues): ClusterTempla
   const postSettings = values.postInstallation
     .filter((formValues) => !!formValues.repo.url)
     .map((formValues) => ({
-      name: `${formValues.repo.url}/${formValues.chart}`,
-      spec: getArgoCDSpec(formValues),
+      name: formValues.chart,
+      spec: getArgoCDSpec(formValues, true),
     }));
   const installationSpec = {
     ...values.installation.spec,
@@ -35,7 +35,7 @@ export const toClusterTemplateSpec = (values: WizardFormikValues): ClusterTempla
   };
   return {
     cost: values.details.cost,
-    clusterDefinition: getArgoCDSpec(installationSpec),
+    clusterDefinition: getArgoCDSpec(installationSpec, false),
     clusterSetup: postSettings,
     argocdNamespace: values.details.argocdNamespace,
   };
