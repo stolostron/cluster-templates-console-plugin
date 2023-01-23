@@ -43,6 +43,9 @@ export type ArgoCDSpec = {
     server: 'https://kubernetes.default.svc';
   };
   project: 'default';
+  syncPolicy: {
+    automated: object;
+  };
 };
 
 export type ClusterTemplate = K8sResourceCommon & {

@@ -17,6 +17,9 @@ const getArgoCDSpec = (values: ArgoCDSpecFormikValues): ArgoCDSpec => {
       server: 'https://kubernetes.default.svc',
     },
     project: 'default',
+    syncPolicy: {
+      automated: {},
+    },
   };
 };
 
