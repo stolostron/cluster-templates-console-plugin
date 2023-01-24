@@ -74,7 +74,8 @@
       "templates": "./components/ClusterTemplatesPage/ClusterTemplatesPage.tsx",
       "createTemplate": "./components/ClusterTemplateCreatePage.tsx",
       "editTemplate": "./components/ClusterTemplateEditPage.tsx",
-      "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx"
+      "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx",
+      "repositoriesContext": "./hooks/useHelmChartRepositories.ts"
     },
     "dependencies": {
       "@console/pluginAPI": "^4.11"

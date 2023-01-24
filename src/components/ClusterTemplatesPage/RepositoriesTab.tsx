@@ -48,7 +48,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 import {
-  HelmChartRepositoryListResult,
+  RepositoriesContextType,
   useHelmChartRepositories,
 } from '../../hooks/useHelmChartRepositories';
 import RepositoriesEmptyState from '../HelmRepositories/RepositoriesEmptyState';
@@ -92,7 +92,7 @@ const RepositoryActionDialogIds: RepositoryActionDialogIds[] = [
 ];
 
 type RepositoryRowProps = RowProps<DecodedSecret<ArgoCDSecretData>> & {
-  helmChartRepositoriesResult: HelmChartRepositoryListResult;
+  helmChartRepositoriesResult: RepositoriesContextType;
   clusterTemplatesResult: WatchK8sResult<ClusterTemplate[]>;
 };
 
@@ -105,14 +105,14 @@ export const RepositoryRow = ({
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
   const [model] = useK8sModel(secretGVK);
-  const [repositories, repositoriesLoaded, repositoriesError] = helmChartRepositoriesResult;
+  const { repos, loaded, error } = helmChartRepositoriesResult;
   const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
 
   const templatesFromRepo = templates.filter(
     (t) => t.spec.clusterDefinition.source.repoURL === obj.data?.url,
   );
 
-  const repository = repositories.find((r) => r.url === obj.data?.url);
+  const repository = repos.find((r) => r.url === obj.data?.url);
 
   const repoChartsCount = repository ? getNumRepoCharts(repository) : '-';
 
@@ -154,12 +154,12 @@ export const RepositoryRow = ({
         {obj.data?.username ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].title}>
-        <CellLoader loaded={repositoriesLoaded} error={repositoriesError}>
+        <CellLoader loaded={loaded} error={error}>
           {repoChartsUpdatedAt}
         </CellLoader>
       </Td>
       <Td dataLabel={columns[4].title}>
-        <CellLoader loaded={repositoriesLoaded} error={repositoriesError}>
+        <CellLoader loaded={loaded} error={error}>
           {repository?.error ? (
             <RepositoryErrorPopover error={repository.error} />
           ) : (

@@ -2,51 +2,57 @@ import { load } from 'js-yaml';
 import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 import { HelmRepository } from '../types';
+import { useTranslation } from 'react-i18next';
 
 const HELM_REPOSITORIES_ENDPOINT =
   '/api/proxy/plugin/clustertemplates-plugin/repositories/api/helm-repositories';
-const HELM_REPOSITORY_ENDPOINT =
-  '/api/proxy/plugin/clustertemplates-plugin/repositories/api/helm-repository';
 
-const getHelmRepositoryEndpoint = (name) => `${HELM_REPOSITORY_ENDPOINT}/${name}`;
-type HelmRepositoriesResponse = HelmRepository[];
+export type RepositoriesContextType = {
+  repos: HelmRepository[];
+  loaded: boolean;
+  error: unknown;
+  refetch: () => Promise<HelmRepository[]>;
+};
 
-export type HelmChartRepositoryListResult = [
-  HelmRepositoriesResponse | undefined,
-  boolean,
-  unknown,
-];
+export const RepositoriesContext = React.createContext<RepositoriesContextType>(null);
 
-export const useHelmChartRepositories = (): HelmChartRepositoryListResult => {
-  const [repoList, setRepoList] = React.useState<HelmRepositoriesResponse>([]);
-  const [repoListLoaded, setRepoListLoaded] = React.useState(false);
+export const repositoriesContextProvider = RepositoriesContext.Provider;
+
+export const useHelmChartRepositoriesContextValue = (): RepositoriesContextType => {
+  const [repos, setRepos] = React.useState<HelmRepository[]>([]);
+  const [loaded, setLoaded] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
 
+  const fetch = async (): Promise<HelmRepository[]> => {
+    let fetchedRepos = [];
+    try {
+      const res = await consoleFetch(HELM_REPOSITORIES_ENDPOINT);
+      const yaml = await res.text();
+      fetchedRepos = load(yaml) as HelmRepository[];
+      setRepos(fetchedRepos);
+    } catch (e) {
+      setError(e);
+    } finally {
+      setLoaded(true);
+    }
+    return fetchedRepos;
+  };
+
   React.useEffect(() => {
-    const fetch = async () => {
-      try {
-        const res = await consoleFetch(HELM_REPOSITORIES_ENDPOINT);
-        const yaml = await res.text();
-        setRepoList(load(yaml) as HelmRepositoriesResponse);
-      } catch (e) {
-        setError(e);
-      } finally {
-        setRepoListLoaded(true);
-      }
-    };
     fetch();
   }, []);
 
-  return [repoList, repoListLoaded, error];
+  return { repos, loaded, error, refetch: fetch };
 };
 
 export const getNumRepoCharts = (repo): number =>
   repo.index ? Object.keys(repo.index.entries).length : undefined;
 
-export type HelmChartRepositoryResult = [HelmRepository | undefined, boolean, unknown];
-
-export const fetchHelmRepository = async (repositoryName: string): Promise<HelmRepository> => {
-  const res = await consoleFetch(getHelmRepositoryEndpoint(repositoryName));
-  const yaml = await res.text();
-  return load(yaml) as HelmRepository;
+export const useHelmChartRepositories = (): RepositoriesContextType => {
+  const context = React.useContext(RepositoriesContext);
+  const { t } = useTranslation();
+  if (!context) {
+    throw t('useHelmChartRepositories must be callsed within RepositoriesContext provider');
+  }
+  return context;
 };

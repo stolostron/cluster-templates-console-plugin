@@ -10,6 +10,7 @@ import {
 } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { FieldProps } from './types';
+import CellLoader from './CellLoader';
 
 export type SelectInputOption =
   | {
@@ -25,6 +26,7 @@ type SelectFieldProps = FieldProps & {
   helperTextInvalid?: string;
   onSelectValue?: (value: string | SelectOptionObject) => void;
   value?: string | SelectOptionObject;
+  loaded?: boolean;
 } & Omit<
     SelectProps,
     | 'variant'
@@ -52,6 +54,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   validate,
   onSelectValue,
   value,
+  loaded = true,
   ...props
 }) => {
   const [field, { touched, error, initialValue }, { setValue }] = useField<
@@ -93,33 +96,35 @@ const SelectField: React.FC<SelectFieldProps> = ({
       helperTextInvalid={errorMessage}
       isRequired={isRequired}
     >
-      <Select
-        variant={SelectVariant.typeahead}
-        validated={validated}
-        onToggle={onToggle}
-        onSelect={onSelect}
-        onClear={isRequired ? undefined : onClearSelection}
-        isOpen={isOpen}
-        selections={value || field.value}
-        typeAheadAriaLabel={props.typeAheadAriaLabel || name}
-        toggleId={name}
-        onCreateOption={onCreateOption}
-        className="cluster-templates-select-field"
-        {...props}
-      >
-        {options.map((op, idx) => {
-          const isStr = typeof op === 'string';
-          return (
-            <SelectOption
-              value={isStr ? op : op.value}
-              isDisabled={isStr ? false : op.disabled}
-              key={idx}
-              name={op.toString()}
-              description={isStr ? '' : op.description}
-            />
-          );
-        })}
-      </Select>
+      <CellLoader loaded={loaded} fontSize="2xl">
+        <Select
+          variant={SelectVariant.typeahead}
+          validated={validated}
+          onToggle={onToggle}
+          onSelect={onSelect}
+          onClear={isRequired ? undefined : onClearSelection}
+          isOpen={isOpen}
+          selections={value || field.value}
+          typeAheadAriaLabel={props.typeAheadAriaLabel || name}
+          toggleId={name}
+          onCreateOption={onCreateOption}
+          className="cluster-templates-select-field"
+          {...props}
+        >
+          {options.map((op, idx) => {
+            const isStr = typeof op === 'string';
+            return (
+              <SelectOption
+                value={isStr ? op : op.value}
+                isDisabled={isStr ? false : op.disabled}
+                key={idx}
+                name={op.toString()}
+                description={isStr ? '' : op.description}
+              />
+            );
+          })}
+        </Select>
+      </CellLoader>
     </FormGroup>
   );
 };
