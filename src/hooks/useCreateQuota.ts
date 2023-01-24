@@ -1,6 +1,8 @@
 import { k8sCreate, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import {
+  clusterRoleBindingGVK,
   clusterTemplateQuotaGVK,
+  clusterTemplatesClusterRoleRef,
   clusterTemplatesRoleRef,
   RBAC_API_GROUP,
   roleBindingGVK,
@@ -43,8 +45,18 @@ const getRoleBinding = (namespace: string, users: string[], groups: string[]): R
   roleRef: clusterTemplatesRoleRef,
 });
 
+const getClusterRoleBinding = (users: string[], groups: string[]): RoleBinding => ({
+  metadata: {
+    generateName: 'cluster-templates-crb-',
+  },
+  subjects: [...getSubjects(users, 'User'), ...getSubjects(groups, 'Group')],
+  roleRef: clusterTemplatesClusterRoleRef,
+});
+
 const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, boolean] => {
   const [roleBindingModel, roleBindingModelLoading] = useK8sModel(roleBindingGVK);
+  const [clusterRoleBindingModel, clusterRoleBindingModelLoading] =
+    useK8sModel(clusterRoleBindingGVK);
   const [quotaModel, quotaModelLoading] = useK8sModel(clusterTemplateQuotaGVK);
   const [createNamespace, createNamespaceLoading] = useCreateNamespace();
   const createQuota = async (values: NewQuotaFormikValues): Promise<Quota> => {
@@ -54,10 +66,20 @@ const useCreateQuota = (): [(values: NewQuotaFormikValues) => Promise<Quota>, bo
         data: getRoleBinding(values.namespace, values.users, values.groups),
         model: roleBindingModel,
       });
+      await k8sCreate({
+        data: getClusterRoleBinding(values.users, values.groups),
+        model: clusterRoleBindingModel,
+      });
     }
     return await k8sCreate({ data: getQuota(values), model: quotaModel });
   };
-  return [createQuota, !roleBindingModelLoading && !quotaModelLoading && !createNamespaceLoading];
+  return [
+    createQuota,
+    !roleBindingModelLoading &&
+      !clusterRoleBindingModelLoading &&
+      !quotaModelLoading &&
+      !createNamespaceLoading,
+  ];
 };
 
 export default useCreateQuota;

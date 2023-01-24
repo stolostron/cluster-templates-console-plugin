@@ -45,6 +45,11 @@ export const roleBindingGVK: K8sGroupVersionKind = {
   kind: 'RoleBinding',
   version: 'v1',
 };
+export const clusterRoleBindingGVK: K8sGroupVersionKind = {
+  group: 'rbac.authorization.k8s.io',
+  kind: 'ClusterRoleBinding',
+  version: 'v1',
+};
 
 export const namespaceGVK: K8sGroupVersionKind = {
   kind: 'Namespace',
@@ -74,6 +79,7 @@ export const userGVK: K8sGroupVersionKind = {
 };
 
 export const CLUSTER_TEMPLATES_ROLE = 'cluster-templates-user';
+export const CLUSTER_TEMPLATES_CLUSTER_ROLE = 'cluster-templates-user-ct';
 
 export const RBAC_API_GROUP = 'rbac.authorization.k8s.io';
 
@@ -87,6 +93,12 @@ export const clusterTemplatesRoleRef: RoleRef = {
   apiGroup: RBAC_API_GROUP,
   kind: 'ClusterRole',
   name: CLUSTER_TEMPLATES_ROLE,
+};
+
+export const clusterTemplatesClusterRoleRef: RoleRef = {
+  apiGroup: RBAC_API_GROUP,
+  kind: 'ClusterRole',
+  name: CLUSTER_TEMPLATES_CLUSTER_ROLE,
 };
 
 export const argoCDGVK: K8sGroupVersionKind = {
