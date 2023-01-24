@@ -9,89 +9,67 @@ import {
   Button,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { HelmRepository } from '../../types';
-import {
-  fetchHelmRepository,
-  HelmChartRepositoryListResult,
-} from '../../hooks/useHelmChartRepositories';
+import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
 import PopoverHelpIcon from '../../helpers/PopoverHelpIcon';
-import { humanizeUrl } from '../../utils/humanizing';
 import { useAlerts } from '../../alerts/AlertsContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import { PlusIcon } from '@patternfly/react-icons';
 import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
+import CellLoader from '../../helpers/CellLoader';
+import { getErrorMessage } from '../../utils/utils';
 
 type HelmRepositoryFieldProps = {
   fieldName: string;
-  reposListResult: HelmChartRepositoryListResult;
   showLabelIcon: boolean;
-  onSelectRepo: (repo: HelmRepository) => void;
-  onInitializeRepo: (repo: HelmRepository | undefined) => void;
 };
 
-const HelmRepositoryField = ({
-  fieldName,
-  reposListResult,
-  showLabelIcon,
-  onSelectRepo,
-  onInitializeRepo,
-}: HelmRepositoryFieldProps) => {
+const HelmRepositoryField = ({ fieldName, showLabelIcon }: HelmRepositoryFieldProps) => {
   const { addAlert } = useAlerts();
   const { t } = useTranslation();
   const [{ value: url, onBlur }, { touched, error }, { setValue }] = useField<string>(fieldName);
-  const [selectedRepo, setSelectedRepo] = React.useState<HelmRepository>();
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
-  const [repos, loaded, loadError] = reposListResult;
+  const { repos, loaded, error: reposLoadError, refetch } = useHelmChartRepositories();
   const [newRepositoryDialogOpen, setNewRepositoryDialogOpen] = React.useState(false);
-  const [repoNames, setRepoNames] = React.useState<string[]>([]);
-  const errorMessage = error || (selectedRepo && selectedRepo.error);
-
-  const updateRepoNames = (repos: HelmRepository[]) =>
-    setRepoNames(repos.map((repo) => repo.name).sort((name1, name2) => name1.localeCompare(name2)));
-
-  const validated = touched && errorMessage ? ValidatedOptions.error : ValidatedOptions.default;
-  React.useEffect(() => {
-    if (!loaded) {
-      return;
-    }
-    updateRepoNames(repos);
-    //initialize
-    if (!url) {
-      return;
-    }
-    const repo = repos.find((curRepo) => curRepo.url === url);
-    if (!repo) {
-      addAlert({
-        title: 'Failed to initialize Helm chart fields',
-        message: `Failed to find repository ${humanizeUrl(url)}`,
-      });
-      setValue('');
-    } else {
-      setSelectedRepo(repo);
-    }
-    onInitializeRepo(repo);
-  }, [loaded]);
 
   const onSelect: SelectProps['onSelect'] = (_, value) => {
     const repo = repos.find((repo) => repo.name === value);
-    setValue(repo.url, true);
-    setSelectedRepo(repo);
-    onSelectRepo(repo);
+    if (!repo) {
+      // t('Unexpected error')
+      addAlert({ title: 'Unexpected error', message: `Failed to find repository ${value}` });
+      setValue('');
+    } else {
+      setValue(repo.url, true);
+    }
     setIsOpen(false);
   };
 
-  const onCloseNewRepositoryDialog = async (repoName?: string) => {
-    if (!repoName) {
+  const onNewRepoCreated = async (repoName: string) => {
+    try {
+      const newRepos = await refetch();
+      const newRepo = newRepos.find((repo) => repo.name === repoName);
+      if (!newRepo) {
+        // t('Failed to get repository data')
+        addAlert({
+          title: 'Failed to get repository',
+          message: `Repositories list doesn't contain new repository ${repoName}`,
+        });
+      } else {
+        setValue(newRepo.url, true);
+      }
+    } catch (err) {
+      // t('Failed to refresh repositories')
+      addAlert({ title: 'Failed to referesh repositories', message: getErrorMessage(err) });
+    } finally {
       setNewRepositoryDialogOpen(false);
-      return;
     }
-    const newRepo = await fetchHelmRepository(repoName);
-    setValue(newRepo.url, true);
-    setSelectedRepo(newRepo);
-    onSelectRepo(newRepo);
-    updateRepoNames([...repos, newRepo]);
-    setNewRepositoryDialogOpen(false);
   };
+
+  const selectedRepo = url ? repos.find((repo) => repo.url === url) : undefined;
+  const errorMessage = error || (selectedRepo && selectedRepo.error);
+  const validated = touched && errorMessage ? ValidatedOptions.error : ValidatedOptions.default;
+  const repoNames = repos
+    .map((repo) => repo.name)
+    .sort((name1, name2) => name1.localeCompare(name2));
 
   return (
     <FormGroup
@@ -110,36 +88,42 @@ const HelmRepositoryField = ({
         )
       }
     >
-      <Select
-        variant={SelectVariant.typeahead}
-        validated={validated}
-        onToggle={() => setIsOpen(!isOpen)}
-        onSelect={onSelect}
-        isOpen={isOpen}
-        selections={selectedRepo ? selectedRepo.name : ''}
-        typeAheadAriaLabel={t('Type a Helm repository repoNames')}
-        placeholderText={t('Select a Helm chart repository')}
-        toggleId={fieldName}
-        className="cluster-templates-select-field"
-        isDisabled={!!loadError}
-        loadingVariant={loaded ? undefined : 'spinner'}
-        onBlur={onBlur}
-        footer={
-          <Button
-            variant="link"
-            onClick={() => setNewRepositoryDialogOpen(true)}
-            icon={<PlusIcon />}
-            className="cluster-templates-field-array__btn"
-          >
-            {t('Add another repository URL')}
-          </Button>
-        }
-      >
-        {repoNames.map((name) => {
-          return <SelectOption value={name} isDisabled={false} key={name} name={name} />;
-        })}
-      </Select>
-      {newRepositoryDialogOpen && <NewRepositoryDialog closeDialog={onCloseNewRepositoryDialog} />}
+      <CellLoader loaded={loaded} fontSize="2xl">
+        <Select
+          variant={SelectVariant.typeahead}
+          validated={validated}
+          onToggle={() => setIsOpen(!isOpen)}
+          onSelect={onSelect}
+          isOpen={isOpen}
+          selections={selectedRepo ? selectedRepo.name : ''}
+          typeAheadAriaLabel={t('Type a Helm repository repoNames')}
+          placeholderText={t('Select a Helm chart repository')}
+          toggleId={fieldName}
+          className="cluster-templates-select-field"
+          isDisabled={!!reposLoadError}
+          onBlur={onBlur}
+          footer={
+            <Button
+              variant="link"
+              onClick={() => setNewRepositoryDialogOpen(true)}
+              icon={<PlusIcon />}
+              className="cluster-templates-field-array__btn"
+            >
+              {t('Add another repository URL')}
+            </Button>
+          }
+        >
+          {repoNames.map((name) => {
+            return <SelectOption value={name} isDisabled={false} key={name} name={name} />;
+          })}
+        </Select>
+      </CellLoader>
+      {newRepositoryDialogOpen && (
+        <NewRepositoryDialog
+          onCancel={() => setNewRepositoryDialogOpen(false)}
+          onCreate={onNewRepoCreated}
+        />
+      )}
     </FormGroup>
   );
 };

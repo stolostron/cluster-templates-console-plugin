@@ -20,13 +20,7 @@ import { InputField } from 'formik-pf';
 import PopoverHelpIcon from '../../../../helpers/PopoverHelpIcon';
 import { getNewArgoCDSpecFormValues } from '../../../../utils/toWizardFormValues';
 import { HelmFormikValues } from '../../types';
-import {
-  HelmChartRepositoryListResult,
-  useHelmChartRepositories,
-} from '../../../../hooks/useHelmChartRepositories';
-import { useAddAlertOnError } from '../../../../alerts/useAddAlertOnError';
 import HelmFields from '../../../sharedFields/HelmFields';
-import Loader from '../../../../helpers/Loader';
 
 const fieldName = 'postInstallation';
 
@@ -34,12 +28,10 @@ const PostInstallationSettings = ({
   idx,
   remove,
   isRemoveDisabled,
-  reposListResult,
 }: {
   idx: number;
   remove: (number) => void;
   isRemoveDisabled: boolean;
-  reposListResult: HelmChartRepositoryListResult;
 }) => {
   const { t } = useTranslation();
   const fieldName = `postInstallation[${idx}]`;
@@ -47,11 +39,7 @@ const PostInstallationSettings = ({
   return (
     <Grid hasGutter>
       <GridItem span={11}>
-        <HelmFields
-          fieldNamePrefix={fieldName}
-          horizontal={true}
-          reposListResult={reposListResult}
-        />
+        <HelmFields fieldNamePrefix={fieldName} horizontal={true} />
       </GridItem>
       <GridItem className="cluster-templates-argoc-remove-button" span={1}>
         <RemoveButton
@@ -89,46 +77,36 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
   const onAddArgoCDSpec = () => {
     push(getNewArgoCDSpecFormValues());
   };
-  const reposListResult = useHelmChartRepositories();
-  const [, loaded, error] = reposListResult;
-  // t('Failed to load Helm chart repositories')
-  useAddAlertOnError(error, 'Failed to load Helm chart repositories');
+
   return (
-    <Loader loaded={loaded}>
-      <Stack hasGutter>
-        {field.value.map((data, idx) => {
-          return (
-            <React.Fragment key={idx}>
-              <Stack hasGutter>
-                <StackItem>
-                  <PostInstallationSettings
-                    isRemoveDisabled={false}
-                    remove={remove}
-                    idx={idx}
-                    reposListResult={reposListResult}
-                  />
-                </StackItem>
-                <StackItem>
-                  <Divider />
-                </StackItem>
-              </Stack>
-            </React.Fragment>
-          );
-        })}
-        <StackItem>
-          <Button
-            variant="link"
-            onClick={onAddArgoCDSpec}
-            icon={<PlusIcon />}
-            className="cluster-templates-field-array__btn"
-          >
-            {field.value && field.value.length
-              ? t('Add more')
-              : t('Add the first post-installation settings')}
-          </Button>
-        </StackItem>
-      </Stack>
-    </Loader>
+    <Stack hasGutter>
+      {field.value.map((data, idx) => {
+        return (
+          <React.Fragment key={idx}>
+            <Stack hasGutter>
+              <StackItem>
+                <PostInstallationSettings isRemoveDisabled={false} remove={remove} idx={idx} />
+              </StackItem>
+              <StackItem>
+                <Divider />
+              </StackItem>
+            </Stack>
+          </React.Fragment>
+        );
+      })}
+      <StackItem>
+        <Button
+          variant="link"
+          onClick={onAddArgoCDSpec}
+          icon={<PlusIcon />}
+          className="cluster-templates-field-array__btn"
+        >
+          {field.value && field.value.length
+            ? t('Add more')
+            : t('Add the first post-installation settings')}
+        </Button>
+      </StackItem>
+    </Stack>
   );
 };
 

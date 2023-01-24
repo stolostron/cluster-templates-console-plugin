@@ -13,7 +13,8 @@ import RepositoryForm from './RepositoryForm';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 
 type NewRepositoryDialogProps = {
-  closeDialog: (repoName?: string) => Promise<void>;
+  onCancel: () => void;
+  onCreate: (repoName: string) => void;
 };
 
 export function getInitialValues(): RepositoryFormValues {
@@ -31,7 +32,7 @@ export function getInitialValues(): RepositoryFormValues {
   };
 }
 
-const NewRepositoryDialog = ({ closeDialog }: NewRepositoryDialogProps) => {
+const NewRepositoryDialog = ({ onCancel, onCreate }: NewRepositoryDialogProps) => {
   const { t } = useTranslation();
   const [formError, setFormError] = React.useState<FormError | undefined>();
   // const [secrets, secretsLoaded, secretsError] = useArgoCDSecrets();
@@ -83,7 +84,7 @@ const NewRepositoryDialog = ({ closeDialog }: NewRepositoryDialogProps) => {
 
     try {
       const secret = await createArgoCDSecret;
-      await closeDialog(secret.metadata?.name);
+      onCreate(secret.metadata?.name);
     } catch (e) {
       setFormError({
         title: t('Something went wrong'),
@@ -97,7 +98,7 @@ const NewRepositoryDialog = ({ closeDialog }: NewRepositoryDialogProps) => {
       variant={ModalVariant.medium}
       isOpen
       title={t('Add a repository')}
-      onClose={() => closeDialog()}
+      onClose={() => onCancel()}
       aria-label="Add repository dialog"
       showClose
       hasNoBodyWrapper
@@ -108,7 +109,7 @@ const NewRepositoryDialog = ({ closeDialog }: NewRepositoryDialogProps) => {
           onSubmit={handleSubmit}
           validationSchema={getValidationSchema(t)}
           component={(props) => (
-            <RepositoryForm {...props} formError={formError} closeDialog={closeDialog} />
+            <RepositoryForm {...props} formError={formError} closeDialog={onCancel} />
           )}
         />
       </ModalDialogLoader>
