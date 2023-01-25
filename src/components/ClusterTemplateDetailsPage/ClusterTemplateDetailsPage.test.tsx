@@ -57,16 +57,16 @@ describe('cluster template details page', () => {
     const { getByTestId } = renderTemplatesPage();
     const details = {
       ['Template name']: exampleTemplate.metadata?.name,
-      ['HELM chart name']: exampleTemplate.spec.clusterDefinition.source.chart,
-      ['HELM chart repository']: exampleTemplate.spec.clusterDefinition.source.repoURL,
-      ['HELM chart version']: exampleTemplate.spec.clusterDefinition.source.targetRevision,
+      ['Helm chart name']: exampleTemplate.spec.clusterDefinition.source.chart,
+      ['Helm chart repository']: exampleTemplate.spec.clusterDefinition.source.repoURL,
+      ['Helm chart version']: exampleTemplate.spec.clusterDefinition.source.targetRevision,
       ['Description']:
         exampleTemplate.metadata?.annotations['clustertemplates.openshift.io/description'],
       ['Infrastructure type']:
         exampleTemplate.metadata?.labels['clustertemplates.openshift.io/infra'],
       ['Location']: exampleTemplate.metadata?.labels['clustertemplates.openshift.io/location'],
       ['Vendor']: 'Custom template',
-      ['Cost estimation']: `${exampleTemplate.spec.cost} / Per use`,
+      ['Cost']: `${exampleTemplate.spec.cost} / Per instance`,
       ['Template uses']: '0 clusters',
     };
     let error;

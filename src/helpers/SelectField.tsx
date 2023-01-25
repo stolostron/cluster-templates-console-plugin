@@ -9,19 +9,24 @@ import {
   ValidatedOptions,
 } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { getOptionValueStr } from './formikFieldUtils';
 import { FieldProps } from './types';
+import CellLoader from './CellLoader';
 
-export type SelectInputOption = {
-  value: string | SelectOptionObject;
-  disabled: boolean;
-  description?: string;
-};
+export type SelectInputOption =
+  | {
+      value: string | SelectOptionObject;
+      disabled: boolean;
+      description?: string;
+    }
+  | string;
 
 type SelectFieldProps = FieldProps & {
   options: SelectInputOption[];
   validate?: () => string;
   helperTextInvalid?: string;
+  onSelectValue?: (value: string | SelectOptionObject) => void;
+  value?: string | SelectOptionObject;
+  loaded?: boolean;
 } & Omit<
     SelectProps,
     | 'variant'
@@ -47,6 +52,9 @@ const SelectField: React.FC<SelectFieldProps> = ({
   helperText,
   isRequired,
   validate,
+  onSelectValue,
+  value,
+  loaded = true,
   ...props
 }) => {
   const [field, { touched, error, initialValue }, { setValue }] = useField<
@@ -59,17 +67,22 @@ const SelectField: React.FC<SelectFieldProps> = ({
     setIsOpen(!isOpen);
   };
 
+  const _setValue = (value) => {
+    setValue(value, true);
+    onSelectValue && onSelectValue(value);
+  };
+
   const onSelect: SelectProps['onSelect'] = (_, value) => {
-    setValue(value);
     setIsOpen(false);
+    _setValue(value);
   };
 
   const onClearSelection = () => {
-    setValue(initialValue);
+    _setValue(initialValue);
   };
 
   const onCreateOption = (newOption: string) => {
-    setValue(newOption);
+    _setValue(newOption);
     setIsOpen(false);
   };
 
@@ -83,33 +96,35 @@ const SelectField: React.FC<SelectFieldProps> = ({
       helperTextInvalid={errorMessage}
       isRequired={isRequired}
     >
-      <Select
-        variant={SelectVariant.typeahead}
-        validated={validated}
-        onToggle={onToggle}
-        onSelect={onSelect}
-        onClear={onClearSelection}
-        isOpen={isOpen}
-        selections={field.value}
-        typeAheadAriaLabel={props.typeAheadAriaLabel || name}
-        toggleId={name}
-        onCreateOption={onCreateOption}
-        className="cluster-templates-select-field"
-        {...props}
-      >
-        {options.map((op, idx) => {
-          const valueStr = getOptionValueStr(op);
-          return (
-            <SelectOption
-              value={op.value}
-              isDisabled={op.disabled}
-              key={idx}
-              name={valueStr}
-              description={op.description}
-            />
-          );
-        })}
-      </Select>
+      <CellLoader loaded={loaded} fontSize="2xl">
+        <Select
+          variant={SelectVariant.typeahead}
+          validated={validated}
+          onToggle={onToggle}
+          onSelect={onSelect}
+          onClear={isRequired ? undefined : onClearSelection}
+          isOpen={isOpen}
+          selections={value || field.value}
+          typeAheadAriaLabel={props.typeAheadAriaLabel || name}
+          toggleId={name}
+          onCreateOption={onCreateOption}
+          className="cluster-templates-select-field"
+          {...props}
+        >
+          {options.map((op, idx) => {
+            const isStr = typeof op === 'string';
+            return (
+              <SelectOption
+                value={isStr ? op : op.value}
+                isDisabled={isStr ? false : op.disabled}
+                key={idx}
+                name={op.toString()}
+                description={isStr ? '' : op.description}
+              />
+            );
+          })}
+        </Select>
+      </CellLoader>
     </FormGroup>
   );
 };

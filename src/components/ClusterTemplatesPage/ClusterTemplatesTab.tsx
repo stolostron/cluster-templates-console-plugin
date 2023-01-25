@@ -42,7 +42,7 @@ function getTableColumns(t: TFunction): TableColumn[] {
       id: 'name',
     },
     {
-      title: t('Cost estimation'),
+      title: t('Cost'),
       id: 'cost',
     },
     {

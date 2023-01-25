@@ -104,7 +104,7 @@ const ReviewStep = () => {
       <StackItem>
         <DescriptionList>
           <DescriptionListGroup>
-            <DescriptionListTerm>{t('Name')}</DescriptionListTerm>
+            <DescriptionListTerm>{t('Cluster template name')}</DescriptionListTerm>
             <DescriptionListDescription>{values.details.name}</DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>

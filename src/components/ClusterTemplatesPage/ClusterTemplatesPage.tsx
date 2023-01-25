@@ -12,6 +12,7 @@ import { getReference, getResourceUrl } from '../../utils/k8s';
 import { useArgoCDSecretsCount } from '../../hooks/useArgoCDSecrets';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
 import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
 
 type ActionDialogIds = 'newRepositoryDialog';
 const actionDialogIds: ActionDialogIds[] = ['newRepositoryDialog'];
@@ -63,7 +64,7 @@ const ClusterTemplatesPage = () => {
   };
 
   return (
-    <>
+    <AlertsContextProvider>
       <ListPageHeader title="Cluster templates">
         <ListPageCreateDropdown
           createAccessReview={{ groupVersionKind: getReference(clusterTemplateGVK) }}
@@ -102,10 +103,13 @@ const ClusterTemplatesPage = () => {
           <ClusterTemplatesTab />
         )}
         {isDialogOpen('newRepositoryDialog') && (
-          <NewRepositoryDialog closeDialog={() => closeDialog('newRepositoryDialog')} />
+          <NewRepositoryDialog
+            onCreate={() => closeDialog('newRepositoryDialog')}
+            onCancel={() => closeDialog('newRepositoryDialog')}
+          />
         )}
       </div>
-    </>
+    </AlertsContextProvider>
   );
 };
 

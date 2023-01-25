@@ -18,6 +18,7 @@ const BudgetField = ({
   popoverHelpText,
 }: BudgetFieldProps) => {
   const [{ value: hasBudget }] = useField<boolean>(hasBudgetFieldName);
+  const [, , { setValue: setBudget }] = useField<number>(budgetFieldName);
   return (
     <Flex>
       <FlexItem>
@@ -29,6 +30,7 @@ const BudgetField = ({
             </WithHelpIcon>
           }
           fieldId={hasBudgetFieldName}
+          onChange={(checked) => !checked && setBudget(undefined)}
         />
       </FlexItem>
       <FlexItem>
@@ -37,6 +39,7 @@ const BudgetField = ({
           isDisabled={!hasBudget}
           fieldId={budgetFieldName}
           type={TextInputTypes.number}
+          autoComplete="off"
         />
       </FlexItem>
     </Flex>

@@ -2,10 +2,10 @@
   padding-left: unset;
 }
 
-.cluster-templates-cost-field {
-  align-items: flex-end;
-}
-
 .cluster-templates-argoc-remove-button {
   align-self: end;
+}
+
+.installation-destination-namespace {
+  --pf-l-stack--m-gutter--MarginBottom: var(--pf-global--spacer--sm);
 }

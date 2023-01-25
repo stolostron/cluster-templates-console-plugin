@@ -38,7 +38,7 @@ import {
   RowProps,
   TableColumn,
 } from '../../types';
-import { getRepoCharts } from '../../hooks/useHelmChartRepositories';
+import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
 import TableLoader from '../../helpers/TableLoader';
@@ -105,16 +105,16 @@ export const RepositoryRow = ({
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
   const [model] = useK8sModel(secretGVK);
-  const [repositories, repositoriesLoaded, repositoriesError] = helmChartRepositoriesResult;
+  const { repos, loaded, error } = helmChartRepositoriesResult;
   const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
 
   const templatesFromRepo = templates.filter(
     (t) => t.spec.clusterDefinition.source.repoURL === obj.data?.url,
   );
 
-  const repository = repositories.find((r) => r.url === obj.data?.url);
+  const repository = repos.find((r) => r.url === obj.data?.url);
 
-  const repoChartsCount = repository?.index ? getRepoCharts(repository.index).length ?? '-' : '-';
+  const repoChartsCount = repository ? getNumRepoCharts(repository) : '-';
 
   const repoChartsUpdatedAt = repository?.index
     ? new Date(repository.index.generated).toLocaleString()
@@ -154,12 +154,12 @@ export const RepositoryRow = ({
         {obj.data?.username ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].title}>
-        <CellLoader loaded={repositoriesLoaded} error={repositoriesError}>
+        <CellLoader loaded={loaded} error={error}>
           {repoChartsUpdatedAt}
         </CellLoader>
       </Td>
       <Td dataLabel={columns[4].title}>
-        <CellLoader loaded={repositoriesLoaded} error={repositoriesError}>
+        <CellLoader loaded={loaded} error={error}>
           {repository?.error ? (
             <RepositoryErrorPopover error={repository.error} />
           ) : (

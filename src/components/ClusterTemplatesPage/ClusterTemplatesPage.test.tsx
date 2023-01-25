@@ -34,6 +34,6 @@ describe('ClusterTemplatesPage', () => {
     );
     waitForText('Cluster templates');
     expect(screen.getByRole('tab', { name: 'Cluster templates tab' }));
-    expect(screen.getByRole('tab', { name: 'HELM repositories tab' }));
+    expect(screen.getByRole('tab', { name: 'Helm repositories tab' }));
   });
 });

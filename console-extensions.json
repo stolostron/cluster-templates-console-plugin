@@ -128,5 +128,15 @@
     "flags": {
       "required": ["CLUSTER_TEMPLATES_FLAG"]
     }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "repositoriesContext.repositoriesContextProvider" },
+      "useValueHook": { "$codeRef": "repositoriesContext.useHelmRepositoriesState" }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
   }
 ]

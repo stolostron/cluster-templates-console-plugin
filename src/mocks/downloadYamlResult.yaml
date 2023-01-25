@@ -1,35 +1,82 @@
 apiVersion: clustertemplate.openshift.io/v1alpha1
 kind: ClusterTemplateInstance
 metadata:
-  namespace: <value>
-  name: <value>
+  namespace: null
+  name: null
 spec:
-  clusterTemplateRef: cluster-template-example
+  clusterTemplateRef: with-postinstall
   values:
-    - name: prop1
-      value: sampletemplateinstance.com
-      # type: string
-      # description: Base DNS domain of the cluster
-    - name: APIPublishingStrategy
-      value: LoadBalancer
-      # description: API Publishing strategy - can be LoadBalancer or NodePort
     - name: ocpVersion
-      value: 4.11.9-multi
-      # description: OCP version to be used
+      value: 4.11.9
     - name: ocpArch
       value: x86_64
-      # description: OCP arch to be used
-    - name: sshPublicKey
-      value: <value>
-      # description: SSH public key to be injected into all cluster node sshd servers
-      # A default value is defined in a secret
-    - name: clusterSetupSecretProp1
-      value: <value>
-      clusterSetup: setup1
-      # description: clusterSetupSecretProp1
-      # A default value is defined in a secret
-    - name: prop1
-      value: <value>
-      clusterSetup: setup2
-      # type: string
-      # description: prop for testing duplicated property name
+    - name: APIPublishingStrategy
+      value: LoadBalancer
+    - name: baseDnsDomain
+      value: sampletemplateinstance.com
+    - clusterSetup: https://charts.openshift.io/dotnet
+      name: image
+      value:
+        name: null
+        tag: latest
+    - clusterSetup: https://charts.openshift.io/dotnet
+      name: build
+      value:
+        enabled: true
+        uri: https://github.com/redhat-developer/s2i-dotnetcore-ex
+        ref: dotnetcore-3.1
+        contextDir: null
+        startupProject: app
+        imageStreamTag:
+          name: dotnet:3.1
+          useReleaseNamespace: false
+          namespace: openshift
+        output:
+          kind: ImageStreamTag
+          pushSecret: null
+        pullSecret: null
+        env: null
+        resources: null
+    - clusterSetup: https://charts.openshift.io/dotnet
+      name: deploy
+      value:
+        replicas: 1
+        resources: null
+        serviceType: ClusterIP
+        ports:
+          - name: http
+            port: 8080
+            targetPort: 8080
+            protocol: TCP
+        route:
+          enabled: true
+          targetPort: http
+          tls:
+            enabled: true
+            termination: edge
+            insecureEdgeTerminationPolicy: Redirect
+            key: null
+            caCertificate: null
+            certificate: null
+            destinationCACertificate: null
+        livenessProbe:
+          tcpSocket:
+            port: http
+        readinessProbe:
+          httpGet:
+            path: /
+            port: http
+        env: null
+        envFrom: null
+        applicationProperties:
+          enabled: false
+          mountPath: /deployments/config/
+          properties: '## Properties go here'
+        volumeMounts: null
+        volumes: null
+        initContainers: null
+        extraContainers: null
+    - clusterSetup: https://charts.openshift.io/dotnet
+      name: global
+      value:
+        nameOverride: null

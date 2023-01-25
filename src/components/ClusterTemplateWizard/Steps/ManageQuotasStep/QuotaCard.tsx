@@ -9,7 +9,6 @@ import { useQuotas } from '../../../../hooks/useQuotas';
 import { QuotaOptionObject, WizardFormikValues } from '../../types';
 import BudgetField from '../../../ClusterTemplateQuotas/NewQuotaDialog/BudgetField';
 import { PlusIcon } from '@patternfly/react-icons';
-import get from 'lodash/get';
 import { useAddAlertOnError } from '../../../../alerts/useAddAlertOnError';
 
 type QuotaCardProps = {
@@ -24,7 +23,7 @@ const getQuotaOptionObject = (name: string, namespace: string): QuotaOptionObjec
 });
 
 const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
-  const { values, setFieldValue, errors } = useFormikContext<WizardFormikValues>();
+  const { values, setFieldValue } = useFormikContext<WizardFormikValues>();
   const quotaFieldName = `${fieldName}.quota`;
 
   const checkboxFieldName = `${fieldName}.limitAllowed`;
@@ -52,9 +51,8 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
           name={quotaFieldName}
           options={selectOptions}
           aria-label={`Quota ${quotaIdx} quota name`}
-          validate={() => get(errors, `${quotaFieldName}.name`)}
           isRequired={true}
-          placeholder={t('Select a quota')}
+          placeholderText={t('Select a quota')}
           footer={
             <Button
               variant="link"
@@ -71,7 +69,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
         <BudgetField
           hasBudgetFieldName={checkboxFieldName}
           budgetFieldName={`${fieldName}.numAllowed`}
-          label={t('Limit the number of clusters created from this type')}
+          label={t('Limit the number of clusters created from this template')}
         />
       </Form>
       <NewQuotaDialog

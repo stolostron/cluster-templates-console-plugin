@@ -1,6 +1,6 @@
 import { Alert } from '@patternfly/react-core';
 import React from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from '../hooks/useTranslation';
 import { useAlerts } from './AlertsContext';
 
 const Alerts = () => {
