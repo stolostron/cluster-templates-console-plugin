@@ -46,7 +46,7 @@ const PageHeader = ({ clusterTemplateName }: { clusterTemplateName: string }) =>
               <Title headingLevel="h1">{clusterTemplateName}</Title>
             </FlexItem>
             <FlexItem align={{ default: 'alignRight' }}>
-              <ActionsMenu actions={actions}></ActionsMenu>
+              <ActionsMenu actions={actions} />
             </FlexItem>
           </Flex>
         </StackItem>

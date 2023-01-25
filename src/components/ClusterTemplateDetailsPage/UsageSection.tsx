@@ -28,7 +28,7 @@ const UsageSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterT
       {instances.length === 0 ? (
         <UsageEmptyState />
       ) : (
-        <ClusterTemplateInstancesTable instances={instances}></ClusterTemplateInstancesTable>
+        <ClusterTemplateInstancesTable instances={instances} />
       )}
     </TableLoader>
   );

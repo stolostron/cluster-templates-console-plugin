@@ -114,7 +114,7 @@ const ReviewStep = () => {
           <DescriptionListGroup>
             <DescriptionListTerm>{t('Installation settings')}</DescriptionListTerm>
             <DescriptionListDescription>
-              <InstallationDetails clusterTemplate={clusterTemplate}></InstallationDetails>
+              <InstallationDetails clusterTemplate={clusterTemplate} />
             </DescriptionListDescription>
           </DescriptionListGroup>
           <DescriptionListGroup>

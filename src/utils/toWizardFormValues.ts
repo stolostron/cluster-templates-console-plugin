@@ -60,9 +60,9 @@ const useQuotasStepFormValues = (
         if (name === clusterTemplateName) {
           ret.push({
             quota: {
-              name: quota.metadata?.name,
-              namespace: quota.metadata?.namespace,
-              toString: () => quota.metadata?.name,
+              name: quota.metadata?.name || '',
+              namespace: quota.metadata?.namespace || '',
+              toString: () => quota.metadata?.name || '',
             },
             limitAllowed: !!count,
             numAllowed: count,

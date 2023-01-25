@@ -34,10 +34,7 @@ export async function waitForInputByText(text: string, index?: number) {
     await waitFor(() => expect(screen.getByText(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByText(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByText(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByText(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -58,10 +55,7 @@ export async function waitForInputByTitle(title: string, index?: number) {
     await waitFor(() => expect(screen.getByTitle(title)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByTitle(title)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByTitle(title) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByTitle(title).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -141,10 +135,7 @@ export async function waitForInputByRole(text: string, index?: number) {
     await waitFor(() => expect(screen.getByRole(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByRole(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByRole(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByRole(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -197,10 +188,7 @@ export async function waitForInputByTestId(text: string, index?: number) {
     await waitFor(() => expect(screen.getByTestId(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByTestId(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByTestId(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByTestId(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -259,10 +247,7 @@ export async function waitForInputByLabelText(text: string, index?: number) {
     await waitFor(() => expect(screen.getByLabelText(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByLabelText(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByLabelText(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByLabelText(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }

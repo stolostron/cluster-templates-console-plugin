@@ -16,7 +16,7 @@ jest.mock('@openshift-console/dynamic-plugin-sdk', () => {
 });
 
 const renderUsageSection = async () => {
-  return render(<UsageSection clusterTemplate={clusterTemplate}></UsageSection>);
+  return render(<UsageSection clusterTemplate={clusterTemplate} />);
 };
 
 describe('Cluster template details page usage section', () => {

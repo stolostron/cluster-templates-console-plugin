@@ -93,7 +93,7 @@ describe('cluster template details page', () => {
   xit('should show labels in details section', () => {
     const { getByTestId } = renderTemplatesPage();
     expect(getByTestId('Labels label')).toHaveTextContent('Labels');
-    for (const [key, value] of Object.entries(exampleTemplate.metadata.labels)) {
+    for (const [key, value] of Object.entries(exampleTemplate.metadata?.labels)) {
       expect(getByTestId('Labels value')).toHaveTextContent(`${key}=${value}`);
     }
   });
