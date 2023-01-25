@@ -17,6 +17,7 @@ import { PlusIcon } from '@patternfly/react-icons';
 import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
 import CellLoader from '../../helpers/CellLoader';
 import { getErrorMessage } from '../../utils/utils';
+import { ArgoCDSecretData } from '../../types';
 
 type HelmRepositoryFieldProps = {
   fieldName: string;
@@ -43,25 +44,9 @@ const HelmRepositoryField = ({ fieldName, showLabelIcon }: HelmRepositoryFieldPr
     setIsOpen(false);
   };
 
-  const onNewRepoCreated = async (repoName: string) => {
-    try {
-      const newRepos = await refetch();
-      const newRepo = newRepos.find((repo) => repo.name === repoName);
-      if (!newRepo) {
-        // t('Failed to get repository data')
-        addAlert({
-          title: 'Failed to get repository',
-          message: `Repositories list doesn't contain new repository ${repoName}`,
-        });
-      } else {
-        setValue(newRepo.url, true);
-      }
-    } catch (err) {
-      // t('Failed to refresh repositories')
-      addAlert({ title: 'Failed to referesh repositories', message: getErrorMessage(err) });
-    } finally {
-      setNewRepositoryDialogOpen(false);
-    }
+  const onNewRepoCreated = async (argoCDSecretData: ArgoCDSecretData) => {
+    await refetch();
+    setValue(argoCDSecretData.url || '', true);
   };
 
   const selectedRepo = url ? repos.find((repo) => repo.url === url) : undefined;
@@ -120,7 +105,7 @@ const HelmRepositoryField = ({ fieldName, showLabelIcon }: HelmRepositoryFieldPr
       </CellLoader>
       {newRepositoryDialogOpen && (
         <NewRepositoryDialog
-          onCancel={() => setNewRepositoryDialogOpen(false)}
+          closeDialog={() => setNewRepositoryDialogOpen(false)}
           onCreate={onNewRepoCreated}
         />
       )}

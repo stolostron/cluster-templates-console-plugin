@@ -3,8 +3,6 @@ import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
 import { HelmRepository } from '../types';
 import { RepositoriesContext } from '../contexts/helmRepositoriesContext';
-import { useAlerts } from '../alerts/AlertsContext';
-import { getErrorMessage } from '../utils/utils';
 
 const HELM_REPOSITORIES_ENDPOINT =
   '/api/proxy/plugin/clustertemplates-plugin/repositories/api/helm-repositories';
@@ -19,7 +17,6 @@ export const useHelmChartRepositories = (): HelmChartRepositoryListResult & {
   refetch: () => Promise<HelmRepository[]>;
 } => {
   const [repoListResult, setRepoListResult] = React.useContext(RepositoriesContext);
-  const { addAlert } = useAlerts();
   const fetch = async (): Promise<HelmRepository[]> => {
     setRepoListResult({ repos: [], loaded: false, error: null });
     try {
@@ -35,21 +32,17 @@ export const useHelmChartRepositories = (): HelmChartRepositoryListResult & {
   };
 
   React.useEffect(() => {
-    try {
-      if (repoListResult === null) {
-        fetch();
-      }
-    } catch (e) {
-      addAlert({ title: `Failed to fetch Helm chart repositories`, message: getErrorMessage(e) });
+    if (!repoListResult) {
+      fetch();
     }
   }, []);
 
   if (!repoListResult) {
-    return { loaded: false, repos: [], error: null, refetch: fetch };
+    return { loaded: false, repos: [], error: undefined, refetch: fetch };
   } else {
     return { ...repoListResult, refetch: fetch };
   }
 };
 
-export const getNumRepoCharts = (repo): number =>
-  repo.index ? Object.keys(repo.index.entries).length : undefined;
+export const getNumRepoCharts = (repo: HelmRepository): number | undefined =>
+  repo.index ? Object.keys(repo.index?.entries).length : undefined;
