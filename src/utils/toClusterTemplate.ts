@@ -1,4 +1,4 @@
-import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
+import { ObjectMetadata } from '@openshift-console/dynamic-plugin-sdk';
 import { HelmFormikValues, WizardFormikValues } from '../components/ClusterTemplateWizard/types';
 import { INSTANCE_NAMESPACE_VAR } from '../constants';
 import { ArgoCDSpec, ClusterTemplate } from '../types';
@@ -43,7 +43,7 @@ export const toClusterTemplateSpec = (values: WizardFormikValues): ClusterTempla
 
 export const getAnnotations = (
   values: WizardFormikValues,
-): K8sResourceCommon['metadata']['annotations'] => {
+): ObjectMetadata['annotations'] | undefined => {
   if (values.details.description) {
     return { [TEMPLATE_LABELS.description]: values.details.description };
   }

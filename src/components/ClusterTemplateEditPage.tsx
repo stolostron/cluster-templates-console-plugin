@@ -57,7 +57,7 @@ const ClusterTemplateEditPage = ({ match }: { match: { params: { name: string } 
           setError(err);
         });
     }
-  }, [name, clusterTemplate]);
+  }, [name, clusterTemplate, model]);
   return (
     <ErrorBoundary>
       <PageLoader

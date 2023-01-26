@@ -1,7 +1,7 @@
-import { useK8sWatchResource, WatchK8sResult } from '@openshift-console/dynamic-plugin-sdk';
+import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
 import { ARGOCD_NAMESPACE, secretGVK } from '../constants';
-import { ArgoCDSecretData, DecodedSecret, Secret } from '../types';
+import { ArgoCDSecretData, CorrectWatchK8sResult, DecodedSecret, Secret } from '../types';
 import { getDecodedSecretData } from '../utils/secrets';
 
 const initResource = {
@@ -11,8 +11,10 @@ const initResource = {
   selector: { matchLabels: { 'argocd.argoproj.io/secret-type': 'repository' } },
 };
 
-export const useArgoCDSecrets = (): WatchK8sResult<DecodedSecret<ArgoCDSecretData>[]> => {
-  const [secrets, loaded, loadError] = useK8sWatchResource<Secret[]>(initResource);
+export const useArgoCDSecrets = (): CorrectWatchK8sResult<DecodedSecret<ArgoCDSecretData>[]> => {
+  const [secrets, loaded, loadError] = useK8sWatchResource<Secret[]>(
+    initResource,
+  ) as CorrectWatchK8sResult<Secret[]>;
 
   const decodedSecrets = secrets.map((secret) => ({
     ...secret,
@@ -23,17 +25,19 @@ export const useArgoCDSecrets = (): WatchK8sResult<DecodedSecret<ArgoCDSecretDat
 };
 
 export const useArgoCDSecretsCount = () => {
-  const [secrets, loaded, loadError] = useK8sWatchResource<Secret[]>(initResource);
+  const [secrets, loaded, loadError] = useK8sWatchResource<Secret[]>(
+    initResource,
+  ) as CorrectWatchK8sResult<Secret[]>;
   return loaded && !loadError ? secrets.length : undefined;
 };
 
 export const useArgoCDSecretByRepoUrl = (
   repoUrl: string,
-): [DecodedSecret<ArgoCDSecretData>, boolean, unknown] => {
+): [DecodedSecret<ArgoCDSecretData> | undefined, boolean, unknown] => {
   const [secrets, loaded, loadError] = useArgoCDSecrets();
   const secret = React.useMemo(
-    () => secrets.find((secret) => secret.data.url === repoUrl),
-    [secrets],
+    () => secrets.find((secret) => secret.data?.url === repoUrl),
+    [secrets, repoUrl],
   );
   return [secret, loaded, loadError];
 };

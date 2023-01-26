@@ -15,7 +15,7 @@ import { getDecodedSecretData } from '../../utils/secrets';
 
 type NewRepositoryDialogProps = {
   closeDialog: () => void;
-  onCreate?: (secretData: ArgoCDSecretData) => void;
+  onCreate?: (secretData: ArgoCDSecretData) => Promise<void>;
 };
 
 export function getInitialValues(): RepositoryFormValues {

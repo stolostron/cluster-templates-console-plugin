@@ -95,4 +95,5 @@ export const argoCDGVK: K8sGroupVersionKind = {
   version: 'v1alpha1',
 };
 
+// eslint-disable-next-line @typescript-eslint/restrict-template-expressions
 export const helmChartRepositoryReference = `${helmRepoGVK.group}~${helmRepoGVK.version}~${helmRepoGVK.kind}`;

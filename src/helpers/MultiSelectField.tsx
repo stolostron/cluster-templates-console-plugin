@@ -58,7 +58,7 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
       validated={validated}
       isRequired={required}
       labelIcon={labelIcon}
-      data-test={`multi-select-${label}`}
+      data-test={`multi-select-${label || ''}`}
       className="cluster-templates-select-field"
     >
       <Select

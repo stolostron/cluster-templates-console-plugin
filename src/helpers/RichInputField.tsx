@@ -94,7 +94,7 @@ const RichInputField = React.forwardRef(
     ref: React.Ref<HTMLInputElement>,
   ) => {
     const [popoverOpen, setPopoverOpen] = React.useState(false);
-    const [{ onChange }, { error, value, touched }, { setTouched }] = useField({
+    const [{ onChange }, { error, value, touched }, { setTouched }] = useField<string>({
       name: props.name,
     });
 
@@ -115,6 +115,7 @@ const RichInputField = React.forwardRef(
         labelIcon={labelIcon}
       >
         <InputGroup
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
           className={classNames('rich-input__group', { 'rich_input__group--invalid': !isValid })}
         >
           <TextInput
@@ -147,17 +148,19 @@ const RichInputField = React.forwardRef(
               />
             }
           >
-            {!isDisabled && (
-              <Button variant="plain" aria-label="Validation">
-                {!isValid ? (
-                  <ExclamationCircleIcon color={dangerColor.value} />
-                ) : value ? (
-                  <CheckCircleIcon color={okColor.value} />
-                ) : (
-                  <InfoCircleIcon color={blueInfoColor.value} />
-                )}
-              </Button>
-            )}
+            <div>
+              {!isDisabled && (
+                <Button variant="plain" aria-label="Validation">
+                  {!isValid ? (
+                    <ExclamationCircleIcon color={dangerColor.value} />
+                  ) : value ? (
+                    <CheckCircleIcon color={okColor.value} />
+                  ) : (
+                    <InfoCircleIcon color={blueInfoColor.value} />
+                  )}
+                </Button>
+              )}
+            </div>
           </Popover>
         </InputGroup>
       </FormGroup>

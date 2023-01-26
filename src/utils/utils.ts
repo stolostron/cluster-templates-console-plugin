@@ -30,7 +30,9 @@ export const sortByResourceName = <T extends K8sResourceCommon>(crs: T[]) =>
   crs.sort((cr1, cr2) => (cr1.metadata?.name || '').localeCompare(cr2.metadata?.name || ''));
 
 export const getSortedResourceNames = (crs: K8sResourceCommon[]) =>
-  crs.map((cr) => cr.metadata?.name).sort((name1, name2) => name1.localeCompare(name2));
+  (crs.map((cr) => cr.metadata?.name).filter(Boolean) as string[]).sort((name1, name2) =>
+    name1.localeCompare(name2),
+  );
 
 export const getErrorMessage = (error: unknown) => {
   if (error instanceof Error) {

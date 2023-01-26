@@ -1,5 +1,6 @@
-import { ErrorBoundaryFallbackPage } from '@openshift-console/dynamic-plugin-sdk';
 import * as React from 'react';
+import { ErrorBoundaryFallbackPage } from '@openshift-console/dynamic-plugin-sdk';
+
 export type ErrorBoundaryFallbackProps = {
   errorMessage: string;
   componentStack: string;
@@ -18,7 +19,6 @@ export type ErrorBoundaryState = {
   errorInfo: { componentStack: string };
 };
 class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   readonly defaultState: ErrorBoundaryState = {
     hasError: false,
     error: {
@@ -31,12 +31,15 @@ class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundarySta
     },
   };
 
-  constructor(props) {
+  constructor(props: ErrorBoundaryProps) {
     super(props);
     this.state = this.defaultState;
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(
+    error: ErrorBoundaryState['error'],
+    errorInfo: ErrorBoundaryState['errorInfo'],
+  ) {
     this.setState({
       hasError: true,
       error,

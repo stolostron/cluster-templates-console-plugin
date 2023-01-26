@@ -22,7 +22,7 @@ const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
   );
 };
 
-const getChartToVersions = (repo?: HelmRepository): Record<string, string[]> => {
+const getChartToVersions = (repo?: HelmRepository): Record<string, string[]> | undefined => {
   if (!repo || !repo.index) {
     return undefined;
   }
@@ -42,19 +42,19 @@ const HelmFields = ({
   fieldNamePrefix: string;
   horizontal: boolean;
 }) => {
+  const { t } = useTranslation();
   const { addAlert } = useAlerts();
   const { values, setFieldValue } = useFormikContext();
-  const { t } = useTranslation();
   const { repos, loaded } = useHelmChartRepositories();
   const prevUrl = React.useRef<string>();
 
   const chartFieldName = `${fieldNamePrefix}.chart`;
   const versionFieldName = `${fieldNamePrefix}.version`;
   const repoFieldName = `${fieldNamePrefix}.url`;
-  const url = get(values, repoFieldName);
+  const url = get(values, repoFieldName) as string;
   const selectedRepo = url ? repos.find((repo) => repo.url === url) : undefined;
   const chartToVersions = getChartToVersions(selectedRepo);
-  const chart = get(values, chartFieldName);
+  const chart = get(values, chartFieldName) as string;
 
   React.useEffect(() => {
     if (loaded && url && !selectedRepo) {
@@ -64,7 +64,7 @@ const HelmFields = ({
         message: `Repositories list doesn't contain repository ${humanizeUrl(url)}`,
       });
     }
-  }, [selectedRepo, loaded, url]);
+  }, [selectedRepo, loaded, url, addAlert]);
 
   React.useEffect(() => {
     if (prevUrl.current && url !== prevUrl.current) {
@@ -73,7 +73,7 @@ const HelmFields = ({
       setFieldValue(versionFieldName, '');
     }
     prevUrl.current = url;
-  }, [url]);
+  }, [chartFieldName, setFieldValue, url, versionFieldName]);
 
   const fields = [
     <HelmRepositoryField

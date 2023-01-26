@@ -63,7 +63,7 @@ const QuotaSummary = ({
     } else {
       setQuotaDetails(details);
     }
-  }, [quotasData, quotaFormikValues]);
+  }, [quotasData, quotaFormikValues, addAlert, t]);
 
   if (!quotaDetails) {
     return null;

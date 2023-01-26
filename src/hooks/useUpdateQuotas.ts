@@ -1,10 +1,10 @@
 import { useK8sModel, K8sModel, Patch, k8sPatch } from '@openshift-console/dynamic-plugin-sdk';
-import { differenceWith } from 'lodash';
 import { WizardFormikValues, QuotaFormikValues } from '../components/ClusterTemplateWizard/types';
 import { clusterTemplateQuotaGVK } from '../constants';
 import { Quota } from '../types';
 import { getErrorMessage } from '../utils/utils';
 import { useQuotas } from './useQuotas';
+import differenceWith from 'lodash/differenceWith';
 
 const useUpdateQuotas = (
   initialValues: WizardFormikValues,
@@ -21,7 +21,7 @@ const useUpdateQuotas = (
     clusterTemplateName: string,
     quotaFormValues: QuotaFormikValues,
     isRemove: boolean,
-  ): Promise<{ model: K8sModel; resource: Quota; data: Patch[] }> => {
+  ): Promise<{ model: K8sModel; resource: Quota; data: Patch[] } | undefined> => {
     let quota;
     try {
       quota = await quotasData.getQuota(

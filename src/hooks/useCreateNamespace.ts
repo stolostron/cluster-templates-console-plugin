@@ -28,6 +28,7 @@ export const useCreateNamespace = (): [(name: string) => Promise<void>, boolean]
     try {
       await k8sCreate({ model: nsModel, data: getNamespace(name) });
     } catch (err) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (err['json'] && err['json']['reason'] === 'AlreadyExists') {
         return;
       }

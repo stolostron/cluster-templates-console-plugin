@@ -15,10 +15,10 @@ module.exports = {
     ecmaFeatures: {
       jsx: true,
     },
-    ecmaVersion: '2016',
+    ecmaVersion: '2020',
     sourceType: 'module',
     tsconfigRootDir: __dirname,
-    project: ['./tsconfig.json'],
+    project: ['./tsconfig.json', './tsconfig.tests.json'],
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'import'],
   rules: {

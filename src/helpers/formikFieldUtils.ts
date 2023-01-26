@@ -9,7 +9,7 @@ export const selectValuesEqual = (
   value2: SelectOptionObject | string,
 ): boolean => {
   if (isOptionObject(value1) && isOptionObject(value2)) {
-    return value1.toString() == value2.toString();
+    return value1.toString() === value2.toString();
   }
   if (isString(value1) && isString(value2)) {
     return value1 === value2;

@@ -39,7 +39,7 @@ const CustomFooter = () => {
   const history = useHistory();
   const { values, isSubmitting, submitForm, setTouched, errors } =
     useFormikContext<WizardFormikValues>();
-  const [submitError, setSubmitError] = React.useState();
+  const [submitError, setSubmitError] = React.useState<string>();
   const [submitClicked, setSubmitClicked] = React.useState(false);
   const { activeStep, onBack, onNext } = React.useContext(WizardContext);
   const { t } = useTranslation();
@@ -53,7 +53,7 @@ const CustomFooter = () => {
 
   const onClickSubmit = async () => {
     if (invalid) {
-      submitForm();
+      await submitForm();
       setSubmitClicked(true);
       return;
     } else if (activeStep.id === 'review') {
@@ -61,7 +61,7 @@ const CustomFooter = () => {
         await submitForm();
         history.push(getResourceUrl(clusterTemplateGVK, values.details.name));
       } catch (err) {
-        setSubmitError(err);
+        setSubmitError(getErrorMessage(err));
       }
     } else {
       reset();
@@ -91,7 +91,7 @@ const CustomFooter = () => {
         <Button
           variant="primary"
           type="submit"
-          onClick={onClickSubmit}
+          onClick={void onClickSubmit()}
           isLoading={isSubmitting}
           isDisabled={submitClicked && invalid}
         >

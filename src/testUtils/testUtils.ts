@@ -64,27 +64,27 @@ export async function waitForInputByTitle(title: string, index?: number) {
 export async function clickByText(text: string, index?: number) {
   await waitForInputByText(text, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByText(text)[index]);
+    await userEvent.click(screen.getAllByText(text)[index]);
   } else {
-    userEvent.click(screen.getByText(text));
+    await userEvent.click(screen.getByText(text));
   }
 }
 
 export async function clickByTitle(title: string, index?: number) {
   await waitForInputByTitle(title, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByTitle(title)[index]);
+    await userEvent.click(screen.getAllByTitle(title)[index]);
   } else {
-    userEvent.click(screen.getByTitle(title));
+    await userEvent.click(screen.getByTitle(title));
   }
 }
 
 export async function typeByText(text: string, type: string, index?: number) {
   await waitForInputByText(text, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByText(text)[index], type);
+    await userEvent.type(screen.getAllByText(text)[index], type);
   } else {
-    userEvent.type(screen.getByText(text), type);
+    await userEvent.type(screen.getByText(text), type);
   }
 }
 
@@ -92,17 +92,17 @@ export async function typeByText(text: string, type: string, index?: number) {
 
 export async function typeByPlaceholderText(text: string, type: string, index?: number) {
   if (index !== undefined) {
-    userEvent.type(screen.getAllByPlaceholderText(text)[index], type);
+    await userEvent.type(screen.getAllByPlaceholderText(text)[index], type);
   } else {
-    userEvent.type(screen.getByPlaceholderText(text), type);
+    await userEvent.type(screen.getByPlaceholderText(text), type);
   }
 }
 
 export async function clickByPlaceholderText(text: string, index?: number) {
   if (index !== undefined) {
-    userEvent.click(screen.getAllByPlaceholderText(text)[index]);
+    await userEvent.click(screen.getAllByPlaceholderText(text)[index]);
   } else {
-    userEvent.click(screen.getByPlaceholderText(text));
+    await userEvent.click(screen.getByPlaceholderText(text));
   }
 }
 
@@ -144,18 +144,18 @@ export async function waitForInputByRole(text: string, index?: number) {
 export async function clickByRole(role: string, index?: number) {
   await waitForInputByRole(role, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByRole(role)[index]);
+    await userEvent.click(screen.getAllByRole(role)[index]);
   } else {
-    userEvent.click(screen.getByRole(role));
+    await userEvent.click(screen.getByRole(role));
   }
 }
 
 export async function typeByRole(role: string, type: string, index?: number) {
   await waitForInputByRole(role, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByRole(role)[index], type);
+    await userEvent.type(screen.getAllByRole(role)[index], type);
   } else {
-    userEvent.type(screen.getByRole(role), type);
+    await userEvent.type(screen.getByRole(role), type);
   }
 }
 
@@ -197,18 +197,18 @@ export async function waitForInputByTestId(text: string, index?: number) {
 export async function clickByTestId(text: string, index?: number) {
   await waitForInputByTestId(text, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByTestId(text)[index]);
+    await userEvent.click(screen.getAllByTestId(text)[index]);
   } else {
-    userEvent.click(screen.getByTestId(text));
+    await userEvent.click(screen.getByTestId(text));
   }
 }
 
 export async function typeByTestId(id: string, type: string, index?: number) {
   await waitForInputByTestId(id, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByTestId(id)[index], type);
+    await userEvent.type(screen.getAllByTestId(id)[index], type);
   } else {
-    userEvent.type(screen.getByTestId(id), type);
+    await userEvent.type(screen.getByTestId(id), type);
   }
 }
 
@@ -256,18 +256,18 @@ export async function waitForInputByLabelText(text: string, index?: number) {
 export async function clickByLabel(text: string, index?: number) {
   await waitForInputByLabelText(text, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByLabelText(text)[index]);
+    await userEvent.click(screen.getAllByLabelText(text)[index]);
   } else {
-    userEvent.click(screen.getByLabelText(text));
+    await userEvent.click(screen.getByLabelText(text));
   }
 }
 
 export async function typeByLabel(text: string, type: string, index?: number) {
   await waitForInputByLabelText(text, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByLabelText(text)[index], type);
+    await userEvent.type(screen.getAllByLabelText(text)[index], type);
   } else {
-    userEvent.type(screen.getByLabelText(text), type);
+    await userEvent.type(screen.getByLabelText(text), type);
   }
 }
 

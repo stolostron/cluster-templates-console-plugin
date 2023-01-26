@@ -21,7 +21,6 @@ describe('SelectField', () => {
       <Formik initialValues={{ secretName: 'option1' }} onSubmit={jest.fn()}>
         <SelectField
           name="secretName"
-          fieldId="secretName"
           label="Secret name"
           options={[
             {
@@ -37,7 +36,7 @@ describe('SelectField', () => {
       </Formik>,
     );
   });
-  test('renders a form group with select', async () => {
+  test('renders a form group with select', () => {
     expect(screen.getByLabelText('Secret name')).toBeDefined();
     expect(screen.getByRole('button', { name: 'Options menu' })).toBeDefined();
   });

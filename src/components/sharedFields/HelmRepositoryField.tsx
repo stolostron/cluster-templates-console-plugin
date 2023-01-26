@@ -16,7 +16,6 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { PlusIcon } from '@patternfly/react-icons';
 import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
 import CellLoader from '../../helpers/CellLoader';
-import { getErrorMessage } from '../../utils/utils';
 import { ArgoCDSecretData } from '../../types';
 
 type HelmRepositoryFieldProps = {
@@ -36,7 +35,10 @@ const HelmRepositoryField = ({ fieldName, showLabelIcon }: HelmRepositoryFieldPr
     const repo = repos.find((repo) => repo.name === value);
     if (!repo) {
       // t('Unexpected error')
-      addAlert({ title: 'Unexpected error', message: `Failed to find repository ${value}` });
+      addAlert({
+        title: 'Unexpected error',
+        message: `Failed to find repository ${value.toString()}`,
+      });
       setValue('');
     } else {
       setValue(repo.url, true);

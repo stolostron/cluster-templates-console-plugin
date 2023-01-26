@@ -33,9 +33,10 @@ export const useHelmChartRepositories = (): HelmChartRepositoryListResult & {
 
   React.useEffect(() => {
     if (!repoListResult) {
-      fetch();
+      void fetch();
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [repoListResult]);
 
   if (!repoListResult) {
     return { loaded: false, repos: [], error: undefined, refetch: fetch };

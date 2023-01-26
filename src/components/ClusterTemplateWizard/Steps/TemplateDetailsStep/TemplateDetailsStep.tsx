@@ -10,7 +10,7 @@ import NameField from '../../../sharedFields/NameField';
 
 const DetailsForm = () => {
   const { t } = useTranslation();
-  const [{ value: isCreateFlow }] = useField('isCreateFlow');
+  const [{ value: isCreateFlow }] = useField<boolean>('isCreateFlow');
   return (
     <Form>
       <NameField

@@ -67,7 +67,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
     setIsOpen(!isOpen);
   };
 
-  const _setValue = (value) => {
+  const _setValue = (value: string | SelectOptionObject) => {
     setValue(value, true);
     onSelectValue && onSelectValue(value);
   };
@@ -78,7 +78,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   };
 
   const onClearSelection = () => {
-    _setValue(initialValue);
+    _setValue(initialValue || '');
   };
 
   const onCreateOption = (newOption: string) => {

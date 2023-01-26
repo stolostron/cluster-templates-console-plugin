@@ -90,7 +90,7 @@
     "@patternfly/react-icons": "^4.92.6",
     "@patternfly/react-table": "^4.111.4",
     "@types/humanize-plus": "^1.8.0",
-    "classnames": "2.2.6",
+    "classnames": "2.3.2",
     "formik": "^2.2.9",
     "formik-pf": "^0.0.1-alpha9",
     "humanize-plus": "^1.8.2",
