@@ -30,7 +30,7 @@ const PostInstallationSettings = ({
   isRemoveDisabled,
 }: {
   idx: number;
-  remove: (number) => void;
+  remove: (number: number) => void;
   isRemoveDisabled: boolean;
 }) => {
   const { t } = useTranslation();

@@ -43,7 +43,10 @@ const CustomFooter = () => {
   const [submitClicked, setSubmitClicked] = React.useState(false);
   const { activeStep, onBack, onNext } = React.useContext(WizardContext);
   const { t } = useTranslation();
-  const invalid = activeStep.id === 'review' ? !isEmpty(errors) : !isEmpty(errors[activeStep.id]);
+  const invalid =
+    activeStep.id === 'review'
+      ? !isEmpty(errors)
+      : activeStep.id && !isEmpty(errors[activeStep.id]);
   const [confirmCancelModalOpen, setConfirmCancelModalOpen] = React.useState(false);
   const reset = () => {
     setSubmitError(undefined);
@@ -93,7 +96,7 @@ const CustomFooter = () => {
           type="submit"
           onClick={void onClickSubmit()}
           isLoading={isSubmitting}
-          isDisabled={submitClicked && invalid}
+          isDisabled={submitClicked && !!invalid}
         >
           {activeStep.id === StepId.REVIEW
             ? values.isCreateFlow
@@ -182,20 +185,22 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
 
   return (
     <Loader loaded={initialValuesLoaded} error={initialValuesError}>
-      <Formik<WizardFormikValues>
-        initialValues={initialValues}
-        onSubmit={onSubmit}
-        validationSchema={validationSchema}
-      >
-        <Wizard
-          steps={steps}
-          footer={<CustomFooter />}
-          hideClose
-          onGoToStep={(newStep) => updateActiveStepIndex(newStep.id)}
-          onNext={({ id }) => updateActiveStepIndex(id)}
-          onBack={({ id }) => updateActiveStepIndex(id)}
-        />
-      </Formik>
+      {!!initialValues && (
+        <Formik<WizardFormikValues>
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
+        >
+          <Wizard
+            steps={steps}
+            footer={<CustomFooter />}
+            hideClose
+            onGoToStep={(newStep) => updateActiveStepIndex(newStep.id)}
+            onNext={({ id }) => updateActiveStepIndex(id)}
+            onBack={({ id }) => updateActiveStepIndex(id)}
+          />
+        </Formik>
+      )}
     </Loader>
   );
 };

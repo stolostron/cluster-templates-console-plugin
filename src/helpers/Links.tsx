@@ -19,6 +19,8 @@ const InlineResourceLink = ({
   groupVersionKind: K8sGroupVersionKind;
   displayName?: string;
   name?: string;
-}) => <InlineLinkButton text={displayName || name} url={getResourceUrl(groupVersionKind, name)} />;
+}) => (
+  <InlineLinkButton text={displayName || name || ''} url={getResourceUrl(groupVersionKind, name)} />
+);
 
 export default InlineResourceLink;

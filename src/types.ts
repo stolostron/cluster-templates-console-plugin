@@ -222,7 +222,7 @@ export type ApiError = {
 };
 
 export const isApiError = (err: unknown): err is ApiError => {
-  return typeof err === 'object' && typeof err['json'] === 'object';
+  return !!err && typeof err === 'object' && 'json' in err && typeof err.json === 'object';
 };
 
 export type CorrectWatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [

@@ -61,7 +61,7 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clust
     },
     {
       label: t('Created'),
-      value: <Timestamp timestamp={clusterTemplate.metadata?.creationTimestamp} />,
+      value: <Timestamp timestamp={clusterTemplate.metadata?.creationTimestamp || ''} />,
     },
     //TODO: implement labels
     // {

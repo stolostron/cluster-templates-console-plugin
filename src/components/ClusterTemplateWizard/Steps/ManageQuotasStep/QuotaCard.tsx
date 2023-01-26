@@ -81,7 +81,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
           }
           setNewQuotaDialogOpen(false);
         }}
-        clusterTemplateCost={values.details.cost}
+        clusterTemplateCost={values.details.cost || 0}
       />
     </>
   );

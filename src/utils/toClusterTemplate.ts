@@ -35,7 +35,7 @@ export const toClusterTemplateSpec = (values: WizardFormikValues): ClusterTempla
       : values.installation.spec.destinationNamespace,
   };
   return {
-    cost: values.details.cost,
+    cost: values.details.cost || 0,
     clusterDefinition: getArgoCDSpec(installationSpec, HUB_CLUSTER_SERVER),
     clusterSetup: postSettings,
   };
