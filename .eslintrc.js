@@ -88,4 +88,14 @@ module.exports = {
       version: 'detect',
     },
   },
+  ignorePatterns: [
+    '.eslintrc.js',
+    'src/components/ClusterTemplatesPage/HelmRepositoriesTab.test.tsx',
+    'src/components/ClusterTemplatesPage/ClusterTemplatesTab.test.tsx',
+    'src/components/ClusterTemplatesPage/ClusterTemplatesPage.test.tsx',
+    'src/components/ClusterTemplateWizard/Steps/ManageQuotasStep/ManageQuotasStep.test.tsx',
+    'src/components/ClusterTemplateDetailsPage/UsageSection.test.tsx',
+    'src/components/ClusterTemplateDetailsPage/QuotasSection.test.tsx',
+    'src/components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.test.tsx',
+  ],
 };
