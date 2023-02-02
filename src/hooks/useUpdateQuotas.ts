@@ -7,7 +7,7 @@ import { useQuotas } from './useQuotas';
 import differenceWith from 'lodash/differenceWith';
 
 const useUpdateQuotas = (
-  initialValues: WizardFormikValues,
+  initialValues?: WizardFormikValues,
 ): [(values: WizardFormikValues) => Promise<void>, boolean] => {
   /*
   Quotas loading and error are not handled here:
@@ -15,7 +15,7 @@ const useUpdateQuotas = (
      This must be done because there can be quotas that were created but not sent in the socket yet
   2. To avoid handling quotas loading state in the wizard */
   const [quotasData] = useQuotas();
-  const [quotasModel, loading] = useK8sModel(clusterTemplateQuotaGVK);
+  const [quotasModel, loadingModel] = useK8sModel(clusterTemplateQuotaGVK);
 
   const getPatchValue = async (
     clusterTemplateName: string,
@@ -64,7 +64,7 @@ const useUpdateQuotas = (
   const updateQuotas = async (values: WizardFormikValues) => {
     const promises = [];
     const toRemove = differenceWith(
-      initialValues.quotas,
+      initialValues?.quotas,
       values.quotas,
       (quota1, quota2) =>
         quota1.quota.name === quota2.quota.name &&
@@ -88,7 +88,7 @@ const useUpdateQuotas = (
     }
   };
 
-  return [updateQuotas, loading];
+  return [updateQuotas, loadingModel || !initialValues];
 };
 
 export default useUpdateQuotas;

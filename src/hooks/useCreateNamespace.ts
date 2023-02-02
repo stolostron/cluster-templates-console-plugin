@@ -5,6 +5,7 @@
 
 import { k8sCreate, K8sResourceCommon, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import { namespaceGVK } from '../constants';
+import { isApiError } from '../types';
 import { useNamespaces } from './useNamespaces';
 
 const getNamespace = (name: string): K8sResourceCommon => {
@@ -28,9 +29,8 @@ export const useCreateNamespace = (): [(name: string) => Promise<void>, boolean]
     try {
       await k8sCreate({ model: nsModel, data: getNamespace(name) });
     } catch (err) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (err['json'] && err['json']['reason'] === 'AlreadyExists') {
-        return;
+      if (isApiError(err)) {
+        if (err.json.reason === 'AlreadyExists') return;
       }
       throw err;
     }
