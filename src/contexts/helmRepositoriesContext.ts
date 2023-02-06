@@ -3,7 +3,7 @@ import { HelmChartRepositoryListResult } from '../hooks/useHelmChartRepositories
 
 export type RepositoriesContextType = [
   HelmChartRepositoryListResult | undefined,
-  Dispatch<SetStateAction<HelmChartRepositoryListResult>>,
+  Dispatch<SetStateAction<HelmChartRepositoryListResult | undefined>>,
 ];
 
 export const RepositoriesContext = React.createContext<RepositoriesContextType>([

@@ -6,7 +6,7 @@ import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
 import HelmRepositoryField from './HelmRepositoryField';
 import { useTranslation } from '../../hooks/useTranslation';
 import SelectField from '../../helpers/SelectField';
-import { Flex, FlexItem } from '@patternfly/react-core';
+import { Flex, FlexItem, SelectOptionObject } from '@patternfly/react-core';
 import { useAlerts } from '../../alerts/AlertsContext';
 import { humanizeUrl } from '../../utils/humanizing';
 
@@ -93,9 +93,13 @@ const HelmFields = ({
       isDisabled={!chartToVersions}
       key={chartFieldName}
       placeholderText={!chartToVersions ? t('Select a repository first') : t('Select a chart')}
-      onSelectValue={(chart: string) => {
-        if (chartToVersions && chartToVersions[chart] && chartToVersions[chart].length) {
-          setFieldValue(versionFieldName, chartToVersions[chart][0]);
+      onSelectValue={(chart: string | SelectOptionObject) => {
+        if (
+          chartToVersions &&
+          chartToVersions[chart.toString()] &&
+          chartToVersions[chart.toString()].length
+        ) {
+          setFieldValue(versionFieldName, chartToVersions[chart.toString()][0]);
         }
       }}
       loaded={loaded}

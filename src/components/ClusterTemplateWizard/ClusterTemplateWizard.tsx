@@ -11,7 +11,6 @@ import { Formik, useFormikContext } from 'formik';
 import ReviewStep from './Steps/ReviewStep/ReviewStep';
 import { StepId, WizardFormikValues } from './types';
 import { useHistory } from 'react-router';
-import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
 
 import TemplateDetailsStep from './Steps/TemplateDetailsStep/TemplateDetailsStep';
 import { getErrorMessage } from '../../utils/utils';
@@ -30,6 +29,7 @@ import { clusterTemplateGVK } from '../../constants';
 import findIndex from 'lodash/findIndex';
 import useWizardValidationSchema from './wizardValidationSchema';
 import ConfirmCancelModal from './ConfirmCancelModal';
+import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
 
 export type ClusterTemplateWizardProps = {
   clusterTemplate?: ClusterTemplate;
@@ -48,6 +48,7 @@ const CustomFooter = () => {
       ? !isEmpty(errors)
       : activeStep.id && !isEmpty(errors[activeStep.id]);
   const [confirmCancelModalOpen, setConfirmCancelModalOpen] = React.useState(false);
+
   const reset = () => {
     setSubmitError(undefined);
     setSubmitClicked(false);

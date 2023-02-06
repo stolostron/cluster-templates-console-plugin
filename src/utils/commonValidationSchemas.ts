@@ -60,7 +60,7 @@ export const nameSchema = (
     .test(
       nameValidationMessagesList.INVALID_START_END,
       nameValidationMessagesList.INVALID_START_END,
-      (value: string) => {
+      (value?: string) => {
         const trimmed = value?.trim();
         if (!trimmed) {
           return true;
