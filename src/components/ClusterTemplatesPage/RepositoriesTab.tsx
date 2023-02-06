@@ -29,7 +29,6 @@ import { secretGVK } from '../../constants';
 import {
   ArgoCDSecretData,
   ClusterTemplate,
-  CorrectWatchK8sResult,
   DecodedSecret,
   RowProps,
   TableColumn,
@@ -49,6 +48,7 @@ import {
 } from '../../hooks/useHelmChartRepositories';
 import RepositoriesEmptyState from '../HelmRepositories/RepositoriesEmptyState';
 import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
+import { WatchK8sResult } from '../../hooks/k8s';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -89,7 +89,7 @@ const RepositoryActionDialogIds: RepositoryActionDialogIds[] = [
 
 type RepositoryRowProps = RowProps<DecodedSecret<ArgoCDSecretData>> & {
   helmChartRepositoriesResult: HelmChartRepositoryListResult;
-  clusterTemplatesResult: CorrectWatchK8sResult<ClusterTemplate[]>;
+  clusterTemplatesResult: WatchK8sResult<ClusterTemplate[]>;
 };
 
 export const RepositoryRow = ({

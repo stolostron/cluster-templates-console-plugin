@@ -159,7 +159,7 @@ export type Secret = K8sResourceCommon & {
 };
 
 export type DecodedSecret<DecodedDataType> = Omit<Secret, 'data'> & {
-  data?: DecodedDataType;
+  data: DecodedDataType;
 };
 
 export type ArgoCDSecretData = {
@@ -224,9 +224,3 @@ export type ApiError = {
 export const isApiError = (err: unknown): err is ApiError => {
   return (err as ApiError).json !== undefined;
 };
-
-export type CorrectWatchK8sResult<R extends K8sResourceCommon | K8sResourceCommon[]> = [
-  R,
-  boolean,
-  unknown,
-];

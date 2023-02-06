@@ -8,10 +8,9 @@ import {
 import InlineResourceLink from '../../../helpers/Links';
 import MultiSelectField from '../../../helpers/MultiSelectField';
 import { useTranslation } from '../../../hooks/useTranslation';
-
+import { useK8sWatchResource } from '../../../hooks/k8s';
 import { getSortedResourceNames } from '../../../utils/utils';
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
-import { CorrectWatchK8sResult, Group, User } from '../../../types';
+import { Group, User } from '../../../types';
 import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
 import { Trans } from 'react-i18next';
 import { FormSection, Text } from '@patternfly/react-core';
@@ -20,14 +19,14 @@ export const useUsers = () => {
   return useK8sWatchResource<User[]>({
     groupVersionKind: userGVK,
     isList: true,
-  }) as CorrectWatchK8sResult<User[]>;
+  });
 };
 
 export const useGroups = () =>
   useK8sWatchResource<Group[]>({
     groupVersionKind: groupGVK,
     isList: true,
-  }) as CorrectWatchK8sResult<Group[]>;
+  });
 
 export const UsersField = () => {
   const { t } = useTranslation();

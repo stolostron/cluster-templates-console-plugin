@@ -1,8 +1,9 @@
-import { k8sGet, useK8sModel, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
 import { clusterTemplateQuotaGVK, CLUSTER_TEMPLATES_ROLE, roleBindingGVK } from '../constants';
 
-import { CorrectWatchK8sResult, Quota, QuotaDetails, RoleBinding } from '../types';
+import { Quota, QuotaDetails, RoleBinding } from '../types';
+import { useK8sWatchResource } from './k8s';
 
 export const useAllQuotas = (): [Quota[], boolean, unknown] =>
   useK8sWatchResource<Quota[]>({
@@ -11,12 +12,14 @@ export const useAllQuotas = (): [Quota[], boolean, unknown] =>
     namespaced: true,
   });
 
-const useClusterTemplateRoleBindings = (): CorrectWatchK8sResult<RoleBinding[]> => {
+const useClusterTemplateRoleBindings = (): ReturnType<
+  typeof useK8sWatchResource<RoleBinding[]>
+> => {
   const [rbs, loaded, error] = useK8sWatchResource<RoleBinding[]>({
     groupVersionKind: roleBindingGVK,
     namespaced: true,
     isList: true,
-  }) as CorrectWatchK8sResult<RoleBinding[]>;
+  });
   const clusterTemplateRbs = rbs.filter((rb) => rb.roleRef.name === CLUSTER_TEMPLATES_ROLE);
   return [clusterTemplateRbs, loaded, error];
 };

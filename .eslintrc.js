@@ -60,6 +60,11 @@ module.exports = {
             importNames: ['useTranslation'],
             message: 'Please use useTranslation from src/hooks/useTranslation.ts instead',
           },
+          {
+            name: '@openshift-console/dynamic-plugin-sdk',
+            importNames: ['useK8sWatchResource'],
+            message: 'Please use a type friendly wrapper from src/hooks/k8s.ts instead',
+          },
         ],
       },
     ],

@@ -14,7 +14,11 @@ const useNewQuotaValidationSchema = (clusterTemplateCost: number) => {
   //It's used for testing unique names, if it fails or not loaded yet, the backend will block the creation
   const [allQuotas] = useAllQuotas();
   const usedQuotaNames = React.useMemo(
-    () => allQuotas.map((quota) => quota.metadata?.name).filter(Boolean) as string[],
+    () =>
+      allQuotas.reduce<string[]>(
+        (res, quota) => (quota.metadata?.name ? [...res, quota.metadata?.name] : res),
+        [],
+      ),
     [allQuotas],
   );
 

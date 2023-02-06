@@ -20,7 +20,11 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
   //It's used for testing unique names, if it fails or not loaded yet, the backend will block the creation
   const [clusterTemplates] = useClusterTemplates();
   const usedTemplateNames = React.useMemo(
-    () => clusterTemplates.map((template) => template.metadata?.name).filter(Boolean) as string[],
+    () =>
+      clusterTemplates.reduce<string[]>(
+        (res, template) => (template.metadata?.name ? [...res, template.metadata?.name] : res),
+        [],
+      ),
     [clusterTemplates],
   );
   const { t } = useTranslation();

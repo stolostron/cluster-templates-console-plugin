@@ -1,12 +1,12 @@
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateGVK } from '../constants';
-import { ClusterTemplate, CorrectWatchK8sResult } from '../types';
+import { ClusterTemplate } from '../types';
+import { useK8sWatchResource } from './k8s';
 
 export const useClusterTemplates = () =>
   useK8sWatchResource<ClusterTemplate[]>({
     groupVersionKind: clusterTemplateGVK,
     isList: true,
-  }) as CorrectWatchK8sResult<ClusterTemplate[]>;
+  });
 
 export const useClusterTemplatesCount = () => {
   const [templates, loaded, error] = useClusterTemplates();

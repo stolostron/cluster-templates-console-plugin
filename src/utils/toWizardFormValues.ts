@@ -1,7 +1,6 @@
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
 import { clusterTemplateQuotaGVK, INSTANCE_NAMESPACE_VAR } from '../constants';
-import { ArgoCDSpec, ClusterTemplate, CorrectWatchK8sResult, Quota } from '../types';
+import { ArgoCDSpec, ClusterTemplate, Quota } from '../types';
 import {
   WizardFormikValues,
   QuotaFormikValues,
@@ -11,6 +10,7 @@ import {
 import { sortByResourceName } from './utils';
 
 import { getClusterTemplateDescription } from './clusterTemplateDataUtils';
+import { useK8sWatchResource } from '../hooks/k8s';
 
 export const getNewArgoCDSpecFormValues = (): HelmFormikValues => ({
   chart: '',
@@ -47,7 +47,7 @@ const useQuotasStepFormValues = (
     groupVersionKind: clusterTemplateQuotaGVK,
     isList: true,
     namespaced: true,
-  }) as CorrectWatchK8sResult<Quota[]>;
+  });
   const [formValues, setFormValues] = React.useState<QuotaFormikValues[]>();
 
   React.useEffect(() => {
