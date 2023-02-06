@@ -95,7 +95,7 @@ const CustomFooter = () => {
         <Button
           variant="primary"
           type="submit"
-          onClick={void onClickSubmit()}
+          onClick={() => void onClickSubmit()}
           isLoading={isSubmitting}
           isDisabled={submitClicked && !!invalid}
         >

@@ -9,6 +9,7 @@ import SelectField from '../../helpers/SelectField';
 import { Flex, FlexItem, SelectOptionObject } from '@patternfly/react-core';
 import { useAlerts } from '../../alerts/AlertsContext';
 import { humanizeUrl } from '../../utils/humanizing';
+import { getErrorMessage } from '../../utils/utils';
 
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
   return (
@@ -45,7 +46,7 @@ const HelmFields = ({
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
   const { values, setFieldValue } = useFormikContext();
-  const { repos, loaded } = useHelmChartRepositories();
+  const { repos, loaded, error } = useHelmChartRepositories();
   const prevUrl = React.useRef<string>();
 
   const chartFieldName = `${fieldNamePrefix}.chart`;
@@ -55,6 +56,15 @@ const HelmFields = ({
   const selectedRepo = url ? repos.find((repo) => repo.url === url) : undefined;
   const chartToVersions = getChartToVersions(selectedRepo);
   const chart = get(values, chartFieldName) as string;
+
+  React.useEffect(() => {
+    if (error) {
+      addAlert({
+        title: 'Failed to load Helm chart repositories',
+        message: getErrorMessage(error),
+      });
+    }
+  }, [addAlert, error]);
 
   React.useEffect(() => {
     if (loaded && url && !selectedRepo) {

@@ -14,20 +14,18 @@ export type HelmChartRepositoryListResult = {
 };
 
 export const useHelmChartRepositories = (): HelmChartRepositoryListResult & {
-  refetch: () => Promise<HelmRepository[]>;
+  refetch: () => Promise<void>;
 } => {
   const [repoListResult, setRepoListResult] = React.useContext(RepositoriesContext);
-  const fetch = async (): Promise<HelmRepository[]> => {
+  const fetch = async () => {
     setRepoListResult({ repos: [], loaded: false, error: null });
     try {
       const res = await consoleFetch(HELM_REPOSITORIES_ENDPOINT);
       const yaml = await res.text();
       const repos = load(yaml) as HelmRepository[];
       setRepoListResult({ repos, loaded: true, error: null });
-      return repos;
     } catch (e) {
       setRepoListResult({ repos: [], loaded: true, error: e });
-      throw e;
     }
   };
 
