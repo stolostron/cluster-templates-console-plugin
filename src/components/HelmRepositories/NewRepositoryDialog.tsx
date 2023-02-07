@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
-import { Secret } from '../../types';
+import { ArgoCDSecretData, Secret } from '../../types';
 import { k8sCreate, useK8sModels } from '@openshift-console/dynamic-plugin-sdk';
 import { ARGOCD_NAMESPACE, ARGOCD_SECRET_LABELS, secretGVK } from '../../constants';
 import { Formik } from 'formik';
@@ -11,10 +11,11 @@ import { getValidationSchema } from './utils';
 import { FormError, RepositoryFormValues } from './types';
 import RepositoryForm from './RepositoryForm';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
+import { getDecodedSecretData } from '../../utils/secrets';
 
 type NewRepositoryDialogProps = {
-  onCancel: () => void;
-  onCreate: (repoName: string) => void;
+  closeDialog: () => void;
+  onCreate?: (secretData: ArgoCDSecretData) => Promise<void>;
 };
 
 export function getInitialValues(): RepositoryFormValues {
@@ -32,7 +33,7 @@ export function getInitialValues(): RepositoryFormValues {
   };
 }
 
-const NewRepositoryDialog = ({ onCancel, onCreate }: NewRepositoryDialogProps) => {
+const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps) => {
   const { t } = useTranslation();
   const [formError, setFormError] = React.useState<FormError | undefined>();
   // const [secrets, secretsLoaded, secretsError] = useArgoCDSecrets();
@@ -84,7 +85,9 @@ const NewRepositoryDialog = ({ onCancel, onCreate }: NewRepositoryDialogProps) =
 
     try {
       const secret = await createArgoCDSecret;
-      onCreate(secret.metadata?.name);
+      const decodedSecretData = getDecodedSecretData<ArgoCDSecretData>(secret.data);
+      !!onCreate && (await onCreate(decodedSecretData));
+      closeDialog();
     } catch (e) {
       setFormError({
         title: t('Something went wrong'),
@@ -98,7 +101,7 @@ const NewRepositoryDialog = ({ onCancel, onCreate }: NewRepositoryDialogProps) =
       variant={ModalVariant.medium}
       isOpen
       title={t('Add a repository')}
-      onClose={() => onCancel()}
+      onClose={closeDialog}
       aria-label="Add repository dialog"
       showClose
       hasNoBodyWrapper
@@ -109,7 +112,7 @@ const NewRepositoryDialog = ({ onCancel, onCreate }: NewRepositoryDialogProps) =
           onSubmit={handleSubmit}
           validationSchema={getValidationSchema(t)}
           component={(props) => (
-            <RepositoryForm {...props} formError={formError} closeDialog={onCancel} />
+            <RepositoryForm {...props} formError={formError} closeDialog={closeDialog} />
           )}
         />
       </ModalDialogLoader>

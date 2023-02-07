@@ -69,7 +69,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
     },
     {
       title: t('Edit template'),
-      onClick: () => history.push(getEditClusterTemplateUrl(obj.metadata?.name)),
+      onClick: () => history.push(getEditClusterTemplateUrl(obj.metadata?.name || '')),
     },
   ];
 
@@ -109,13 +109,15 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
             <Button
               key="confirm"
               variant="danger"
-              onClick={async () => {
-                await k8sDelete({
-                  model,
-                  resource: obj,
-                });
-                setDeleteOpen(false);
-              }}
+              onClick={
+                void (async () => {
+                  await k8sDelete({
+                    model,
+                    resource: obj,
+                  });
+                  setDeleteOpen(false);
+                })()
+              }
             >
               {t('Delete')}
             </Button>,

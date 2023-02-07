@@ -6,7 +6,7 @@
 .cluster-templates-removable-item .cluster-templates-remove-button {
   position: absolute;
   top: -0.5rem;
-  right: 0px;
+  right: 0;
 }
 
 .cluster-templates-select-field ul {

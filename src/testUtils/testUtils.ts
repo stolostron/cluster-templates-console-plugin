@@ -34,10 +34,7 @@ export async function waitForInputByText(text: string, index?: number) {
     await waitFor(() => expect(screen.getByText(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByText(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByText(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByText(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -58,10 +55,7 @@ export async function waitForInputByTitle(title: string, index?: number) {
     await waitFor(() => expect(screen.getByTitle(title)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByTitle(title)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByTitle(title) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByTitle(title).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -70,27 +64,27 @@ export async function waitForInputByTitle(title: string, index?: number) {
 export async function clickByText(text: string, index?: number) {
   await waitForInputByText(text, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByText(text)[index]);
+    await userEvent.click(screen.getAllByText(text)[index]);
   } else {
-    userEvent.click(screen.getByText(text));
+    await userEvent.click(screen.getByText(text));
   }
 }
 
 export async function clickByTitle(title: string, index?: number) {
   await waitForInputByTitle(title, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByTitle(title)[index]);
+    await userEvent.click(screen.getAllByTitle(title)[index]);
   } else {
-    userEvent.click(screen.getByTitle(title));
+    await userEvent.click(screen.getByTitle(title));
   }
 }
 
 export async function typeByText(text: string, type: string, index?: number) {
   await waitForInputByText(text, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByText(text)[index], type);
+    await userEvent.type(screen.getAllByText(text)[index], type);
   } else {
-    userEvent.type(screen.getByText(text), type);
+    await userEvent.type(screen.getByText(text), type);
   }
 }
 
@@ -98,17 +92,17 @@ export async function typeByText(text: string, type: string, index?: number) {
 
 export async function typeByPlaceholderText(text: string, type: string, index?: number) {
   if (index !== undefined) {
-    userEvent.type(screen.getAllByPlaceholderText(text)[index], type);
+    await userEvent.type(screen.getAllByPlaceholderText(text)[index], type);
   } else {
-    userEvent.type(screen.getByPlaceholderText(text), type);
+    await userEvent.type(screen.getByPlaceholderText(text), type);
   }
 }
 
 export async function clickByPlaceholderText(text: string, index?: number) {
   if (index !== undefined) {
-    userEvent.click(screen.getAllByPlaceholderText(text)[index]);
+    await userEvent.click(screen.getAllByPlaceholderText(text)[index]);
   } else {
-    userEvent.click(screen.getByPlaceholderText(text));
+    await userEvent.click(screen.getByPlaceholderText(text));
   }
 }
 
@@ -141,10 +135,7 @@ export async function waitForInputByRole(text: string, index?: number) {
     await waitFor(() => expect(screen.getByRole(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByRole(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByRole(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByRole(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -153,18 +144,18 @@ export async function waitForInputByRole(text: string, index?: number) {
 export async function clickByRole(role: string, index?: number) {
   await waitForInputByRole(role, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByRole(role)[index]);
+    await userEvent.click(screen.getAllByRole(role)[index]);
   } else {
-    userEvent.click(screen.getByRole(role));
+    await userEvent.click(screen.getByRole(role));
   }
 }
 
 export async function typeByRole(role: string, type: string, index?: number) {
   await waitForInputByRole(role, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByRole(role)[index], type);
+    await userEvent.type(screen.getAllByRole(role)[index], type);
   } else {
-    userEvent.type(screen.getByRole(role), type);
+    await userEvent.type(screen.getByRole(role), type);
   }
 }
 
@@ -197,10 +188,7 @@ export async function waitForInputByTestId(text: string, index?: number) {
     await waitFor(() => expect(screen.getByTestId(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByTestId(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByTestId(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByTestId(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -209,18 +197,18 @@ export async function waitForInputByTestId(text: string, index?: number) {
 export async function clickByTestId(text: string, index?: number) {
   await waitForInputByTestId(text, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByTestId(text)[index]);
+    await userEvent.click(screen.getAllByTestId(text)[index]);
   } else {
-    userEvent.click(screen.getByTestId(text));
+    await userEvent.click(screen.getByTestId(text));
   }
 }
 
 export async function typeByTestId(id: string, type: string, index?: number) {
   await waitForInputByTestId(id, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByTestId(id)[index], type);
+    await userEvent.type(screen.getAllByTestId(id)[index], type);
   } else {
-    userEvent.type(screen.getByTestId(id), type);
+    await userEvent.type(screen.getByTestId(id), type);
   }
 }
 
@@ -259,10 +247,7 @@ export async function waitForInputByLabelText(text: string, index?: number) {
     await waitFor(() => expect(screen.getByLabelText(text)).toBeDefined(), options);
     await waitFor(() => expect(screen.getByLabelText(text)).not.toBeDisabled(), options);
     await waitFor(
-      () =>
-        expect(
-          (screen.getByLabelText(text) as HTMLInputElement).getAttribute('aria-disabled'),
-        ).not.toEqual('true'),
+      () => expect(screen.getByLabelText(text).getAttribute('aria-disabled')).not.toEqual('true'),
       options,
     );
   }
@@ -271,18 +256,18 @@ export async function waitForInputByLabelText(text: string, index?: number) {
 export async function clickByLabel(text: string, index?: number) {
   await waitForInputByLabelText(text, index);
   if (index !== undefined) {
-    userEvent.click(screen.getAllByLabelText(text)[index]);
+    await userEvent.click(screen.getAllByLabelText(text)[index]);
   } else {
-    userEvent.click(screen.getByLabelText(text));
+    await userEvent.click(screen.getByLabelText(text));
   }
 }
 
 export async function typeByLabel(text: string, type: string, index?: number) {
   await waitForInputByLabelText(text, index);
   if (index !== undefined) {
-    userEvent.type(screen.getAllByLabelText(text)[index], type);
+    await userEvent.type(screen.getAllByLabelText(text)[index], type);
   } else {
-    userEvent.type(screen.getByLabelText(text), type);
+    await userEvent.type(screen.getByLabelText(text), type);
   }
 }
 

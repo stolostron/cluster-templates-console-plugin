@@ -26,7 +26,7 @@ const QuotasSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ cluster
   const { t } = useTranslation();
   const [quotasData, loaded, error] = useQuotas();
   const quotasDetails = React.useMemo<QuotaDetails[]>(
-    () => quotasData.getClusterTemplateQuotasDetails(clusterTemplate.metadata?.name),
+    () => quotasData.getClusterTemplateQuotasDetails(clusterTemplate.metadata?.name || ''),
     [quotasData, clusterTemplate],
   );
   return (

@@ -6,13 +6,14 @@ import {
   ClusterTemplateStatus,
 } from '../types';
 import { clusterTemplateInstanceGVK } from '../constants';
+import { getApiVersion } from './k8s';
 
 const getProperties = (
   valuesStr: string,
   clusterSetupName?: string,
 ): ClusterTemplateInstancePropertyValue[] => {
   try {
-    const valuesObject: Record<string, string> = load(valuesStr);
+    const valuesObject = load(valuesStr) as Record<string, string>;
     if (!valuesObject) {
       return [];
     }
@@ -23,7 +24,7 @@ const getProperties = (
     }));
   } catch (err) {
     // t("Failed to parse values of chart {{chart}}")
-    throw new Error(`Failed to parse values of chart ${clusterSetupName}`);
+    throw new Error(`Failed to parse values of chart ${clusterSetupName || ''}`);
   }
 };
 
@@ -47,14 +48,14 @@ const getInstanceObject = (clusterTemplate: ClusterTemplate): ClusterTemplateIns
   }
   const values = getAllProperties(clusterTemplate.status);
   return {
-    apiVersion: `${clusterTemplateInstanceGVK.group}/${clusterTemplateInstanceGVK.version}`,
+    apiVersion: getApiVersion(clusterTemplateInstanceGVK),
     kind: clusterTemplateInstanceGVK.kind,
     metadata: {
-      namespace: null,
-      name: null,
+      namespace: undefined,
+      name: undefined,
     },
     spec: {
-      clusterTemplateRef: clusterTemplate.metadata?.name || null,
+      clusterTemplateRef: clusterTemplate.metadata?.name || '',
       values: values.length ? values : undefined,
     },
   };

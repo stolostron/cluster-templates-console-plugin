@@ -140,7 +140,7 @@ export type Quota = K8sResourceCommon & {
     budget?: number;
     allowedTemplates: {
       name: string;
-      count: number;
+      count?: number;
     }[];
   };
   status?: {
@@ -159,7 +159,7 @@ export type Secret = K8sResourceCommon & {
 };
 
 export type DecodedSecret<DecodedDataType> = Omit<Secret, 'data'> & {
-  data?: DecodedDataType;
+  data: DecodedDataType;
 };
 
 export type ArgoCDSecretData = {
@@ -222,5 +222,5 @@ export type ApiError = {
 };
 
 export const isApiError = (err: unknown): err is ApiError => {
-  return typeof err === 'object' && typeof err['json'] === 'object';
+  return (err as ApiError).json !== undefined;
 };

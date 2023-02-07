@@ -11,7 +11,6 @@ import { Formik, useFormikContext } from 'formik';
 import ReviewStep from './Steps/ReviewStep/ReviewStep';
 import { StepId, WizardFormikValues } from './types';
 import { useHistory } from 'react-router';
-import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
 
 import TemplateDetailsStep from './Steps/TemplateDetailsStep/TemplateDetailsStep';
 import { getErrorMessage } from '../../utils/utils';
@@ -30,6 +29,7 @@ import { clusterTemplateGVK } from '../../constants';
 import findIndex from 'lodash/findIndex';
 import useWizardValidationSchema from './wizardValidationSchema';
 import ConfirmCancelModal from './ConfirmCancelModal';
+import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
 
 export type ClusterTemplateWizardProps = {
   clusterTemplate?: ClusterTemplate;
@@ -39,12 +39,16 @@ const CustomFooter = () => {
   const history = useHistory();
   const { values, isSubmitting, submitForm, setTouched, errors } =
     useFormikContext<WizardFormikValues>();
-  const [submitError, setSubmitError] = React.useState();
+  const [submitError, setSubmitError] = React.useState<string>();
   const [submitClicked, setSubmitClicked] = React.useState(false);
   const { activeStep, onBack, onNext } = React.useContext(WizardContext);
   const { t } = useTranslation();
-  const invalid = activeStep.id === 'review' ? !isEmpty(errors) : !isEmpty(errors[activeStep.id]);
+  const invalid =
+    activeStep.id === 'review'
+      ? !isEmpty(errors)
+      : activeStep.id && !isEmpty(errors[activeStep.id]);
   const [confirmCancelModalOpen, setConfirmCancelModalOpen] = React.useState(false);
+
   const reset = () => {
     setSubmitError(undefined);
     setSubmitClicked(false);
@@ -53,7 +57,7 @@ const CustomFooter = () => {
 
   const onClickSubmit = async () => {
     if (invalid) {
-      submitForm();
+      await submitForm();
       setSubmitClicked(true);
       return;
     } else if (activeStep.id === 'review') {
@@ -61,7 +65,7 @@ const CustomFooter = () => {
         await submitForm();
         history.push(getResourceUrl(clusterTemplateGVK, values.details.name));
       } catch (err) {
-        setSubmitError(err);
+        setSubmitError(getErrorMessage(err));
       }
     } else {
       reset();
@@ -91,9 +95,9 @@ const CustomFooter = () => {
         <Button
           variant="primary"
           type="submit"
-          onClick={onClickSubmit}
+          onClick={() => void onClickSubmit()}
           isLoading={isSubmitting}
-          isDisabled={submitClicked && invalid}
+          isDisabled={submitClicked && !!invalid}
         >
           {activeStep.id === StepId.REVIEW
             ? values.isCreateFlow
@@ -182,20 +186,22 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
 
   return (
     <Loader loaded={initialValuesLoaded} error={initialValuesError}>
-      <Formik<WizardFormikValues>
-        initialValues={initialValues}
-        onSubmit={onSubmit}
-        validationSchema={validationSchema}
-      >
-        <Wizard
-          steps={steps}
-          footer={<CustomFooter />}
-          hideClose
-          onGoToStep={(newStep) => updateActiveStepIndex(newStep.id)}
-          onNext={({ id }) => updateActiveStepIndex(id)}
-          onBack={({ id }) => updateActiveStepIndex(id)}
-        />
-      </Formik>
+      {!!initialValues && (
+        <Formik<WizardFormikValues>
+          initialValues={initialValues}
+          onSubmit={onSubmit}
+          validationSchema={validationSchema}
+        >
+          <Wizard
+            steps={steps}
+            footer={<CustomFooter />}
+            hideClose
+            onGoToStep={(newStep) => updateActiveStepIndex(newStep.id)}
+            onNext={({ id }) => updateActiveStepIndex(id)}
+            onBack={({ id }) => updateActiveStepIndex(id)}
+          />
+        </Formik>
+      )}
     </Loader>
   );
 };

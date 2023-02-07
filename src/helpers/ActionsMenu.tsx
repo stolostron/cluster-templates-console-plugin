@@ -17,7 +17,7 @@ export const ActionsMenu = ({ actions }: { actions: Action[] }) => {
 
   const onFocus = () => {
     const element = document.getElementById('toggle-descriptions');
-    element.focus();
+    element?.focus();
   };
 
   const onSelect = () => {

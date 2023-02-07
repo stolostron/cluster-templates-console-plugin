@@ -8,9 +8,8 @@ import {
 import InlineResourceLink from '../../../helpers/Links';
 import MultiSelectField from '../../../helpers/MultiSelectField';
 import { useTranslation } from '../../../hooks/useTranslation';
-
+import { useK8sWatchResource } from '../../../hooks/k8s';
 import { getSortedResourceNames } from '../../../utils/utils';
-import { useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
 import { Group, User } from '../../../types';
 import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
 import { Trans } from 'react-i18next';

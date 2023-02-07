@@ -28,7 +28,7 @@ export type QuotaFormikValues = {
 
 export type DetailsFormikValues = {
   name: string;
-  cost: number;
+  cost?: number;
   description?: string;
 };
 

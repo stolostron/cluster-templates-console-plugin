@@ -30,7 +30,7 @@ const PostInstallationSettings = ({
   isRemoveDisabled,
 }: {
   idx: number;
-  remove: (number) => void;
+  remove: (number: number) => void;
   isRemoveDisabled: boolean;
 }) => {
   const { t } = useTranslation();
@@ -113,7 +113,10 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
 const PostInstallationStepForm = () => {
   return (
     <Form>
-      <FieldArray name={fieldName} component={PostInstallationArrayFields} />
+      <FieldArray
+        name={fieldName}
+        component={PostInstallationArrayFields as React.ComponentType<FieldArrayRenderProps | void>}
+      />
     </Form>
   );
 };

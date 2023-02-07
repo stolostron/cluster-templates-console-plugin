@@ -21,7 +21,7 @@ const InstanceYamlSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
           onClick={() => {
             try {
               createDownloadFile(
-                `${clusterTemplate.metadata?.name}_instance.yaml`,
+                `${clusterTemplate.metadata?.name || ''}_instance.yaml`,
                 generateInstanceYaml(clusterTemplate),
               );
             } catch (err) {

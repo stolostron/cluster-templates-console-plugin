@@ -103,10 +103,7 @@ const ClusterTemplatesPage = () => {
           <ClusterTemplatesTab />
         )}
         {isDialogOpen('newRepositoryDialog') && (
-          <NewRepositoryDialog
-            onCreate={() => closeDialog('newRepositoryDialog')}
-            onCancel={() => closeDialog('newRepositoryDialog')}
-          />
+          <NewRepositoryDialog closeDialog={() => closeDialog('newRepositoryDialog')} />
         )}
       </div>
     </AlertsContextProvider>

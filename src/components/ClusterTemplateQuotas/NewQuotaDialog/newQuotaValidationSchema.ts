@@ -14,30 +14,34 @@ const useNewQuotaValidationSchema = (clusterTemplateCost: number) => {
   //It's used for testing unique names, if it fails or not loaded yet, the backend will block the creation
   const [allQuotas] = useAllQuotas();
   const usedQuotaNames = React.useMemo(
-    () => allQuotas.map((quota) => quota.metadata?.name),
+    () =>
+      allQuotas.reduce<string[]>(
+        (res, quota) => (quota.metadata?.name ? [...res, quota.metadata?.name] : res),
+        [],
+      ),
     [allQuotas],
   );
 
-  const getNewQuotaValidationSchema = () =>
-    objectSchema().shape({
-      name: nameSchema(t, usedQuotaNames).required(t('Required')),
-      namespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).required(t('Required')),
-      budget: integerSchema(t).when('hasBudget', {
-        is: true,
-        then: (schema) =>
-          schema.min(
-            clusterTemplateCost,
-            t(`The budget must exceed the cost of the cluster template: {{cost}}`, {
-              cost: clusterTemplateCost,
-            }),
-          ),
-        otherwise: (schema) => schema.optional(),
-      }),
-    });
-
   const validationSchema = React.useMemo(() => {
+    const getNewQuotaValidationSchema = () =>
+      objectSchema().shape({
+        name: nameSchema(t, usedQuotaNames).required(t('Required')),
+        namespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).required(t('Required')),
+        budget: integerSchema(t).when('hasBudget', {
+          is: true,
+          then: (schema) =>
+            schema.min(
+              clusterTemplateCost,
+              t(`The budget must exceed the cost of the cluster template: {{cost}}`, {
+                cost: clusterTemplateCost,
+              }),
+            ),
+          otherwise: (schema) => schema.optional(),
+        }),
+      });
+
     return getNewQuotaValidationSchema();
-  }, [allQuotas]);
+  }, [clusterTemplateCost, t, usedQuotaNames]);
   return validationSchema;
 };
 

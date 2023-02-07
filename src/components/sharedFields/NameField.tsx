@@ -13,12 +13,12 @@ const NameField = ({
   label: string;
 }) => {
   const { t } = useTranslation();
-  const nameInputRef = React.useRef<HTMLInputElement>();
+  const nameInputRef = React.useRef<HTMLInputElement>(null);
   React.useEffect(() => {
     if (!isDisabled) {
       nameInputRef.current?.focus();
     }
-  }, []);
+  }, [isDisabled]);
   return (
     <RichInputField
       ref={nameInputRef}

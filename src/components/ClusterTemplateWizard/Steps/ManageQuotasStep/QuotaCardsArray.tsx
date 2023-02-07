@@ -58,7 +58,12 @@ const _QuotaCardsArray = ({ push, remove }: FieldArrayRenderProps) => {
 };
 
 const QuotaCardsArray = () => {
-  return <FieldArray name={fieldName} component={_QuotaCardsArray} />;
+  return (
+    <FieldArray
+      name={fieldName}
+      component={_QuotaCardsArray as React.ComponentType<FieldArrayRenderProps | void>}
+    />
+  );
 };
 
 export default QuotaCardsArray;

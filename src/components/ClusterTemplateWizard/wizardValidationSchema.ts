@@ -20,7 +20,11 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
   //It's used for testing unique names, if it fails or not loaded yet, the backend will block the creation
   const [clusterTemplates] = useClusterTemplates();
   const usedTemplateNames = React.useMemo(
-    () => clusterTemplates.map((template) => template.metadata?.name),
+    () =>
+      clusterTemplates.reduce<string[]>(
+        (res, template) => (template.metadata?.name ? [...res, template.metadata?.name] : res),
+        [],
+      ),
     [clusterTemplates],
   );
   const { t } = useTranslation();
@@ -63,18 +67,26 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
     useInstanceNamespace: booleanSchema(),
   });
 
-  const getWizardValidationSchema = () =>
-    objectSchema().shape({
-      details: detailsValidationSchema,
-      quotas: arraySchema().of(quotaOptionsValidationSchema),
-      installation: installationValidationSchema,
-      postInstallation: arraySchema().of(helmValidationSchema),
-      isCreateFlow: booleanSchema(),
-    });
+  const getWizardValidationSchema = React.useCallback(
+    () =>
+      objectSchema().shape({
+        details: detailsValidationSchema,
+        quotas: arraySchema().of(quotaOptionsValidationSchema),
+        installation: installationValidationSchema,
+        postInstallation: arraySchema().of(helmValidationSchema),
+        isCreateFlow: booleanSchema(),
+      }),
+    [
+      detailsValidationSchema,
+      helmValidationSchema,
+      installationValidationSchema,
+      quotaOptionsValidationSchema,
+    ],
+  );
 
   const validationSchema = React.useMemo(() => {
     return getWizardValidationSchema();
-  }, [clusterTemplates]);
+  }, [getWizardValidationSchema]);
 
   return validationSchema;
 };

@@ -1,17 +1,8 @@
 {
+  "extends": "./tsconfig.base",
   "compilerOptions": {
-    "baseUrl": ".",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "target": "es2020",
-    "jsx": "react",
-    "strict": false,
-    "noUnusedLocals": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
-    "esModuleInterop": true,
-    "types": ["node", "jest", "@testing-library/jest-dom"]
+    "types": ["node"],
   },
   "include": ["src"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "src/testUtils"]
+  "exclude": ["**/*.test.ts", "**/*.test.tsx", "src/testUtils", "src/mocks"]
 }

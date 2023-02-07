@@ -11,7 +11,7 @@ export type AlertsContextData = {
   addAlert: (alert: AlertData) => void;
 };
 
-const AlertsContext = React.createContext<AlertsContextData>(null);
+const AlertsContext = React.createContext<AlertsContextData | undefined>(undefined);
 
 export const AlertsContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [alerts, setAlerts] = React.useState<AlertData[]>([]);

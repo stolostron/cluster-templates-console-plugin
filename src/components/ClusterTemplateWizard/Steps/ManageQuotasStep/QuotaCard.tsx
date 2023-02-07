@@ -33,15 +33,16 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
   // t('Failed to load quota options')
   useAddAlertOnError(error, 'Failed to load quota options');
   const [newQuotaDialogOpen, setNewQuotaDialogOpen] = React.useState(false);
-  const getSelectOptions = (): SelectInputOption[] => {
+
+  const getSelectOptions = React.useCallback((): SelectInputOption[] => {
     return quotasContext.getAllQuotasDetails().map((quotaDetails) => ({
       value: getQuotaOptionObject(quotaDetails.name, quotaDetails.namespace),
       disabled: false,
       description: t('Namespace: {{namespace}}', { namespace: quotaDetails.namespace }),
     }));
-  };
+  }, [quotasContext, t]);
 
-  const selectOptions = React.useMemo(() => getSelectOptions(), [quotasContext]);
+  const selectOptions = React.useMemo(() => getSelectOptions(), [getSelectOptions]);
 
   return (
     <>
@@ -80,7 +81,7 @@ const QuotaCard = ({ quotaIdx, fieldName }: QuotaCardProps) => {
           }
           setNewQuotaDialogOpen(false);
         }}
-        clusterTemplateCost={values.details.cost}
+        clusterTemplateCost={values.details.cost || 0}
       />
     </>
   );

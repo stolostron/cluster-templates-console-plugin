@@ -1,10 +1,5 @@
 import * as React from 'react';
-import {
-  k8sDelete,
-  ResourceLink,
-  useK8sModel,
-  WatchK8sResult,
-} from '@openshift-console/dynamic-plugin-sdk';
+import { k8sDelete, ResourceLink, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import {
   Button,
   Label,
@@ -53,6 +48,7 @@ import {
 } from '../../hooks/useHelmChartRepositories';
 import RepositoriesEmptyState from '../HelmRepositories/RepositoriesEmptyState';
 import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
+import { WatchK8sResult } from '../../hooks/k8s';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -147,7 +143,7 @@ export const RepositoryRow = ({
       </Td>
       <Td dataLabel={columns[1].title}>
         <Text component="a" href={obj.data?.url} target="_blank" rel="noopener noreferrer">
-          <Truncate content={obj.data?.url} position={'middle'} trailingNumChars={10} />
+          <Truncate content={obj.data?.url || ''} position={'middle'} trailingNumChars={10} />
         </Text>
       </Td>
       <Td dataLabel={columns[2].title}>
@@ -192,13 +188,15 @@ export const RepositoryRow = ({
             <Button
               key="confirm"
               variant="danger"
-              onClick={async () => {
-                await k8sDelete({
-                  model,
-                  resource: obj,
-                });
-                closeDialog('deleteDialog');
-              }}
+              onClick={
+                void (async () => {
+                  await k8sDelete({
+                    model,
+                    resource: obj,
+                  });
+                  closeDialog('deleteDialog');
+                })()
+              }
             >
               {t('Delete')}
             </Button>,

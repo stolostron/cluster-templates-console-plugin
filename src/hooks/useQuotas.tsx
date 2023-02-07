@@ -1,8 +1,9 @@
-import { k8sGet, useK8sModel, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { k8sGet, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
 import { clusterTemplateQuotaGVK, CLUSTER_TEMPLATES_ROLE, roleBindingGVK } from '../constants';
 
 import { Quota, QuotaDetails, RoleBinding } from '../types';
+import { useK8sWatchResource } from './k8s';
 
 export const useAllQuotas = (): [Quota[], boolean, unknown] =>
   useK8sWatchResource<Quota[]>({
@@ -11,7 +12,9 @@ export const useAllQuotas = (): [Quota[], boolean, unknown] =>
     namespaced: true,
   });
 
-const useClusterTemplateRoleBindings = () => {
+const useClusterTemplateRoleBindings = (): ReturnType<
+  typeof useK8sWatchResource<RoleBinding[]>
+> => {
   const [rbs, loaded, error] = useK8sWatchResource<RoleBinding[]>({
     groupVersionKind: roleBindingGVK,
     namespaced: true,
@@ -26,10 +29,10 @@ export const getQuotaTemplateNames = (quota: Quota) => {
 };
 
 export type QuotasData = {
-  getAllQuotasDetails(): QuotaDetails[];
-  getQuota(quotaName, quotaNamespace): Promise<Quota>;
+  getAllQuotasDetails: () => QuotaDetails[];
+  getQuota: (quotaName: string, quotaNamespace: string) => Promise<Quota>;
   getClusterTemplateQuotasDetails: (clusterTemplateName: string) => QuotaDetails[];
-  getQuotaDetails: (quotaName: string, quotaNamespace: string) => QuotaDetails;
+  getQuotaDetails: (quotaName: string, quotaNamespace: string) => QuotaDetails | undefined;
 };
 
 const getDetails = (quota: Quota, rbs: RoleBinding[]): QuotaDetails => {
@@ -49,11 +52,11 @@ const getDetails = (quota: Quota, rbs: RoleBinding[]): QuotaDetails => {
     }
   }
   return {
-    name: quota.metadata?.name,
-    namespace: quota.metadata?.namespace,
+    name: quota.metadata?.name || '',
+    namespace: quota.metadata?.namespace || '',
     budget: quota.spec?.budget,
     budgetSpent: quota.status?.budgetSpent,
-    uid: quota.metadata?.uid,
+    uid: quota.metadata?.uid || '',
     numGroups,
     numUsers,
   };
@@ -96,6 +99,6 @@ export const useQuotas = (): [QuotasData, boolean, unknown] => {
         return quota ? getDetails(quota, rbs) : undefined;
       },
     };
-  }, [allQuotas, rbs]);
+  }, [allQuotas, rbs, quotasModel]);
   return [data, loaded && !quotasModelLoading, error || quotasError];
 };

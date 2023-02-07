@@ -94,5 +94,3 @@ export const argoCDGVK: K8sGroupVersionKind = {
   kind: 'ArgoCD',
   version: 'v1alpha1',
 };
-
-export const helmChartRepositoryReference = `${helmRepoGVK.group}~${helmRepoGVK.version}~${helmRepoGVK.kind}`;

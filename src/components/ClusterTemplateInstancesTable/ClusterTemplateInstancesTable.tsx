@@ -41,7 +41,7 @@ const InstanceRow: React.FC<{
           name={instance.metadata?.name}
           namespace={instance.metadata?.namespace}
           hideIcon
-          data-testid={`instance-${instance.metadata?.name}`}
+          data-testid={`instance-${instance.metadata?.name || ''}`}
         />
       </Td>
       <Td dataLabel={columns[1].title} data-testid="namespace">
@@ -49,7 +49,7 @@ const InstanceRow: React.FC<{
           groupVersionKind={namespaceGVK}
           name={instance.metadata?.namespace}
           hideIcon
-          data-testid={`namespace-${instance.metadata?.namespace}`}
+          data-testid={`namespace-${instance.metadata?.namespace || ''}`}
         />
       </Td>
       <Td dataLabel={columns[2].title} data-testid="status">

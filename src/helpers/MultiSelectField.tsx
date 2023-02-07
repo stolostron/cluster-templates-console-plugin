@@ -42,7 +42,9 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
 
     let newValue;
     if (selected.find((value) => selectValuesEqual(selection, value))) {
-      newValue = selected.filter((sel: string) => !selectValuesEqual(sel, selection));
+      newValue = selected.filter(
+        (sel: string | SelectOptionObject) => !selectValuesEqual(sel, selection),
+      );
     } else {
       newValue = [...field.value, selection];
     }
@@ -58,7 +60,7 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
       validated={validated}
       isRequired={required}
       labelIcon={labelIcon}
-      data-test={`multi-select-${label}`}
+      data-test={`multi-select-${label || ''}`}
       className="cluster-templates-select-field"
     >
       <Select

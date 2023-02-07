@@ -33,7 +33,7 @@ const getPatchData = (
 };
 
 export const useSaveClusterTemplate = (
-  initialValues: WizardFormikValues,
+  initialValues?: WizardFormikValues,
   originalClusterTemplate?: ClusterTemplate,
 ): [(values: WizardFormikValues) => Promise<boolean>, boolean] => {
   const [updateQuotas, loadingUpdateQuotas] = useUpdateQuotas(initialValues);

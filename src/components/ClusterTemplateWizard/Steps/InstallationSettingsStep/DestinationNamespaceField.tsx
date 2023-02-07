@@ -30,7 +30,7 @@ const DestinationNamespaceField = () => {
     if (useInstanceNamespace) {
       setNamespace('');
     }
-  }, [useInstanceNamespace]);
+  }, [setNamespace, useInstanceNamespace]);
   return (
     <Stack hasGutter className="installation-destination-namespace">
       <SelectField

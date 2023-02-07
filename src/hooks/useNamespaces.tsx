@@ -1,6 +1,7 @@
-import { K8sResourceCommon, useK8sWatchResource } from '@openshift-console/dynamic-plugin-sdk';
+import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
 import { namespaceGVK } from '../constants';
+import { useK8sWatchResource } from './k8s';
 
 export const useNamespaces = (): [string[], boolean, unknown] => {
   const [allNamespaces, loaded, error] = useK8sWatchResource<K8sResourceCommon[]>({

@@ -1,5 +1,4 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
-import get from 'lodash/get';
 import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types';
 
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
@@ -9,8 +8,8 @@ export const TEMPLATE_LABELS = {
   vendor: `${TEMPLATES_LABEL_PREFIX}/vendor`,
 };
 
-const getLabelValue = (resource: K8sResourceCommon, labelName: string): string | undefined =>
-  get(resource, ['metadata', 'labels', labelName]);
+const getLabelValue = (resource: K8sResourceCommon, labelName: string) =>
+  resource.metadata?.labels?.[labelName];
 
 export const getClusterTemplateVendor = (
   clusterTemplate: ClusterTemplate,
@@ -24,11 +23,8 @@ export const getClusterTemplateVendor = (
     : ClusterTemplateVendor.CUSTOM;
 };
 
-export const getClusterTemplateDescription = (
-  clusterTemplate: ClusterTemplate,
-): string | undefined => {
-  return get(clusterTemplate, ['metadata', 'annotations', TEMPLATE_LABELS.description]);
-};
+export const getClusterTemplateDescription = (clusterTemplate?: ClusterTemplate) =>
+  clusterTemplate?.metadata?.annotations?.[TEMPLATE_LABELS.description];
 
 export const isHelmAppSpec = (source: ApplicationSource) => !!source.chart;
 

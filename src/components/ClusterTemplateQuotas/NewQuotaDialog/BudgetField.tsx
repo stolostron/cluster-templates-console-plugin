@@ -18,7 +18,7 @@ const BudgetField = ({
   popoverHelpText,
 }: BudgetFieldProps) => {
   const [{ value: hasBudget }] = useField<boolean>(hasBudgetFieldName);
-  const [, , { setValue: setBudget }] = useField<number>(budgetFieldName);
+  const [, , { setValue: setBudget }] = useField<number | undefined>(budgetFieldName);
   return (
     <Flex>
       <FlexItem>
