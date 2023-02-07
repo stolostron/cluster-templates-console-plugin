@@ -80,7 +80,7 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clust
 
   const rightItems: ListItem[] = [
     {
-      label: t('Post-installation settings'),
+      label: t('Gitops'),
       value: <PostInstallationDetails clusterTemplate={clusterTemplate} />,
     },
     {

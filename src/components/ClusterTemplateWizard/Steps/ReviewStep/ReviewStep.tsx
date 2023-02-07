@@ -25,6 +25,7 @@ import {
 } from '../../../sharedDetailItems/clusterTemplateDetailItems';
 import { useAlerts } from '../../../../alerts/AlertsContext';
 import toClusterTemplate from '../../../../utils/toClusterTemplate';
+import ErrorBoundary from '../../../../helpers/ErrorBoundary';
 
 export const getQuotaNameAndUsersText = (quotaDetails: QuotaDetails, t: TFunction) => {
   const users = t('{{count}} user', {
@@ -95,43 +96,45 @@ const ReviewStep = () => {
   const clusterTemplate = toClusterTemplate(values);
   const { t } = useTranslation();
   return (
-    <Stack hasGutter>
-      <StackItem>
-        <TextContent>
-          <Text component="h2">{t('Review')}</Text>
-        </TextContent>
-      </StackItem>
-      <StackItem>
-        <DescriptionList>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Cluster template name')}</DescriptionListTerm>
-            <DescriptionListDescription>{values.details.name}</DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Cost')}</DescriptionListTerm>
-            <ClusterTemplateCost clusterTemplate={clusterTemplate} />
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Installation settings')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              <InstallationDetails clusterTemplate={clusterTemplate} />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Post-installation settings')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              <PostInstallationDetails clusterTemplate={clusterTemplate} />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-          <DescriptionListGroup>
-            <DescriptionListTerm>{t('Manage quotas')}</DescriptionListTerm>
-            <DescriptionListDescription>
-              <ReviewQuotas quotas={values.quotas} />
-            </DescriptionListDescription>
-          </DescriptionListGroup>
-        </DescriptionList>
-      </StackItem>
-    </Stack>
+    <ErrorBoundary>
+      <Stack hasGutter>
+        <StackItem>
+          <TextContent>
+            <Text component="h2">{t('Review')}</Text>
+          </TextContent>
+        </StackItem>
+        <StackItem>
+          <DescriptionList>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('Cluster template name')}</DescriptionListTerm>
+              <DescriptionListDescription>{values.details.name}</DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('Cost')}</DescriptionListTerm>
+              <ClusterTemplateCost clusterTemplate={clusterTemplate} />
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('Installation settings')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <InstallationDetails clusterTemplate={clusterTemplate} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('Gitops')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <PostInstallationDetails clusterTemplate={clusterTemplate} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+            <DescriptionListGroup>
+              <DescriptionListTerm>{t('Manage quotas')}</DescriptionListTerm>
+              <DescriptionListDescription>
+                <ReviewQuotas quotas={values.quotas} />
+              </DescriptionListDescription>
+            </DescriptionListGroup>
+          </DescriptionList>
+        </StackItem>
+      </Stack>
+    </ErrorBoundary>
   );
 };
 

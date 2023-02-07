@@ -1,42 +1,79 @@
-import { ObjectMetadata } from '@openshift-console/dynamic-plugin-sdk';
-import { HelmFormikValues, WizardFormikValues } from '../components/ClusterTemplateWizard/types';
+import { K8sResourceCommon, ObjectMetadata } from '@openshift-console/dynamic-plugin-sdk';
+import {
+  PostInstallationFormikValues,
+  GitRepoSourceFormikValues,
+  HelmSourceFormikValues,
+  isHelmSource,
+  WizardFormikValues,
+} from '../components/ClusterTemplateWizard/types';
 import { INSTANCE_NAMESPACE_VAR } from '../constants';
-import { ArgoCDSpec, ClusterTemplate } from '../types';
+import { ApplicationSource, ArgoCDSpec, ClusterTemplate } from '../types';
 import { TEMPLATE_LABELS } from './clusterTemplateDataUtils';
 
 const HUB_CLUSTER_SERVER = 'https://kubernetes.default.svc';
 const NEW_CLUSTER_SERVER = '${new_cluster}';
 const DEFAULT_PROJECT = 'default';
 
-const getArgoCDSpec = (values: HelmFormikValues, destinationServer: string): ArgoCDSpec => {
+const getArgoHelmSource = (values: HelmSourceFormikValues): ApplicationSource => ({
+  repoURL: values.url,
+  chart: values.chart,
+  targetRevision: values.version,
+});
+
+const getArgoGitSource = (values: GitRepoSourceFormikValues): ApplicationSource => ({
+  repoURL: values.url,
+  targetRevision: values.commit,
+  path: values.directory,
+});
+
+const getArgoSpec = (
+  destinationServer: string,
+  destinationNamespace: string | undefined,
+  source: ApplicationSource,
+  autoSync = false,
+  pruneResources = false,
+): ArgoCDSpec => {
   return {
-    source: {
-      repoURL: values.url,
-      chart: values.chart,
-      targetRevision: values.version,
-    },
+    source,
     destination: {
-      namespace: values.destinationNamespace,
+      namespace: destinationNamespace,
       server: destinationServer,
     },
     project: DEFAULT_PROJECT,
+    syncPolicy: autoSync
+      ? {
+          automated: { prune: pruneResources },
+        }
+      : undefined,
+  };
+};
+
+const getClusterSetupItem = (
+  values: PostInstallationFormikValues,
+): { name: string; spec: ArgoCDSpec } => {
+  const source: ApplicationSource = isHelmSource(values.source)
+    ? getArgoHelmSource(values.source)
+    : getArgoGitSource(values.source);
+  return {
+    name: isHelmSource(values.source)
+      ? `${values.source.url}/${values.source.chart}`
+      : `${values.source.url}/${values.source.commit}`,
+    spec: getArgoSpec(NEW_CLUSTER_SERVER, values.destinationNamespace, source),
   };
 };
 
 export const toClusterTemplateSpec = (values: WizardFormikValues): ClusterTemplate['spec'] => {
-  const postSettings = values.postInstallation.map((formValues) => ({
-    name: `${formValues.url}/${formValues.chart}`,
-    spec: getArgoCDSpec(formValues, NEW_CLUSTER_SERVER),
-  }));
-  const installationSpec = {
-    ...values.installation.spec,
-    destinationNamespace: values.installation.useInstanceNamespace
+  const postSettings = values.postInstallation.map((formValues) => getClusterSetupItem(formValues));
+  const installationSpec = getArgoSpec(
+    HUB_CLUSTER_SERVER,
+    values.installation.useInstanceNamespace
       ? INSTANCE_NAMESPACE_VAR
-      : values.installation.spec.destinationNamespace,
-  };
+      : values.installation.destinationNamespace,
+    getArgoHelmSource(values.installation.source),
+  );
   return {
-    cost: values.details.cost || 0,
-    clusterDefinition: getArgoCDSpec(installationSpec, HUB_CLUSTER_SERVER),
+    cost: values.details.cost,
+    clusterDefinition: installationSpec,
     clusterSetup: postSettings,
   };
 };

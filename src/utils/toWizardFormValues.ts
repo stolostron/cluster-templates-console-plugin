@@ -1,22 +1,37 @@
 import React from 'react';
 import { clusterTemplateQuotaGVK, INSTANCE_NAMESPACE_VAR } from '../constants';
-import { ArgoCDSpec, ClusterTemplate, Quota } from '../types';
+import { ApplicationSource, ArgoCDSpec, ClusterTemplate, Quota } from '../types';
 import {
   WizardFormikValues,
   QuotaFormikValues,
   InstallationFormikValues,
-  HelmFormikValues,
+  HelmSourceFormikValues,
+  PostInstallationFormikValues,
+  GitRepoSourceFormikValues,
 } from '../components/ClusterTemplateWizard/types';
 import { sortByResourceName } from './utils';
 
 import { getClusterTemplateDescription } from './clusterTemplateDataUtils';
 import { useK8sWatchResource } from '../hooks/k8s';
 
-export const getNewArgoCDSpecFormValues = (): HelmFormikValues => ({
+export const getNewHelmSourceFormValues = (): HelmSourceFormikValues => ({
+  url: '',
   chart: '',
   version: '',
+});
+
+export const getNewGitOpsFormValues = (type: 'helm' | 'git'): PostInstallationFormikValues => ({
   destinationNamespace: '',
-  url: '',
+  autoSync: true,
+  pruneResources: false,
+  source:
+    type === 'helm'
+      ? getNewHelmSourceFormValues()
+      : {
+          url: '',
+          commit: '',
+          directory: '',
+        },
 });
 
 export const getNewQuotaFormValues = (): QuotaFormikValues => ({
@@ -35,11 +50,80 @@ export const getNewClusterTemplateFormValues = (): WizardFormikValues => {
       name: '',
     },
     quotas: [getNewQuotaFormValues()],
-    installation: { spec: getNewArgoCDSpecFormValues(), useInstanceNamespace: false },
+    installation: {
+      useInstanceNamespace: true,
+      destinationNamespace: '',
+      source: getNewHelmSourceFormValues(),
+    },
     postInstallation: [],
     isCreateFlow: true,
   };
 };
+
+const getHelmRepoSourceFormValues = (source: ApplicationSource): HelmSourceFormikValues => ({
+  url: source.repoURL,
+  chart: source.chart || '',
+  version: source.targetRevision || '',
+});
+
+const getGitRepoSourceFormValues = (source: ApplicationSource): GitRepoSourceFormikValues => ({
+  url: source.repoURL,
+  commit: source.targetRevision || '',
+  directory: source.path || '',
+});
+
+const getPostInstallationFormValuesItem = (spec: ArgoCDSpec): PostInstallationFormikValues => ({
+  source: spec.source.chart
+    ? getHelmRepoSourceFormValues(spec.source)
+    : getGitRepoSourceFormValues(spec.source),
+  autoSync: !!spec.syncPolicy?.automated,
+  pruneResources: spec.syncPolicy?.automated?.prune ?? false,
+  destinationNamespace: spec.destination.namespace,
+});
+
+const getPostInstallationFormValues = (
+  clusterTemplate: ClusterTemplate,
+): PostInstallationFormikValues[] => {
+  if (clusterTemplate.spec.clusterSetup) {
+    return clusterTemplate.spec.clusterSetup.map((setup) =>
+      getPostInstallationFormValuesItem(setup.spec),
+    );
+  } else {
+    return [];
+  }
+};
+
+const getInstallationFormValues = (clusterTemplate: ClusterTemplate): InstallationFormikValues => {
+  const installationSettings = clusterTemplate.spec.clusterDefinition;
+  const useInstanceNamespace =
+    installationSettings.destination.namespace === INSTANCE_NAMESPACE_VAR;
+  const destinationNamespace = useInstanceNamespace
+    ? undefined
+    : installationSettings.destination.namespace;
+  return {
+    useInstanceNamespace,
+    source: getHelmRepoSourceFormValues(installationSettings.source),
+    destinationNamespace,
+  };
+};
+
+const getFormValues = (
+  clusterTemplate: ClusterTemplate,
+  quotaFormValues: QuotaFormikValues[],
+): WizardFormikValues => {
+  return {
+    details: {
+      name: clusterTemplate.metadata?.name || '',
+      cost: clusterTemplate.spec.cost,
+      description: getClusterTemplateDescription(clusterTemplate),
+    },
+    installation: getInstallationFormValues(clusterTemplate),
+    postInstallation: getPostInstallationFormValues(clusterTemplate),
+    quotas: quotaFormValues,
+    isCreateFlow: false,
+  };
+};
+
 const useQuotasStepFormValues = (
   clusterTemplateName?: string,
 ): [QuotaFormikValues[], boolean, unknown] => {
@@ -85,7 +169,6 @@ const useQuotasStepFormValues = (
 
   return [formValues || [], quotasLoaded && !!formValues, quotasError];
 };
-
 export const useFormValues = (
   clusterTemplate?: ClusterTemplate,
 ): [WizardFormikValues | undefined, boolean, unknown] => {
@@ -95,57 +178,6 @@ export const useFormValues = (
   );
   const [formValues, setFormValues] = React.useState<WizardFormikValues>();
 
-  const getArgoCDSpecFormValues = (
-    source?: ArgoCDSpec['source'],
-    destinationNamespace?: string,
-  ): HelmFormikValues => {
-    return {
-      url: source?.repoURL || '',
-      chart: source?.chart || '',
-      version: source?.targetRevision || '',
-      destinationNamespace,
-    };
-  };
-
-  const getPostInstallationFormValues = React.useCallback(
-    (clusterTemplate?: ClusterTemplate): HelmFormikValues[] => {
-      if (clusterTemplate?.spec.clusterSetup) {
-        return clusterTemplate?.spec.clusterSetup.map((setup) =>
-          getArgoCDSpecFormValues(setup.spec.source, setup.spec.destination.namespace),
-        );
-      }
-      return [];
-    },
-    [],
-  );
-
-  const getInstallationFormValues = React.useCallback((): InstallationFormikValues => {
-    const installationSettings = clusterTemplate?.spec.clusterDefinition;
-    const useInstanceNamespace =
-      installationSettings?.destination.namespace === INSTANCE_NAMESPACE_VAR;
-    const destinationNamespace = useInstanceNamespace
-      ? undefined
-      : installationSettings?.destination.namespace;
-    return {
-      useInstanceNamespace,
-      spec: getArgoCDSpecFormValues(installationSettings?.source, destinationNamespace),
-    };
-  }, [clusterTemplate?.spec.clusterDefinition]);
-
-  const getFormValues = React.useCallback((): WizardFormikValues => {
-    return {
-      details: {
-        name: clusterTemplate?.metadata?.name || '',
-        cost: clusterTemplate?.spec.cost,
-        description: getClusterTemplateDescription(clusterTemplate) || '',
-      },
-      installation: getInstallationFormValues(),
-      postInstallation: getPostInstallationFormValues(clusterTemplate) || '',
-      quotas: quotaFormValues,
-      isCreateFlow: false,
-    };
-  }, [clusterTemplate, getInstallationFormValues, getPostInstallationFormValues, quotaFormValues]);
-
   React.useEffect(() => {
     if (formValues) {
       //Initialize form values only once
@@ -154,9 +186,8 @@ export const useFormValues = (
     if (!clusterTemplate) {
       setFormValues(getNewClusterTemplateFormValues());
     } else if (quotasLoaded) {
-      setFormValues(getFormValues());
+      setFormValues(getFormValues(clusterTemplate, quotaFormValues));
     }
-  }, [clusterTemplate, formValues, getFormValues, quotaFormValues, quotasLoaded]);
-
+  }, [clusterTemplate, quotasLoaded]);
   return [formValues, !!formValues || !!quotasError, quotasError];
 };
