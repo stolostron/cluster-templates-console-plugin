@@ -36,22 +36,16 @@ const getChartToVersions = (repo?: HelmRepository): Record<string, string[]> | u
   return map;
 };
 
-const HelmFields = ({
-  fieldNamePrefix,
-  horizontal,
-}: {
-  fieldNamePrefix: string;
-  horizontal: boolean;
-}) => {
+const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: boolean }) => {
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
   const { values, setFieldValue } = useFormikContext();
   const { repos, loaded, error } = useHelmChartRepositories();
   const prevUrl = React.useRef<string>();
 
-  const chartFieldName = `${fieldNamePrefix}.chart`;
-  const versionFieldName = `${fieldNamePrefix}.version`;
-  const repoFieldName = `${fieldNamePrefix}.url`;
+  const chartFieldName = `${fieldName}.chart`;
+  const versionFieldName = `${fieldName}.version`;
+  const repoFieldName = `${fieldName}.url`;
   const url = get(values, repoFieldName) as string;
   const selectedRepo = url ? repos.find((repo) => repo.url === url) : undefined;
   const chartToVersions = getChartToVersions(selectedRepo);
@@ -84,11 +78,10 @@ const HelmFields = ({
     }
     prevUrl.current = url;
   }, [chartFieldName, setFieldValue, url, versionFieldName]);
-
   const fields = [
     <HelmRepositoryField
-      fieldName={`${fieldNamePrefix}.url`}
-      key={`${fieldNamePrefix}.url`}
+      fieldName={`${fieldName}.url`}
+      key={`${fieldName}.url`}
       showLabelIcon={!horizontal}
     />,
     <SelectField

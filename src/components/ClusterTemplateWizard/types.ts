@@ -8,11 +8,16 @@ export enum StepId {
   REVIEW = 'review',
 }
 
-export type HelmFormikValues = {
+export type HelmSourceFormikValues = {
   url: string;
   chart: string;
   version: string;
-  destinationNamespace?: string;
+};
+
+export type GitRepoSourceFormikValues = {
+  url: string;
+  commit: string;
+  directory: string;
 };
 
 export interface QuotaOptionObject extends SelectOptionObject {
@@ -28,19 +33,31 @@ export type QuotaFormikValues = {
 
 export type DetailsFormikValues = {
   name: string;
-  cost?: number;
+  cost: number;
   description?: string;
 };
 
 export type InstallationFormikValues = {
   useInstanceNamespace: boolean;
-  spec: HelmFormikValues;
+  source: HelmSourceFormikValues;
+  destinationNamespace?: string;
 };
+
+export type PostInstallationFormikValues = {
+  autoSync: boolean;
+  pruneResources: boolean;
+  destinationNamespace?: string;
+  source: GitRepoSourceFormikValues | HelmSourceFormikValues;
+};
+
+export const isHelmSource = (
+  source: GitRepoSourceFormikValues | HelmSourceFormikValues,
+): source is HelmSourceFormikValues => (source as HelmSourceFormikValues).chart !== undefined;
 
 export type WizardFormikValues = {
   details: DetailsFormikValues;
   quotas: QuotaFormikValues[];
   installation: InstallationFormikValues;
-  postInstallation: HelmFormikValues[];
+  postInstallation: PostInstallationFormikValues[];
   isCreateFlow: boolean;
 };

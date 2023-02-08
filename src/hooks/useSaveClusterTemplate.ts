@@ -53,8 +53,8 @@ export const useSaveClusterTemplate = (
     } else {
       promises.push(k8sCreate({ model: clusterTemplateModel, data: toClusterTemplate(values) }));
     }
-    if (values.installation.spec.destinationNamespace) {
-      promises.push(createNamespace(values.installation.spec.destinationNamespace));
+    if (values.installation.destinationNamespace) {
+      promises.push(createNamespace(values.installation.destinationNamespace));
     }
     promises.push(updateQuotas(values));
     await Promise.all(promises);

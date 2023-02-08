@@ -5,6 +5,8 @@ import {
   array as arraySchema,
   string as stringSchema,
   mixed as mixedSchema,
+  lazy as lazySchema,
+  SchemaOf,
 } from 'yup';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -13,7 +15,7 @@ import {
   NameValidationType,
   positiveIntegerSchema,
 } from '../../utils/commonValidationSchemas';
-import { QuotaOptionObject } from './types';
+import { HelmSourceFormikValues, isHelmSource, QuotaOptionObject } from './types';
 
 const useWizardValidationSchema = (isCreateFlow: boolean) => {
   //Chose to not handle loading and error of useClusterTemplates
@@ -31,11 +33,10 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
 
   const requiredMsg = t('Required');
 
-  const helmValidationSchema = objectSchema().shape({
+  const helmValidationSchema: SchemaOf<HelmSourceFormikValues> = objectSchema().shape({
     url: stringSchema().required(requiredMsg),
     chart: stringSchema().required(requiredMsg),
     version: stringSchema().required(requiredMsg),
-    destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL),
   });
 
   const quotaValidationSchema = mixedSchema().test({
@@ -61,10 +62,25 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
     cost: positiveIntegerSchema(t).required(requiredMsg),
     description: stringSchema().optional(),
   });
-
   const installationValidationSchema = objectSchema().shape({
-    spec: helmValidationSchema,
+    source: helmValidationSchema,
     useInstanceNamespace: booleanSchema(),
+    destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).optional(),
+  });
+
+  const gitRepoValidationSchema = objectSchema().shape({
+    directory: stringSchema().optional(),
+    url: stringSchema().required(requiredMsg),
+    commit: stringSchema().required(requiredMsg),
+  });
+
+  const postInstallationValidationSchema = objectSchema().shape({
+    autoSync: booleanSchema(),
+    pruneResources: booleanSchema(),
+    destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).optional(),
+    source: lazySchema((values) =>
+      isHelmSource(values) ? helmValidationSchema : gitRepoValidationSchema,
+    ),
   });
 
   const getWizardValidationSchema = React.useCallback(
@@ -73,7 +89,7 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
         details: detailsValidationSchema,
         quotas: arraySchema().of(quotaOptionsValidationSchema),
         installation: installationValidationSchema,
-        postInstallation: arraySchema().of(helmValidationSchema),
+        postInstallation: arraySchema().of(postInstallationValidationSchema),
         isCreateFlow: booleanSchema(),
       }),
     [

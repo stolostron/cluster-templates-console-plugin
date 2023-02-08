@@ -9,6 +9,9 @@ import { useNamespaces } from '../../../../hooks/useNamespaces';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import '../styles.css';
 
+const useInstanceNamespaceFieldName = 'installation.useInstanceNamespace';
+const namespaceFieldName = 'installation.destinationNamespace';
+
 const getNamespaceOptions = (namespaces: string[]): SelectInputOption[] =>
   namespaces
     .sort((n1, n2) => n1.localeCompare(n2))
@@ -19,22 +22,25 @@ const getNamespaceOptions = (namespaces: string[]): SelectInputOption[] =>
 
 const DestinationNamespaceField = () => {
   const [namespaces, loaded, error] = useNamespaces();
-  const useInstanceNamespaceFieldName = 'installation.useInstanceNamespace';
-  const namespaceFieldName = 'installation.spec.destinationNamespace';
+
   const [{ value: useInstanceNamespace }] = useField<boolean>(useInstanceNamespaceFieldName);
-  const [, , { setValue: setNamespace }] = useField<string>(namespaceFieldName);
+  const [{ value: namespace }, , { setValue: setNamespace }] = useField<string | undefined>(
+    namespaceFieldName,
+  );
   const { t } = useTranslation();
   useAddAlertOnError(error, t('Failed to load namespace options'));
   const namespaceOptions = React.useMemo(() => getNamespaceOptions(namespaces), [namespaces]);
+
   React.useEffect(() => {
-    if (useInstanceNamespace) {
-      setNamespace('');
+    if (useInstanceNamespace && namespace) {
+      setNamespace(undefined);
     }
-  }, [setNamespace, useInstanceNamespace]);
+  }, [setNamespace, useInstanceNamespace, namespace]);
+
   return (
     <Stack hasGutter className="installation-destination-namespace">
       <SelectField
-        name={'installation.spec.destinationNamespace'}
+        name={namespaceFieldName}
         label={t('Destination namespace')}
         labelIcon={
           <PopoverHelpIcon

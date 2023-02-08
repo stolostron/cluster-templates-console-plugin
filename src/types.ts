@@ -21,6 +21,7 @@ export type ApplicationSource = {
   repoURL: string;
   chart?: string;
   targetRevision?: string;
+  path?: string;
 };
 
 export type ArgoCDSpec = {
@@ -30,6 +31,11 @@ export type ArgoCDSpec = {
     server: string;
   };
   project: string;
+  syncPolicy?: {
+    automated?: {
+      prune?: boolean;
+    };
+  };
 };
 
 export type HelmChartProperty = {

@@ -154,7 +154,7 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
       canJumpTo: activeStepIndex >= 1,
     },
     {
-      name: t('Post-installation settings'),
+      name: t('Gitops'),
       component: <PostInstallationStep />,
       id: StepId.POST_INSTALLATION,
       canJumpTo: activeStepIndex >= 2,

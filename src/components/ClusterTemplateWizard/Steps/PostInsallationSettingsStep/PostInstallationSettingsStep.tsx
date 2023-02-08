@@ -8,75 +8,77 @@ import {
   StackItem,
   TextContent,
   Text,
-  Grid,
-  GridItem,
+  Flex,
 } from '@patternfly/react-core';
 import { PlusIcon } from '@patternfly/react-icons';
 import { FieldArray, FieldArrayRenderProps, useField } from 'formik';
 import { useTranslation } from '../../../../hooks/useTranslation';
-import { RemoveButton } from '../../../../helpers/WithRemoveButton';
 import '../styles.css';
+import { PostInstallationFormikValues, isHelmSource } from '../../types';
+import { getNewGitOpsFormValues } from '../../../../utils/toWizardFormValues';
+import { WithRemoveButton } from '../../../../helpers/WithRemoveButton';
+import HelmFields from '../../../sharedFields/HelmFields';
+import GitRepoField from './GitRepoField';
 import { InputField } from 'formik-pf';
 import PopoverHelpIcon from '../../../../helpers/PopoverHelpIcon';
-import { getNewArgoCDSpecFormValues } from '../../../../utils/toWizardFormValues';
-import { HelmFormikValues } from '../../types';
-import HelmFields from '../../../sharedFields/HelmFields';
+import SyncFields from './SyncFields';
+import ErrorBoundary from '../../../../helpers/ErrorBoundary';
 
-const fieldName = 'postInstallation';
+const stepName = 'postInstallation';
 
 const PostInstallationSettings = ({
-  idx,
-  remove,
-  isRemoveDisabled,
+  fieldName,
+  onRemove,
 }: {
-  idx: number;
-  remove: (number: number) => void;
-  isRemoveDisabled: boolean;
+  fieldName: string;
+  onRemove: () => void;
 }) => {
+  const [{ value }] = useField<PostInstallationFormikValues>(fieldName);
   const { t } = useTranslation();
-  const fieldName = `postInstallation[${idx}]`;
-
   return (
-    <Grid hasGutter>
-      <GridItem span={11}>
-        <HelmFields fieldNamePrefix={fieldName} horizontal={true} />
-      </GridItem>
-      <GridItem className="cluster-templates-argoc-remove-button" span={1}>
-        <RemoveButton
-          onRemove={() => remove(idx)}
-          isRemoveDisabled={isRemoveDisabled}
-          ariaLabel={t('Remove post installation ArgoCD spec')}
-        />
-      </GridItem>
-      <GridItem span={11}>
-        <InputField
-          name={`${fieldName}.destinationNamespace`}
-          label={t('Destination namespace')}
-          labelIcon={
-            <PopoverHelpIcon
-              helpText={t(
-                "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
-              )}
-            />
-          }
-          fieldId={`${fieldName}.destinationNamespace`}
-          placeholder={t('Enter a destination namespace')}
-          autoComplete="off"
-        />
-      </GridItem>
-    </Grid>
+    <WithRemoveButton
+      onRemove={onRemove}
+      isRemoveDisabled={false}
+      ariaLabel={t('Remove GitOps configuration')}
+    >
+      <Stack hasGutter>
+        <StackItem>
+          {isHelmSource(value.source) ? (
+            <HelmFields fieldName={`${fieldName}.source`} horizontal={true} />
+          ) : (
+            <GitRepoField fieldName={`${fieldName}.source`} />
+          )}
+        </StackItem>
+        <StackItem>
+          <InputField
+            name={`${fieldName}.destinationNamespace`}
+            label={t('Destination namespace')}
+            labelIcon={
+              <PopoverHelpIcon
+                helpText={t(
+                  "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
+                )}
+              />
+            }
+            fieldId={fieldName}
+            placeholder={t('Enter a destination namespace')}
+            autoComplete="off"
+          />
+        </StackItem>
+        <StackItem>
+          <SyncFields fieldName={fieldName} />
+        </StackItem>
+      </Stack>
+    </WithRemoveButton>
   );
 };
 
 const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) => {
-  const [field] = useField<HelmFormikValues[]>({
-    name: fieldName,
+  const [field] = useField<PostInstallationFormikValues[]>({
+    name: stepName,
   });
 
   const { t } = useTranslation();
-  const onAddArgoCDSpec = () => {
-    push(getNewArgoCDSpecFormValues());
-  };
 
   return (
     <Stack hasGutter>
@@ -85,7 +87,10 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
           <React.Fragment key={idx}>
             <Stack hasGutter>
               <StackItem>
-                <PostInstallationSettings isRemoveDisabled={false} remove={remove} idx={idx} />
+                <PostInstallationSettings
+                  onRemove={() => remove(idx)}
+                  fieldName={`${stepName}[${idx}]`}
+                />
               </StackItem>
               <StackItem>
                 <Divider />
@@ -95,16 +100,24 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
         );
       })}
       <StackItem>
-        <Button
-          variant="link"
-          onClick={onAddArgoCDSpec}
-          icon={<PlusIcon />}
-          className="cluster-templates-field-array__btn"
-        >
-          {field.value && field.value.length
-            ? t('Add more')
-            : t('Add the first post-installation settings')}
-        </Button>
+        <Flex>
+          <Button
+            variant="link"
+            onClick={() => push(getNewGitOpsFormValues('git'))}
+            icon={<PlusIcon />}
+            className="cluster-templates-field-array__btn"
+          >
+            {t('Add Git repository')}
+          </Button>
+          <Button
+            variant="link"
+            onClick={() => push(getNewGitOpsFormValues('helm'))}
+            icon={<PlusIcon />}
+            className="cluster-templates-field-array__btn"
+          >
+            {t('Add Helm chart')}
+          </Button>
+        </Flex>
       </StackItem>
     </Stack>
   );
@@ -114,7 +127,7 @@ const PostInstallationStepForm = () => {
   return (
     <Form>
       <FieldArray
-        name={fieldName}
+        name={stepName}
         component={PostInstallationArrayFields as React.ComponentType<FieldArrayRenderProps | void>}
       />
     </Form>
@@ -135,24 +148,26 @@ const Description = () => {
 const PostInstallationStep = () => {
   const { t } = useTranslation();
   return (
-    <Stack hasGutter>
-      <StackItem>
-        <TextContent>
-          <Text component="h2">{t('Post-installation settings (optional)')}</Text>
-        </TextContent>
-      </StackItem>
-      <StackItem>
-        <Description />
-      </StackItem>
-      <StackItem>
-        <Divider />
-      </StackItem>
-      <StackItem>
-        <Form>
-          <PostInstallationStepForm />
-        </Form>
-      </StackItem>
-    </Stack>
+    <ErrorBoundary>
+      <Stack hasGutter>
+        <StackItem>
+          <TextContent>
+            <Text component="h2">{t('GitOps')}</Text>
+          </TextContent>
+        </StackItem>
+        <StackItem>
+          <Description />
+        </StackItem>
+        <StackItem>
+          <Divider />
+        </StackItem>
+        <StackItem>
+          <Form>
+            <PostInstallationStepForm />
+          </Form>
+        </StackItem>
+      </Stack>
+    </ErrorBoundary>
   );
 };
 
