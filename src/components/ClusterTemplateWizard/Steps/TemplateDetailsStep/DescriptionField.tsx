@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { useField } from 'formik';
 import { FormGroup } from '@patternfly/react-core';
-
-import { CodeEditor, Language } from '@patternfly/react-code-editor';
 import { Trans } from 'react-i18next';
 import { useTranslation } from '../../../../hooks/useTranslation';
+import MarkdownEditor from '../../../../helpers/MardownEditor';
 
 const HelperText = () => (
   <Trans ns="plugin__clustertemplates-plugin">
@@ -19,6 +18,7 @@ const DescriptionField = () => {
   const { t } = useTranslation();
   const [field, { error, touched }, { setValue }] = useField<string>(name);
   const isValid = !error && !touched;
+
   return (
     <>
       <FormGroup
@@ -28,14 +28,7 @@ const DescriptionField = () => {
         helperTextInvalid={error}
         validated={isValid ? 'default' : 'error'}
       >
-        <CodeEditor
-          code={field.value}
-          height="200px"
-          language={Language.markdown}
-          onChange={(code) => setValue(code)}
-          isLanguageLabelVisible
-          isLineNumbersVisible={false}
-        />
+        <MarkdownEditor code={field.value} onChange={(code) => setValue(code)} />
       </FormGroup>
     </>
   );

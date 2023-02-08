@@ -5,6 +5,7 @@ import { Configuration as WebpackDevServerConfiguration } from 'webpack-dev-serv
 import * as path from 'path';
 import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
+import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
@@ -42,6 +43,23 @@ const config: Configuration = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.scss$/,
+        // exclude: /node_modules\/(?!(@patternfly|@console\/plugin-shared)\/).*/,
+        use: [
+          'style-loader',
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              sourceMap: true,
+              sassOptions: {
+                outputStyle: 'compressed',
+              },
+            },
+          },
+        ],
+      },
+      {
         test: /\.(png|jpg|jpeg|gif|svg|woff2?|ttf|eot|otf)(\?.*$|$)/,
         type: 'asset/resource',
         generator: {
@@ -75,6 +93,7 @@ const config: Configuration = {
     new CopyWebpackPlugin({
       patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
     }),
+    new MonacoWebpackPlugin(),
   ],
   devtool: 'source-map',
   optimization: {
