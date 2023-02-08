@@ -93,9 +93,7 @@ const config: Configuration = {
     new CopyWebpackPlugin({
       patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
     }),
-    new MonacoWebpackPlugin({
-      languages: ['markdown', 'json'],
-    }),
+    new MonacoWebpackPlugin(),
   ],
   devtool: 'source-map',
   optimization: {
