@@ -188,6 +188,6 @@ export const useFormValues = (
     } else if (quotasLoaded) {
       setFormValues(getFormValues(clusterTemplate, quotaFormValues));
     }
-  }, [clusterTemplate, quotasLoaded]);
+  }, [clusterTemplate, formValues, quotaFormValues, quotasLoaded]);
   return [formValues, !!formValues || !!quotasError, quotasError];
 };

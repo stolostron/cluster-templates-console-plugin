@@ -15,7 +15,12 @@ import {
   NameValidationType,
   positiveIntegerSchema,
 } from '../../utils/commonValidationSchemas';
-import { HelmSourceFormikValues, isHelmSource, QuotaOptionObject } from './types';
+import {
+  GitRepoSourceFormikValues,
+  HelmSourceFormikValues,
+  isHelmSource,
+  QuotaOptionObject,
+} from './types';
 
 const useWizardValidationSchema = (isCreateFlow: boolean) => {
   //Chose to not handle loading and error of useClusterTemplates
@@ -78,7 +83,7 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
     autoSync: booleanSchema(),
     pruneResources: booleanSchema(),
     destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).optional(),
-    source: lazySchema((values) =>
+    source: lazySchema((values: GitRepoSourceFormikValues | HelmSourceFormikValues) =>
       isHelmSource(values) ? helmValidationSchema : gitRepoValidationSchema,
     ),
   });
@@ -94,8 +99,8 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
       }),
     [
       detailsValidationSchema,
-      helmValidationSchema,
       installationValidationSchema,
+      postInstallationValidationSchema,
       quotaOptionsValidationSchema,
     ],
   );
