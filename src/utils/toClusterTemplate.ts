@@ -1,4 +1,4 @@
-import { K8sResourceCommon, ObjectMetadata } from '@openshift-console/dynamic-plugin-sdk';
+import { ObjectMetadata } from '@openshift-console/dynamic-plugin-sdk';
 import {
   PostInstallationFormikValues,
   GitRepoSourceFormikValues,

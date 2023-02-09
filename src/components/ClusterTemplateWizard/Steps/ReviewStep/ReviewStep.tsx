@@ -120,7 +120,7 @@ const ReviewStep = () => {
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
-              <DescriptionListTerm>{t('Gitops')}</DescriptionListTerm>
+              <DescriptionListTerm>{t('GitOps')}</DescriptionListTerm>
               <DescriptionListDescription>
                 <PostInstallationDetails clusterTemplate={clusterTemplate} />
               </DescriptionListDescription>
