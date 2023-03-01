@@ -4,7 +4,7 @@ import * as React from 'react';
 import generateInstanceYaml from '../../utils/instanceYaml';
 import { createDownloadFile } from '../../utils/utils';
 import { useTranslation } from '../../hooks/useTranslation';
-import { ClusterTemplate } from '../../types';
+import { ClusterTemplate } from '../../types/resourceTypes';
 
 const InstanceYamlSection: React.FC<{ clusterTemplate: ClusterTemplate }> = ({
   clusterTemplate,

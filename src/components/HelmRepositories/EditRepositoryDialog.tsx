@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
-import { ArgoCDSecretData, DecodedSecret } from '../../types';
+import { ArgoCDSecretData, DecodedSecret } from '../../types/resourceTypes';
 import { k8sPatch, useK8sModels } from '@openshift-console/dynamic-plugin-sdk';
 import ModalDialogLoader from '../../helpers/ModalDialogLoader';
 import { Formik } from 'formik';

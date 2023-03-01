@@ -1,14 +1,15 @@
 import { Label } from '@patternfly/react-core';
 import * as React from 'react';
 import CellLoader from '../../helpers/CellLoader';
+import NotAvailable from '../../helpers/NotAvailable';
 
 import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInstances';
+import { useClusterTemplateQuotas } from '../../hooks/useQuotas';
+
 import { useTranslation } from '../../hooks/useTranslation';
-import { ClusterTemplate, ClusterTemplateVendor } from '../../types';
+import { ClusterSetup, ClusterTemplate, ClusterTemplateVendor } from '../../types/resourceTypes';
 import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
 import ArgoCDSpecDetails from './ArgoCDSpecDetails';
-
-const NotAvailable = () => <>-</>;
 
 export const ClusterTemplateUsage: React.FC<{
   clusterTemplate: ClusterTemplate;
@@ -40,29 +41,35 @@ export const ClusterTemplateVendorLabel: React.FC<{
   return <Label color={color}>{labelText}</Label>;
 };
 
-export const ClusterTemplateCost: React.FC<{
-  clusterTemplate: ClusterTemplate;
-}> = ({ clusterTemplate }) => {
-  const { t } = useTranslation();
-  return <>{`${clusterTemplate.spec.cost} / ${t('Per instance')}`}</>;
-};
-
 export const PostInstallationDetails = ({
-  clusterTemplate,
+  clusterSetup,
 }: {
-  clusterTemplate: ClusterTemplate;
+  clusterSetup: ClusterSetup | undefined;
 }) => {
-  return clusterTemplate.spec.clusterSetup && clusterTemplate.spec.clusterSetup.length > 0 ? (
+  return clusterSetup && clusterSetup.length > 0 ? (
     <>
-      {clusterTemplate.spec.clusterSetup.map(({ spec }) => (
+      {clusterSetup.map(({ spec }) => (
         <ArgoCDSpecDetails argocdSpec={spec} key={spec.source.repoURL} />
       ))}
     </>
   ) : (
-    <>-</>
+    <NotAvailable />
   );
 };
 
 export const InstallationDetails = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => (
   <ArgoCDSpecDetails argocdSpec={clusterTemplate.spec.clusterDefinition} />
 );
+
+export const ClusterTemplateQuotasSummary: React.FC<{
+  clusterTemplate: ClusterTemplate;
+}> = ({ clusterTemplate }) => {
+  const [quotas, loaded, loadError] = useClusterTemplateQuotas(
+    clusterTemplate.metadata?.name || '',
+  );
+  return (
+    <CellLoader loaded={loaded} error={loadError}>
+      {quotas.length}
+    </CellLoader>
+  );
+};

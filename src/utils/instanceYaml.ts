@@ -4,7 +4,7 @@ import {
   ClusterTemplate,
   ClusterTemplateInstance,
   ClusterTemplateStatus,
-} from '../types';
+} from '../types/resourceTypes';
 import { clusterTemplateInstanceGVK } from '../constants';
 import { getApiVersion } from './k8s';
 

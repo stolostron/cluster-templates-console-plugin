@@ -1,7 +1,5 @@
 import isString from 'lodash/isString';
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
-import { getResourceUrl } from './k8s';
-import { clusterTemplateGVK } from '../constants';
 
 export const getNavLabelWithCount = (label: string, count?: number) => {
   if (count === undefined) {
@@ -43,6 +41,3 @@ export const getErrorMessage = (error: unknown) => {
   }
   return 'Unexpected error';
 };
-
-export const getEditClusterTemplateUrl = (name: string) =>
-  `${getResourceUrl(clusterTemplateGVK, name)}/edit`;

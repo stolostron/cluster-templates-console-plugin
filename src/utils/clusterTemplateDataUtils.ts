@@ -1,5 +1,5 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
-import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types';
+import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types/resourceTypes';
 
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
 

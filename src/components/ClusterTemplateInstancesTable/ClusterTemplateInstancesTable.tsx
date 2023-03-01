@@ -1,4 +1,4 @@
-import { ClusterTemplateInstance } from '../../types';
+import { ClusterTemplateInstance } from '../../types/resourceTypes';
 
 import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
 import { clusterTemplateInstanceGVK, namespaceGVK } from '../../constants';

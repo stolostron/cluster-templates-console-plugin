@@ -1,16 +1,18 @@
 import React from 'react';
-import { HelmRepository } from '../../types';
+import { HelmRepository } from '../../types/resourceTypes';
 import get from 'lodash/get';
 import { useFormikContext } from 'formik';
 import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
-import HelmRepositoryField from './HelmRepositoryField';
+import RepositoryField from './RepositoryField';
 import { useTranslation } from '../../hooks/useTranslation';
 import SelectField from '../../helpers/SelectField';
 import { Flex, FlexItem, SelectOptionObject } from '@patternfly/react-core';
 import { useAlerts } from '../../alerts/AlertsContext';
 import { humanizeUrl } from '../../utils/humanizing';
 import { getErrorMessage } from '../../utils/utils';
-
+import { WizardFormikValues } from '../../types/wizardFormTypes';
+import set from 'lodash/set';
+import PopoverHelpIcon from '../../helpers/PopoverHelpIcon';
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
   return (
     <Flex>
@@ -36,10 +38,25 @@ const getChartToVersions = (repo?: HelmRepository): Record<string, string[]> | u
   return map;
 };
 
+const getChartFirstVersion = (
+  chart: string,
+  chartToVersions: Record<string, string[]> | undefined,
+): string => {
+  if (
+    !chart ||
+    !chartToVersions ||
+    !chartToVersions[chart] ||
+    chartToVersions[chart].length === 0
+  ) {
+    return '';
+  }
+  return chartToVersions[chart][0];
+};
+
 const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: boolean }) => {
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
-  const { values, setFieldValue } = useFormikContext();
+  const { values, setValues } = useFormikContext<WizardFormikValues>();
   const { repos, loaded, error } = useHelmChartRepositories();
   const prevUrl = React.useRef<string>();
 
@@ -70,19 +87,37 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
     }
   }, [selectedRepo, loaded, url, addAlert]);
 
+  const updateChart = React.useCallback(
+    (chart: string) => {
+      const newValues = { ...values };
+      set(newValues, chartFieldName, chart);
+      set(newValues, versionFieldName, getChartFirstVersion(chart, chartToVersions));
+      setValues(newValues);
+    },
+    [values, versionFieldName, chartToVersions, setValues, chartFieldName],
+  );
+
   React.useEffect(() => {
     if (prevUrl.current && url !== prevUrl.current) {
-      //handle switch repository
-      setFieldValue(chartFieldName, '');
-      setFieldValue(versionFieldName, '');
+      updateChart('');
     }
     prevUrl.current = url;
-  }, [chartFieldName, setFieldValue, url, versionFieldName]);
+  }, [updateChart, url, prevUrl]);
+
   const fields = [
-    <HelmRepositoryField
+    <RepositoryField
       fieldName={`${fieldName}.url`}
       key={`${fieldName}.url`}
-      showLabelIcon={!horizontal}
+      label={t('Helm chart repository')}
+      labelIcon={
+        !horizontal ? (
+          <PopoverHelpIcon
+            helpText={t(
+              'Select the Helm chart repository that contains the Helm Chart you would like to use for this cluster template.',
+            )}
+          />
+        ) : undefined
+      }
     />,
     <SelectField
       name={chartFieldName}
@@ -97,13 +132,7 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
       key={chartFieldName}
       placeholderText={!chartToVersions ? t('Select a repository first') : t('Select a chart')}
       onSelectValue={(chart: string | SelectOptionObject) => {
-        if (
-          chartToVersions &&
-          chartToVersions[chart.toString()] &&
-          chartToVersions[chart.toString()].length
-        ) {
-          setFieldValue(versionFieldName, chartToVersions[chart.toString()][0]);
-        }
+        updateChart(chart as string);
       }}
       loaded={loaded}
     />,

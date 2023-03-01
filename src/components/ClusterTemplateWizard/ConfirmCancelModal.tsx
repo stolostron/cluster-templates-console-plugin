@@ -2,7 +2,7 @@ import { Button, Modal, ModalVariant } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
-import { WizardFormikValues } from './types';
+import { WizardFormikValues } from '../../types/wizardFormTypes';
 
 const ConfirmCancelModal = ({
   isOpen,
