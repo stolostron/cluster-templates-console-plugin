@@ -130,6 +130,32 @@
     }
   },
   {
+    "type": "console.resource/create",
+    "properties": {
+      "model": {
+        "kind": "ClusterTemplateQuota",
+        "group": "clustertemplate.openshift.io",
+        "version": "v1alpha1"
+      },
+      "component": {
+        "$codeRef": "createQuota.default"
+      }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": ["/k8s/ns/:ns/clustertemplate.openshift.io~v1alpha1~ClusterTemplateQuota/:name/edit"],
+      "component": { "$codeRef": "editQuota.default" }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
     "type": "console.context-provider",
     "properties": {
       "provider": { "$codeRef": "repositoriesContext.repositoriesContextProvider" },

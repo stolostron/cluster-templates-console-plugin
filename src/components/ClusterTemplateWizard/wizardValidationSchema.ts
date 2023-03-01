@@ -4,28 +4,24 @@ import {
   boolean as booleanSchema,
   array as arraySchema,
   string as stringSchema,
-  mixed as mixedSchema,
   lazy as lazySchema,
   SchemaOf,
 } from 'yup';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 import { useTranslation } from '../../hooks/useTranslation';
 import {
-  nameSchema,
-  NameValidationType,
-  positiveIntegerSchema,
-} from '../../utils/commonValidationSchemas';
-import {
-  GitRepoSourceFormikValues,
   HelmSourceFormikValues,
+  GitRepoSourceFormikValues,
   isHelmSource,
-  QuotaOptionObject,
-} from './types';
+  WizardFormikValues,
+} from '../../types/wizardFormTypes';
+import { nameSchema, NameValidationType } from '../../utils/commonValidationSchemas';
 
-const useWizardValidationSchema = (isCreateFlow: boolean) => {
-  //Chose to not handle loading and error of useClusterTemplates
-  //It's used for testing unique names, if it fails or not loaded yet, the backend will block the creation
-  const [clusterTemplates] = useClusterTemplates();
+const useWizardValidationSchema = (
+  isCreateFlow: boolean,
+): [SchemaOf<WizardFormikValues>, boolean, unknown] => {
+  const [clusterTemplates, loaded, error] = useClusterTemplates();
+
   const usedTemplateNames = React.useMemo(
     () =>
       clusterTemplates.reduce<string[]>(
@@ -44,29 +40,12 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
     version: stringSchema().required(requiredMsg),
   });
 
-  const quotaValidationSchema = mixedSchema().test({
-    name: 'quota-required',
-    message: requiredMsg,
-    test: (quota: QuotaOptionObject) => !!quota.name,
-  });
-
-  const quotaOptionsValidationSchema = objectSchema({
-    quota: quotaValidationSchema,
-    limitAllowed: booleanSchema(),
-    numAllowed: positiveIntegerSchema(t).when('limitAllowed', {
-      is: true,
-      then: (schema) => schema.required(requiredMsg),
-      otherwise: (schema) => schema.optional(),
-    }),
-  });
-
   const detailsValidationSchema = objectSchema().shape({
-    name: isCreateFlow
-      ? stringSchema().required(requiredMsg).concat(nameSchema(t, usedTemplateNames))
-      : stringSchema(),
-    cost: positiveIntegerSchema(t).required(requiredMsg),
+    name: isCreateFlow ? nameSchema(t, usedTemplateNames).required(requiredMsg) : stringSchema(),
     description: stringSchema().optional(),
+    labels: objectSchema().optional(),
   });
+
   const installationValidationSchema = objectSchema().shape({
     source: helmValidationSchema,
     useInstanceNamespace: booleanSchema(),
@@ -82,6 +61,7 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
   const postInstallationValidationSchema = objectSchema().shape({
     autoSync: booleanSchema(),
     pruneResources: booleanSchema(),
+    createNamespace: booleanSchema(),
     destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).optional(),
     source: lazySchema((values: GitRepoSourceFormikValues | HelmSourceFormikValues) =>
       isHelmSource(values) ? helmValidationSchema : gitRepoValidationSchema,
@@ -92,24 +72,18 @@ const useWizardValidationSchema = (isCreateFlow: boolean) => {
     () =>
       objectSchema().shape({
         details: detailsValidationSchema,
-        quotas: arraySchema().of(quotaOptionsValidationSchema),
         installation: installationValidationSchema,
         postInstallation: arraySchema().of(postInstallationValidationSchema),
         isCreateFlow: booleanSchema(),
       }),
-    [
-      detailsValidationSchema,
-      installationValidationSchema,
-      postInstallationValidationSchema,
-      quotaOptionsValidationSchema,
-    ],
+    [detailsValidationSchema, installationValidationSchema, postInstallationValidationSchema],
   );
 
   const validationSchema = React.useMemo(() => {
-    return getWizardValidationSchema();
+    return getWizardValidationSchema() as SchemaOf<WizardFormikValues>;
   }, [getWizardValidationSchema]);
 
-  return validationSchema;
+  return [validationSchema, loaded, error];
 };
 
 export default useWizardValidationSchema;

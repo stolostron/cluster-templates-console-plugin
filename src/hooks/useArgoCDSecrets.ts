@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ARGOCD_NAMESPACE, secretGVK } from '../constants';
-import { ArgoCDSecretData, DecodedSecret, Secret } from '../types';
+import { ArgoCDSecretData, DecodedSecret, Secret } from '../types/resourceTypes';
 import { getDecodedSecretData } from '../utils/secrets';
 import { useK8sWatchResource } from './k8s';
 

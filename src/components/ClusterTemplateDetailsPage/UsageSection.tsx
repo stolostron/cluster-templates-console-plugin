@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ClusterTemplate } from '../../types';
+import { ClusterTemplate } from '../../types/resourceTypes';
 import ClusterTemplateInstancesTable from '../ClusterTemplateInstancesTable/ClusterTemplateInstancesTable';
 import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInstances';
 import { EmptyState, Title, EmptyStateBody } from '@patternfly/react-core';

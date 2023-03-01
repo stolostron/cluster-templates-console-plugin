@@ -77,9 +77,11 @@
     "description": "Cluster Templates console plugin",
     "exposedModules": {
       "templates": "./components/ClusterTemplatesPage/ClusterTemplatesPage.tsx",
-      "createTemplate": "./components/ClusterTemplateCreatePage.tsx",
-      "editTemplate": "./components/ClusterTemplateEditPage.tsx",
+      "createTemplate": "./components/ClusterTemplatesPage/ClusterTemplateWizardPage.tsx",
+      "editTemplate": "./components/ClusterTemplatesPage/ClusterTemplateEditPage.tsx",
       "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx",
+      "createQuota": "./components/Quotas/QuotaEditor/QuotaFormPage.tsx",
+      "editQuota": "./components/Quotas/QuotaEditor/QuotaEditPage.tsx",
       "repositoriesContext": "./contexts/helmRepositoriesContext.ts"
     },
     "dependencies": {

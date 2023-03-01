@@ -11,7 +11,7 @@ import {
 } from '@patternfly/react-core';
 import { FormikProps } from 'formik';
 import { InputField, TextAreaField, CheckboxField } from 'formik-pf';
-import { DecodedSecret, ArgoCDSecretData } from '../../types';
+import { DecodedSecret, ArgoCDSecretData } from '../../types/resourceTypes';
 import { FormError, RepositoryFormValues } from './types';
 import { useTranslation } from '../../hooks/useTranslation';
 

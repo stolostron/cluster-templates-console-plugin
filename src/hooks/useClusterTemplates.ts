@@ -1,5 +1,5 @@
 import { clusterTemplateGVK } from '../constants';
-import { ClusterTemplate } from '../types';
+import { ClusterTemplate } from '../types/resourceTypes';
 import { useK8sWatchResource } from './k8s';
 
 export const useClusterTemplates = () =>

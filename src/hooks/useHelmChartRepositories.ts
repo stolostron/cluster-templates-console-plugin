@@ -1,7 +1,7 @@
 import { load } from 'js-yaml';
 import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
-import { HelmRepository } from '../types';
+import { HelmRepository } from '../types/resourceTypes';
 import { RepositoriesContext } from '../contexts/helmRepositoriesContext';
 
 const HELM_REPOSITORIES_ENDPOINT =

@@ -61,7 +61,6 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
       isRequired={required}
       labelIcon={labelIcon}
       data-test={`multi-select-${label || ''}`}
-      className="cluster-templates-select-field"
     >
       <Select
         variant={SelectVariant.typeaheadMulti}
@@ -73,6 +72,7 @@ const MultiSelectField: React.FC<MultiSelectFieldProps> = ({
         onClear={onClearSelection}
         name={name}
         {...props}
+        maxHeight={200}
       >
         {options.map((option, idx) => {
           return <SelectOption key={idx} value={option} />;

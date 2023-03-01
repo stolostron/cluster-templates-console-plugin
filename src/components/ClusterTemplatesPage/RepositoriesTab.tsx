@@ -32,7 +32,7 @@ import {
   DecodedSecret,
   RowProps,
   TableColumn,
-} from '../../types';
+} from '../../types/resourceTypes';
 import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
@@ -133,7 +133,7 @@ export const RepositoryRow = ({
 
   return (
     <Tr>
-      <Td dataLabel={columns[0].title}>
+      <Td dataLabel={columns[0].id}>
         <ResourceLink
           groupVersionKind={secretGVK}
           name={obj.metadata?.name}
@@ -141,20 +141,20 @@ export const RepositoryRow = ({
           hideIcon
         />
       </Td>
-      <Td dataLabel={columns[1].title}>
+      <Td dataLabel={columns[1].id}>
         <Text component="a" href={obj.data?.url} target="_blank" rel="noopener noreferrer">
           <Truncate content={obj.data?.url || ''} position={'middle'} trailingNumChars={10} />
         </Text>
       </Td>
-      <Td dataLabel={columns[2].title}>
+      <Td dataLabel={columns[2].id}>
         {obj.data?.username ? t('Authenticated') : t('Not required')}
       </Td>
-      <Td dataLabel={columns[3].title}>
+      <Td dataLabel={columns[3].id}>
         <CellLoader loaded={loaded} error={error}>
           {repoChartsUpdatedAt}
         </CellLoader>
       </Td>
-      <Td dataLabel={columns[4].title}>
+      <Td dataLabel={columns[4].id}>
         <CellLoader loaded={loaded} error={error}>
           {repository?.error ? (
             <RepositoryErrorPopover error={repository.error} />
@@ -163,7 +163,7 @@ export const RepositoryRow = ({
           )}
         </CellLoader>
       </Td>
-      <Td dataLabel={columns[5].title}>
+      <Td dataLabel={columns[5].id}>
         <CellLoader loaded={templatesLoaded} error={templatesLoadError}>
           <Label color="green" icon={<CheckCircleIcon />}>
             {templatesFromRepo.length}
@@ -195,7 +195,7 @@ export const RepositoryRow = ({
                     resource: obj,
                   });
                   closeDialog('deleteDialog');
-                })()
+                })
               }
             >
               {t('Delete')}

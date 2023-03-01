@@ -9,7 +9,10 @@ import { TFunction } from 'i18next';
 import React from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
 
-import { ClusterTemplateInstance, ClusterTemplateInstanceStatusPhase } from '../../types';
+import {
+  ClusterTemplateInstance,
+  ClusterTemplateInstanceStatusPhase,
+} from '../../types/resourceTypes';
 
 const getStatusIcon = (phase: ClusterTemplateInstanceStatusPhase): React.ReactNode => {
   switch (phase) {

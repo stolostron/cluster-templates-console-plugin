@@ -34,7 +34,7 @@ export const ActionsMenu = ({ actions }: { actions: Action[] }) => {
     <Dropdown
       onSelect={onSelect}
       toggle={
-        <DropdownToggle id="toggle-descriptions" onToggle={onToggle}>
+        <DropdownToggle id="toggle-descriptions" onToggle={onToggle} toggleVariant="primary">
           {t('Actions')}
         </DropdownToggle>
       }

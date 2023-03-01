@@ -5,7 +5,7 @@
 
 import { k8sCreate, K8sResourceCommon, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import { namespaceGVK } from '../constants';
-import { isApiError } from '../types';
+import { isApiError } from '../types/errorTypes';
 import { useNamespaces } from './useNamespaces';
 
 const getNamespace = (name: string): K8sResourceCommon => {

@@ -9,19 +9,17 @@ import {
 } from '@patternfly/react-core';
 import { Formik, useFormikContext } from 'formik';
 import ReviewStep from './Steps/ReviewStep/ReviewStep';
-import { StepId, WizardFormikValues } from './types';
+
 import { useHistory } from 'react-router';
 
 import TemplateDetailsStep from './Steps/TemplateDetailsStep/TemplateDetailsStep';
 import { getErrorMessage } from '../../utils/utils';
 import { useTranslation } from '../../hooks/useTranslation';
 import Loader from '../../helpers/Loader';
-import ManageQuotasStep from './Steps/ManageQuotasStep/ManageQuotasStep';
 import Alerts from '../../alerts/Alerts';
 import { AlertsContextProvider } from '../../alerts/AlertsContext';
 import InstallationSettingsStep from './Steps/InstallationSettingsStep/InstallationSettingsStep';
 import PostInstallationStep from './Steps/PostInsallationSettingsStep/PostInstallationSettingsStep';
-import { ClusterTemplate } from '../../types';
 import { useFormValues } from '../../utils/toWizardFormValues';
 import isEmpty from 'lodash/isEmpty';
 import { getResourceUrl } from '../../utils/k8s';
@@ -30,6 +28,8 @@ import findIndex from 'lodash/findIndex';
 import useWizardValidationSchema from './wizardValidationSchema';
 import ConfirmCancelModal from './ConfirmCancelModal';
 import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
+import { ClusterTemplate } from '../../types/resourceTypes';
+import { StepId, WizardFormikValues } from '../../types/wizardFormTypes';
 
 export type ClusterTemplateWizardProps = {
   clusterTemplate?: ClusterTemplate;
@@ -126,14 +126,13 @@ const CustomFooter = () => {
 };
 
 const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps) => {
-  const [initialValues, initialValuesLoaded, initialValuesError] = useFormValues(clusterTemplate);
+  const [initialValues, initialValuesLoaded] = useFormValues(clusterTemplate);
   const [activeStepIndex, setActiveStepIndex] = React.useState<number>(0);
-  const validationSchema = useWizardValidationSchema(!clusterTemplate);
-  const [saveClusterTemplate, saveClusterTemplateLoaded] = useSaveClusterTemplate(
-    initialValues,
-    clusterTemplate,
-  );
+  const [validationSchema, validationSchemaLoaded, validationSchemaError] =
+    useWizardValidationSchema(!clusterTemplate);
+  const [saveClusterTemplate, saveClusterTemplateLoaded] = useSaveClusterTemplate(clusterTemplate);
   const { t } = useTranslation();
+
   const reviewStep = (
     <Loader loaded={saveClusterTemplateLoaded}>
       <ReviewStep />
@@ -154,22 +153,16 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
       canJumpTo: activeStepIndex >= 1,
     },
     {
-      name: t('GitOps'),
+      name: t('Post installation'),
       component: <PostInstallationStep />,
       id: StepId.POST_INSTALLATION,
       canJumpTo: activeStepIndex >= 2,
     },
     {
-      name: t('Manage quotas'),
-      component: <ManageQuotasStep />,
-      id: StepId.QUOTAS,
-      canJumpTo: activeStepIndex >= 3,
-    },
-    {
       name: t('Review'),
       component: reviewStep,
       id: StepId.REVIEW,
-      canJumpTo: activeStepIndex === 4,
+      canJumpTo: activeStepIndex === 3,
     },
   ];
 
@@ -185,12 +178,13 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
   };
 
   return (
-    <Loader loaded={initialValuesLoaded} error={initialValuesError}>
+    <Loader loaded={initialValuesLoaded && validationSchemaLoaded} error={validationSchemaError}>
       {!!initialValues && (
         <Formik<WizardFormikValues>
           initialValues={initialValues}
           onSubmit={onSubmit}
           validationSchema={validationSchema}
+          validateOnMount
         >
           <Wizard
             steps={steps}

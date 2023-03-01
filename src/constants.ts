@@ -1,5 +1,5 @@
 import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
-import { RoleRef } from './types';
+
 export const TEMPLATES_HELM_REPO_LABEL = 'clustertemplates.openshift.io/helm-repo';
 
 export const clusterTemplateVersion = 'v1alpha1';
@@ -83,22 +83,10 @@ export const CLUSTER_TEMPLATES_CLUSTER_ROLE = 'cluster-templates-user-ct';
 
 export const RBAC_API_GROUP = 'rbac.authorization.k8s.io';
 
-export const clusterRoleGroupVersionKind: K8sGroupVersionKind = {
+export const clusterRoleGVK: K8sGroupVersionKind = {
   group: RBAC_API_GROUP,
   kind: 'ClusterRole',
   version: 'v1',
-};
-
-export const clusterTemplatesRoleRef: RoleRef = {
-  apiGroup: RBAC_API_GROUP,
-  kind: 'ClusterRole',
-  name: CLUSTER_TEMPLATES_ROLE,
-};
-
-export const clusterTemplatesClusterRoleRef: RoleRef = {
-  apiGroup: RBAC_API_GROUP,
-  kind: 'ClusterRole',
-  name: CLUSTER_TEMPLATES_CLUSTER_ROLE,
 };
 
 export const argoCDGVK: K8sGroupVersionKind = {
@@ -106,3 +94,5 @@ export const argoCDGVK: K8sGroupVersionKind = {
   kind: 'ArgoCD',
   version: 'v1alpha1',
 };
+
+export const CREATE_NAMESPACE_SYNC_OPTION = 'CreateNamespace=true';
