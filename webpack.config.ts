@@ -6,7 +6,6 @@ import * as path from 'path';
 import { ConsoleRemotePlugin } from '@openshift-console/dynamic-plugin-sdk-webpack';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
-
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
 }
@@ -93,7 +92,9 @@ const config: Configuration = {
     new CopyWebpackPlugin({
       patterns: [{ from: path.resolve(__dirname, 'locales'), to: 'locales' }],
     }),
-    new MonacoWebpackPlugin(),
+    new MonacoWebpackPlugin({
+      languages: ['markdown'],
+    }),
   ],
   devtool: 'source-map',
   optimization: {
@@ -103,6 +104,7 @@ const config: Configuration = {
 };
 
 if (process.env.NODE_ENV === 'production') {
+  config.devtool = false;
   config.mode = 'production';
   config.output!.filename = '[name]-bundle-[hash].min.js';
   config.output!.chunkFilename = '[name]-chunk-[chunkhash].min.js';
