@@ -5,7 +5,6 @@ export const TEMPLATES_HELM_REPO_LABEL = 'clustertemplates.openshift.io/helm-rep
 export const clusterTemplateVersion = 'v1alpha1';
 export const clusterTemplateGroup = 'clustertemplate.openshift.io';
 export const INSTANCE_NAMESPACE_VAR = '${instance_ns}';
-export const ARGOCD_NAMESPACE = 'argocd';
 export const ARGOCD_SECRET_LABELS = {
   'argocd.argoproj.io/secret-type': 'repository',
 };

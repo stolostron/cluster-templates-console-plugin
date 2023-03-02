@@ -29,7 +29,7 @@ export const useClusterTemplateQuotas = (
   return [clusterTemplateQuotas, loaded, error];
 };
 
-export const useQuotasCount = () => {
+export const useQuotasCount = (): number | undefined => {
   const [quotas, loaded, loadError] = useAllQuotas();
   return quotas && loaded && !loadError ? quotas.length : undefined;
 };

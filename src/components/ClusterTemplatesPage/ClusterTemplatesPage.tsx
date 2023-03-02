@@ -15,6 +15,7 @@ import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
 import QuotasTab from './QuotasTab';
 import { useQuotasCount } from '../../hooks/useQuotas';
 import { useNavigation } from '../../hooks/useNavigation';
+import ErrorBoundary from '../../helpers/ErrorBoundary';
 
 type ActionDialogIds = 'newRepositoryDialog';
 const actionDialogIds: ActionDialogIds[] = ['newRepositoryDialog'];
@@ -37,7 +38,6 @@ const ClusterTemplatesPage = () => {
   const templatesCount = useClusterTemplatesCount();
   const argoCDSecretsCount = useArgoCDSecretsCount();
   const activeTab = useActiveTab();
-  console.log('activeTab', activeTab);
   const quotasCount = useQuotasCount();
 
   const actionItems = React.useMemo(
@@ -75,7 +75,7 @@ const ClusterTemplatesPage = () => {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <ListPageHeader title="Cluster templates">
         <ListPageCreateDropdown
           createAccessReview={{ groupVersionKind: getReference(clusterTemplateGVK) }}
@@ -122,7 +122,7 @@ const ClusterTemplatesPage = () => {
           <NewRepositoryDialog closeDialog={() => closeDialog('newRepositoryDialog')} />
         )}
       </div>
-    </>
+    </ErrorBoundary>
   );
 };
 
