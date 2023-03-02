@@ -1,13 +1,14 @@
-import { Dropdown, DropdownItem, DropdownToggle } from '@patternfly/react-core';
+import { Dropdown, DropdownItem, DropdownItemProps, DropdownToggle } from '@patternfly/react-core';
 import React from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 
-export type Action = {
-  onClick: () => void;
-  title: string;
-};
-
-export const ActionsMenu = ({ actions }: { actions: Action[] }) => {
+export const ActionsMenu = ({
+  actions,
+  toggleText,
+}: {
+  actions: DropdownItemProps[];
+  toggleText?: string;
+}) => {
   const { t } = useTranslation();
   const [isOpen, setIsOpen] = React.useState(false);
 
@@ -26,7 +27,7 @@ export const ActionsMenu = ({ actions }: { actions: Action[] }) => {
   };
 
   const dropdownItems = actions.map((action, idx) => (
-    <DropdownItem onClick={action.onClick} key={idx}>
+    <DropdownItem key={idx} {...action}>
       {action.title}
     </DropdownItem>
   ));
@@ -35,7 +36,7 @@ export const ActionsMenu = ({ actions }: { actions: Action[] }) => {
       onSelect={onSelect}
       toggle={
         <DropdownToggle id="toggle-descriptions" onToggle={onToggle} toggleVariant="primary">
-          {t('Actions')}
+          {toggleText ? toggleText : t('Actions')}
         </DropdownToggle>
       }
       isOpen={isOpen}

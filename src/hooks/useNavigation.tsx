@@ -11,10 +11,18 @@ const getResourceEditPageUrl = (gvk: K8sGroupVersionKind, resource: K8sResourceC
 
 const getResourceCreatePageUrl = (gvk: K8sGroupVersionKind) => `${getResourceUrl(gvk)}/~new`;
 
-const getResourceDetailsPageUrl = (gvk: K8sGroupVersionKind, resource: K8sResourceCommon) =>
-  `${getResourceUrl(gvk, resource.metadata?.name || '', resource.metadata?.namespace)}`;
-
-const getClusterTemplatesPageUrl = (tab?: ClusterTemplatePageTab) => {
+export const getResourceDetailsPageUrl = (
+  gvk: K8sGroupVersionKind,
+  resource: K8sResourceCommon,
+  tab?: string,
+) => {
+  let url = `${getResourceUrl(gvk, resource.metadata?.name || '', resource.metadata?.namespace)}`;
+  if (tab) {
+    url += `/${tab}`;
+  }
+  return url;
+};
+export const getClusterTemplatesPageUrl = (tab?: ClusterTemplatePageTab) => {
   let url = getResourceUrl(clusterTemplateGVK);
   if (tab) {
     url += `?tab=${tab}`;
@@ -38,5 +46,7 @@ export const useNavigation = () => {
     goToQuotaCreatePage: () => history.push(getResourceCreatePageUrl(clusterTemplateQuotaGVK)),
     goToQuotaDetailsPage: (quota: Quota) =>
       history.push(getResourceDetailsPageUrl(clusterTemplateQuotaGVK, quota)),
+    goToClusterTemplateDetailsPage: (clusterTemplate: ClusterTemplate, tab?: string) =>
+      history.push(getResourceDetailsPageUrl(clusterTemplateGVK, clusterTemplate, tab)),
   };
 };

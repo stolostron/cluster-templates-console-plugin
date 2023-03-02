@@ -7,6 +7,7 @@ import {
 } from '../types/resourceTypes';
 import { clusterTemplateInstanceGVK } from '../constants';
 import { getApiVersion } from './k8s';
+import { createDownloadFile } from './utils';
 
 const getProperties = (
   valuesStr: string,
@@ -69,4 +70,10 @@ const generateInstanceYaml = (clusterTemplate: ClusterTemplate): string => {
   return yaml;
 };
 
-export default generateInstanceYaml;
+export const downloadInstanceYaml = (clusterTemplate: ClusterTemplate): void =>
+  createDownloadFile(
+    `${clusterTemplate.metadata?.name || ''}_instance.yaml`,
+    generateInstanceYaml(clusterTemplate),
+  );
+
+export default downloadInstanceYaml;
