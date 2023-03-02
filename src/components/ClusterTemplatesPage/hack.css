@@ -1,0 +1,7 @@
+/* Fix issue with console.page/resource/list having an extra div around the component without 100% height
+  See https://github.com/openshift/console/blob/release-4.12/frontend/public/components/resource-list.tsx#L66
+  TODO: Submit this fix to console */
+
+.co-m-list { /* stylelint-disable-line */
+  height: 100%; 
+}

@@ -34,7 +34,12 @@ export type ListItem = {
 
 const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   return (
-    <DescriptionList isHorizontal>
+    <DescriptionList
+      isHorizontal
+      horizontalTermWidthModifier={{
+        default: '20ch',
+      }}
+    >
       {items.map(({ label, action, value }) => (
         <DescriptionListGroup label={label} key={label}>
           <DescriptionListTerm data-testid={`${label} label`}>
@@ -52,7 +57,7 @@ const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   );
 };
 
-const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
+const DetailsCard: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
   const name = clusterTemplate.metadata?.name;
   const [showEditLabels, setShowEditLabels] = React.useState<boolean>(false);
@@ -115,4 +120,4 @@ const DetailsSections: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clust
   );
 };
 
-export default DetailsSections;
+export default DetailsCard;

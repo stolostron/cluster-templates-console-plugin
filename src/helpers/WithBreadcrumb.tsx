@@ -1,47 +1,50 @@
 import {
-  Breadcrumb,
+  Breadcrumb as PFBreadcrumb,
   BreadcrumbItem,
-  Button,
   PageSection,
   PageSectionVariants,
   Stack,
   StackItem,
 } from '@patternfly/react-core';
 import React from 'react';
+import { Link } from 'react-router-dom';
 
-type BreadcrumbProps = {
-  onBack: () => void;
-  prevItemText: string;
-  activeItemText: string;
+export type BreadcrumbProps = {
+  breadcrumb: { text: string; to?: string }[];
 };
-export type WithBreadcrumbProps = {
-  children: React.ReactNode;
-} & BreadcrumbProps;
 
-const PageBreadcrumb = ({ activeItemText, prevItemText, onBack }: BreadcrumbProps) => {
-  return (
-    <Breadcrumb>
-      <BreadcrumbItem>
-        <Button variant="link" isInline onClick={() => onBack()}>
-          {prevItemText}
-        </Button>
-      </BreadcrumbItem>
-      <BreadcrumbItem isActive>{activeItemText}</BreadcrumbItem>
-    </Breadcrumb>
-  );
+export type WithBreadcrumbProps = BreadcrumbProps & { children: React.ReactNode };
+
+export const Breadcrumb = (props: { breadcrumb?: { text: string; to?: string }[] | undefined }) => {
+  const { breadcrumb } = props;
+  if (breadcrumb?.length) {
+    return (
+      <PFBreadcrumb>
+        {breadcrumb.map((crumb, i) => (
+          <BreadcrumbItem key={i}>
+            {breadcrumb.length > 1 && i === breadcrumb.length - 1 ? (
+              <a aria-current="page" className="pf-c-breadcrumb__link pf-m-current">
+                {crumb.text}
+              </a>
+            ) : (
+              <Link to={crumb.to as string} className="pf-c-breadcrumb__link">
+                {crumb.text}
+              </Link>
+            )}
+          </BreadcrumbItem>
+        ))}
+      </PFBreadcrumb>
+    );
+  }
+  return null;
 };
 
 const WithBreadcrumb = ({ children, ...props }: WithBreadcrumbProps) => {
   return (
-    <PageSection
-      variant={PageSectionVariants.light}
-      style={{
-        paddingTop: 'var(--pf-c-page__main-breadcrumb--PaddingTop)',
-      }}
-    >
+    <PageSection variant={PageSectionVariants.light} type="breadcrumb">
       <Stack hasGutter>
         <StackItem>
-          <PageBreadcrumb {...props} />
+          <Breadcrumb {...props} />
         </StackItem>
         <StackItem>{children}</StackItem>
       </Stack>

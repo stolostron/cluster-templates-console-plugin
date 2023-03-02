@@ -13,12 +13,13 @@ import { getErrorMessage } from '../../utils/utils';
 
 type DeleteDialogProps = {
   isOpen: boolean;
-  onClose: () => void;
+  onDelete: () => void;
+  onCancel: () => void;
   gvk: K8sGroupVersionKind;
   resource: K8sResourceCommon;
 };
 
-const DeleteDialog = ({ isOpen, onClose, gvk, resource }: DeleteDialogProps) => {
+const DeleteDialog = ({ isOpen, onDelete, onCancel, gvk, resource }: DeleteDialogProps) => {
   const { t } = useTranslation();
   const [model, loading] = useK8sModel(gvk);
   const [deleting, setDeleting] = React.useState(false);
@@ -31,7 +32,7 @@ const DeleteDialog = ({ isOpen, onClose, gvk, resource }: DeleteDialogProps) => 
         model,
         resource,
       });
-      onClose();
+      onDelete();
     } catch (err) {
       setError(err);
     } finally {
@@ -45,7 +46,7 @@ const DeleteDialog = ({ isOpen, onClose, gvk, resource }: DeleteDialogProps) => 
       title={t('Delete {{kind}}?', { kind: gvk.kind })}
       titleIconVariant="warning"
       showClose
-      onClose={onClose}
+      onClose={onCancel}
       actions={[
         <Button
           isDisabled={loading || deleting}
@@ -57,7 +58,7 @@ const DeleteDialog = ({ isOpen, onClose, gvk, resource }: DeleteDialogProps) => 
         >
           {t('Delete')}
         </Button>,
-        <Button key="cancel" variant="link" onClick={onClose}>
+        <Button key="cancel" variant="link" onClick={onCancel}>
           {t('Cancel')}
         </Button>,
       ]}

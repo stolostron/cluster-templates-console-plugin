@@ -1,37 +1,32 @@
-import {
-  Page,
-  Title,
-  Text,
-  PageSection,
-  PageSectionVariants,
-  Divider,
-} from '@patternfly/react-core';
+import { Page, Title, PageSection, PageSectionVariants, Divider } from '@patternfly/react-core';
 import * as React from 'react';
 
 import QuotaForm from './QuotaForm';
 import { Quota } from '../../../types/resourceTypes';
 import ErrorBoundary from '../../../helpers/ErrorBoundary';
 import WithBreadcrumb from '../../../helpers/WithBreadcrumb';
-import { useNavigation } from '../../../hooks/useNavigation';
+import { getClusterTemplatesPageUrl } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
 
 const PageHeader = ({ quota }: { quota?: Quota }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
   const createTitle = t('Create a new quota');
   const title = quota ? t('Edit ClusterTemplate') : createTitle;
   const activeItemText = quota ? quota?.metadata?.name || '' : createTitle;
   return (
-    <WithBreadcrumb
-      activeItemText={activeItemText}
-      onBack={() => navigation.goToClusterTemplatesPage('quotas')}
-      prevItemText={t('Cluster templates')}
-    >
-      <Title headingLevel="h1">{title}</Title>
-      <Text>
+    <>
+      <WithBreadcrumb
+        breadcrumb={[
+          { to: getClusterTemplatesPageUrl('quotas'), text: t('Cluster Templates') },
+          { text: activeItemText },
+        ]}
+      >
+        <Title headingLevel="h1">{title}</Title>
+      </WithBreadcrumb>
+      <PageSection variant="light" style={{ paddingTop: 'var(--pf-global--spacer--sm)' }}>
         {t('A quota provides constraints that limit aggregate cluster consumption per namespace.')}
-      </Text>
-    </WithBreadcrumb>
+      </PageSection>
+    </>
   );
 };
 

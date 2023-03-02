@@ -23,6 +23,9 @@ export const getClusterTemplateVendor = (
     : ClusterTemplateVendor.CUSTOM;
 };
 
+export const isRedHatTemplate = (clusterTemplate: ClusterTemplate) =>
+  getClusterTemplateVendor(clusterTemplate) === ClusterTemplateVendor.REDHAT;
+
 export const getClusterTemplateDescription = (clusterTemplate?: ClusterTemplate) =>
   clusterTemplate?.metadata?.annotations?.[TEMPLATE_LABELS.description];
 
