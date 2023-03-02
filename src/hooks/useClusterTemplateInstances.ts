@@ -1,5 +1,5 @@
 import { clusterTemplateInstanceGVK } from '../constants';
-import { ClusterTemplateInstance } from '../types/resourceTypes';
+import { ClusterTemplate, ClusterTemplateInstance } from '../types/resourceTypes';
 import { useK8sWatchResource } from './k8s';
 
 export const useAllClusterTemplateInstances = () =>
@@ -19,4 +19,9 @@ export const useClusterTemplateInstances = (
     (instance) => instance.spec?.clusterTemplateRef === clusterTemplateName,
   );
   return [instances, true, null];
+};
+
+export const useClusterTemplateInstancesCount = (clusterTemplate: ClusterTemplate) => {
+  const [templates, loaded, error] = useClusterTemplateInstances(clusterTemplate.metadata?.name);
+  return loaded && !error ? templates.length : undefined;
 };

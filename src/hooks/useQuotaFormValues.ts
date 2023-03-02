@@ -24,7 +24,7 @@ const toAllowedTemplateFormValues = (
         count: allowedTemplate.count,
         cost: template.spec?.cost,
         showCost: !!quotaBudget,
-        showCount: !!template.spec?.cost,
+        showCount: !!allowedTemplate.count,
       }
     : undefined;
 };

@@ -142,7 +142,8 @@ const QuotaRow: React.FC<{
       </Td>
       <DeleteDialog
         isOpen={deleteDlgOpen}
-        onClose={() => setDeleteDlgOpen(false)}
+        onDelete={() => setDeleteDlgOpen(false)}
+        onCancel={() => setDeleteDlgOpen(false)}
         gvk={clusterTemplateQuotaGVK}
         resource={quota}
       />

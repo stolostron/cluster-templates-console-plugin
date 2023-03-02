@@ -33,7 +33,7 @@ export const WithHelpIcon = ({
     <Flex>
       <FlexItem spacer={{ default: 'spacerXs' }}>{children}</FlexItem>
       <FlexItem>
-        <PopoverHelpIcon helpText={helpText} noVerticalAlign={true} />
+        <PopoverHelpIcon helpText={helpText} />
       </FlexItem>
     </Flex>
   ) : (

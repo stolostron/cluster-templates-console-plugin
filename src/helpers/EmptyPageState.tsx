@@ -16,7 +16,7 @@ const EmptyPageState = ({
 }: {
   title: string;
   message: string;
-  action: React.ReactNode;
+  action?: React.ReactNode;
 }) => {
   const { t } = useTranslation();
   return (
@@ -27,7 +27,7 @@ const EmptyPageState = ({
         {title}
       </Title>
       <EmptyStateBody>{message}</EmptyStateBody>
-      <EmptyStatePrimary>{action}</EmptyStatePrimary>
+      {action && <EmptyStatePrimary>{action}</EmptyStatePrimary>}
     </EmptyState>
   );
 };
