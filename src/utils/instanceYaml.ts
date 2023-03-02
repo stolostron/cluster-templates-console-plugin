@@ -31,7 +31,9 @@ const getProperties = (
 const getAllProperties = (
   status: ClusterTemplateStatus,
 ): ClusterTemplateInstancePropertyValue[] => {
-  const clusterDefinitionProperties = getProperties(status.clusterDefinition.values);
+  const clusterDefinitionProperties = status.clusterDefinition.values
+    ? getProperties(status.clusterDefinition.values)
+    : [];
   if (!status.clusterSetup) {
     return clusterDefinitionProperties;
   }
@@ -51,12 +53,12 @@ const getInstanceObject = (clusterTemplate: ClusterTemplate): ClusterTemplateIns
     apiVersion: getApiVersion(clusterTemplateInstanceGVK),
     kind: clusterTemplateInstanceGVK.kind,
     metadata: {
-      namespace: undefined,
-      name: undefined,
+      namespace: '',
+      name: '',
     },
     spec: {
       clusterTemplateRef: clusterTemplate.metadata?.name || '',
-      values: values.length ? values : undefined,
+      values: values,
     },
   };
 };

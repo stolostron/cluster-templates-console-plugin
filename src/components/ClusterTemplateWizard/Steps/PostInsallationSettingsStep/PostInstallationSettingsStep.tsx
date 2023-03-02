@@ -55,7 +55,7 @@ const PostInstallationSettings = ({
             labelIcon={
               <PopoverHelpIcon
                 helpText={t(
-                  "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
+                  'Specify the target namespace for the resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace',
                 )}
               />
             }

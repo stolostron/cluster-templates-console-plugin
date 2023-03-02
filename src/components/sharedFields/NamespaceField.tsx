@@ -47,7 +47,7 @@ const NamespaceField = ({
       isRequired={isRequired}
       name={name}
       label={label}
-      labelIcon={<PopoverHelpIcon helpText={helpText} />}
+      labelIcon={helpText ? <PopoverHelpIcon helpText={helpText} /> : undefined}
       options={namespaceOptions}
       placeholder={t('Enter namespace')}
       loadingVariant={loaded ? undefined : 'spinner'}
