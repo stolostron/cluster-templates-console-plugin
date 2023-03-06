@@ -13,7 +13,7 @@ export type LabelsInputProps = {
   helperText?: React.ReactNode;
 };
 
-export function LabelsInput(props: LabelsInputProps) {
+export const LabelsInput = (props: LabelsInputProps) => {
   const [inputValue, setInputValue] = React.useState<string>();
   const inputRef: React.MutableRefObject<HTMLInputElement | null> = React.useRef(null);
 
@@ -138,4 +138,4 @@ export function LabelsInput(props: LabelsInputProps) {
       </FormGroup>
     </>
   );
-}
+};

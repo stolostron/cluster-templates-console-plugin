@@ -29,8 +29,8 @@ const QuotasTab = () => {
                 title={t('You have no quota')}
                 message={t('Click Create a quota to add the first one')}
                 action={
-                  <Button variant="primary" onClick={() => navigaton.goToQuotaCreatePage()}>
-                    {'Create a quota'}
+                  <Button variant="primary" onClick={navigaton.goToQuotaCreatePage}>
+                    {t('Create a quota')}
                   </Button>
                 }
               />

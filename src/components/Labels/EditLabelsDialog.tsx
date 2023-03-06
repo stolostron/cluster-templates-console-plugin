@@ -27,11 +27,13 @@ const EditLabelsDialog = ({
   const { t } = useTranslation();
   const [labels, setLabels] = React.useState<MetadataLabels>({});
   const [error, setError] = React.useState<unknown>();
+  const [submitting, setSubmitting] = React.useState(false);
 
   const handleSubmit = async () => {
     setError(undefined);
 
     try {
+      setSubmitting(true);
       const newResource = {
         ...resource,
         metadata: { ...resource.metadata, labels: labels },
@@ -40,6 +42,8 @@ const EditLabelsDialog = ({
       close();
     } catch (e) {
       setError(e);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -60,10 +64,14 @@ const EditLabelsDialog = ({
             })}
             value={labels}
             onChange={(labels) => setLabels(labels)}
-            placeholder={t('')}
           />
           <ActionGroup>
-            <Button variant="primary" onClick={() => void handleSubmit()}>
+            <Button
+              variant="primary"
+              onClick={() => void handleSubmit()}
+              isLoading={submitting}
+              isDisabled={submitting}
+            >
               {t('Save')}
             </Button>
             <Button variant="link" onClick={close}>

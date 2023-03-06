@@ -26,7 +26,7 @@ const useActiveTab = () => {
     const query = new URLSearchParams(search);
     const tab = query.get('tab');
 
-    return tab ? tab : 'templates';
+    return tab ?? 'templates';
   }, [search]);
   return activeTab;
 };

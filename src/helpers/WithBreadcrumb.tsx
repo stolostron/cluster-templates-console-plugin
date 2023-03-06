@@ -22,7 +22,7 @@ const PageBreadcrumb = ({ activeItemText, prevItemText, onBack }: BreadcrumbProp
   return (
     <Breadcrumb>
       <BreadcrumbItem>
-        <Button variant="link" isInline onClick={onBack}>
+        <Button variant="link" isInline onClick={() => onBack()}>
           {prevItemText}
         </Button>
       </BreadcrumbItem>

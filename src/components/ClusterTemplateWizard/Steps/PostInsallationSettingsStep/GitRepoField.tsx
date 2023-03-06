@@ -18,7 +18,7 @@ const GitRepoField = ({ fieldName }: { fieldName: string }) => {
           <FlexItem grow={{ default: 'grow' }}>
             <InputField
               name={`${fieldName}.commit`}
-              label={t('Commit / Branch/ Tag')}
+              label={t('Commit / Branch / Tag')}
               labelIcon={
                 <PopoverHelpIcon
                   helpText={t('This is optional. If omitted, will be equal to HEAD.')}

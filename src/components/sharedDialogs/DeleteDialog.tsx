@@ -31,10 +31,11 @@ const DeleteDialog = ({ isOpen, onClose, gvk, resource }: DeleteDialogProps) => 
         model,
         resource,
       });
-      setDeleting(false);
       onClose();
     } catch (err) {
       setError(err);
+    } finally {
+      setDeleting(false);
     }
   };
   return (

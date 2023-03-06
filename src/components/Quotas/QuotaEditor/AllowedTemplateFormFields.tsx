@@ -48,7 +48,7 @@ const TemplateIsInOtherQuotasAlert = ({
         {otherQuotas.slice(0, 3).map((otherQuota, idx) => (
           <>
             <ResourceLink
-              key={idx}
+              key={otherQuota.metadata?.uid}
               name={otherQuota.metadata?.name || ''}
               namespace={otherQuota.metadata?.namespace || ''}
               groupVersionKind={clusterTemplateQuotaGVK}

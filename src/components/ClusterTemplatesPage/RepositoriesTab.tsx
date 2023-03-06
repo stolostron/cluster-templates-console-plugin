@@ -231,7 +231,7 @@ const RepositoriesTab = ({ openNewRepositoryDialog }: RepositoriesTabProps) => {
                   <Tbody>
                     {secrets.map((secret) => (
                       <RepositoryRow
-                        key={secret.data?.name}
+                        key={secret.metadata?.uid}
                         obj={secret}
                         clusterTemplatesResult={clusterTemplatesResult}
                         helmChartRepositoriesResult={helmChartRepositoriesResult}

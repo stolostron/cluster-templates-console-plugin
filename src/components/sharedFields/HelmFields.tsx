@@ -42,12 +42,7 @@ const getChartFirstVersion = (
   chart: string,
   chartToVersions: Record<string, string[]> | undefined,
 ): string => {
-  if (
-    !chart ||
-    !chartToVersions ||
-    !chartToVersions[chart] ||
-    chartToVersions[chart].length === 0
-  ) {
+  if (!chartToVersions?.[chart]?.length) {
     return '';
   }
   return chartToVersions[chart][0];

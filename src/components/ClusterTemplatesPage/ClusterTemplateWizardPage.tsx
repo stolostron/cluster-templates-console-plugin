@@ -16,7 +16,7 @@ const PageHeader = ({ clusterTemplate }: { clusterTemplate?: ClusterTemplate }) 
   return (
     <WithBreadcrumb
       activeItemText={activeItemText}
-      onBack={() => navigation.goToClusterTemplatesPage()}
+      onBack={navigation.goToClusterTemplatesPage}
       prevItemText={t('Cluster templates')}
     >
       <Title headingLevel="h1">{title}</Title>
