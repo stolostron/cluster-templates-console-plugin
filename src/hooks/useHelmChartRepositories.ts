@@ -43,5 +43,6 @@ export const useHelmChartRepositories = (): HelmChartRepositoryListResult & {
   }
 };
 
-export const getNumRepoCharts = (repo: HelmRepository): number | undefined =>
-  repo.index ? Object.keys(repo.index?.entries).length : undefined;
+export const getNumRepoCharts = (repo: HelmRepository): number | undefined => {
+  return repo.index?.entries ? Object.keys(repo.index.entries).length : undefined;
+};

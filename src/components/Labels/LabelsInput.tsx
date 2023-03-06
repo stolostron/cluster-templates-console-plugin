@@ -19,8 +19,7 @@ export const LabelsInput = (props: LabelsInputProps) => {
 
   const { value, name, helperText } = props;
 
-  function addLabel(input: string) {
-    /* istanbul ignore next */
+  const addLabel = (input: string) => {
     const newlabels = input
       .split(',')
       .join(' ')
@@ -40,14 +39,13 @@ export const LabelsInput = (props: LabelsInputProps) => {
         { ...props.value } as Record<string, string>,
       );
     props.onChange(newlabels);
-  }
+  };
 
-  function removeLabel(key: string) {
-    /* istanbul ignore next */
+  const removeLabel = (key: string) => {
     const newLabels: Record<string, string> = { ...props.value };
     delete newLabels[key];
     props.onChange(newLabels);
-  }
+  };
 
   return (
     <>
@@ -67,7 +65,6 @@ export const LabelsInput = (props: LabelsInputProps) => {
           }}
           onClick={() => {
             setInputValue(undefined);
-            /* istanbul ignore next */
             inputRef.current?.focus();
           }}
         >
@@ -79,7 +76,6 @@ export const LabelsInput = (props: LabelsInputProps) => {
                 style={{ margin: 2 }}
                 onClose={(e) => {
                   removeLabel(key);
-                  /* istanbul ignore next */
                   e.detail === 0 && inputRef.current?.focus(); // only refocus on keyboard event, detail is 0 on key event
                 }}
                 closeBtnProps={{ id: `remove-${key}` }}

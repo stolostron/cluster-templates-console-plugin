@@ -8,7 +8,6 @@ export const getNavLabelWithCount = (label: string, count?: number) => {
   return `${label} (${count})`;
 };
 
-/* istanbul ignore next */
 export const createDownloadFile = (filename: string, content: string, type?: string) => {
   const a = document.createElement('a');
   const blob = new Blob([content], { type: type || 'text/plain' });

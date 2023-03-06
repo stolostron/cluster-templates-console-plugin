@@ -28,7 +28,7 @@ const ClusterTemplateWizardPage = ({ clusterTemplate }: { clusterTemplate?: Clus
   return (
     <ErrorBoundary>
       <Page>
-        <PageHeader />
+        <PageHeader clusterTemplate={clusterTemplate} />
         <Divider />
         <ClusterTemplateWizard clusterTemplate={clusterTemplate} />
       </Page>

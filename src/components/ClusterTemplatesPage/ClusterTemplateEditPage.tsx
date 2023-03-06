@@ -13,20 +13,23 @@ const ClusterTemplateEditPage = ({ match }: { match: { params: { name: string } 
   const [clusterTemplate, setClusterTemplate] = React.useState<ClusterTemplate>();
   const [clusterTemplateLoading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<unknown>();
+
   React.useEffect(() => {
+    const fetchClusterTemplate = async () => {
+      try {
+        setLoading(true);
+        const _clusterTemplate = await k8sGet<ClusterTemplate>({ model, name: name });
+        setClusterTemplate(_clusterTemplate);
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
     if (name && !clusterTemplate) {
-      setLoading(true);
-      k8sGet<ClusterTemplate>({ model, name: name })
-        .then((template) => {
-          setLoading(false);
-          setClusterTemplate(template);
-        })
-        .catch((err) => {
-          setLoading(false);
-          setError(err);
-        });
+      void fetchClusterTemplate();
     }
-  }, [name, clusterTemplate, model]);
+  }, [name, clusterTemplate, model, clusterTemplateLoading]);
   return (
     <ErrorBoundary>
       <PageLoader

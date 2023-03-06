@@ -11,7 +11,7 @@ type WithCheckboxFieldProps = {
   isDisabled?: boolean;
   children: React.ReactNode;
   onChange?: (checked: boolean) => void;
-  condition?: () => boolean;
+  showChlidren?: boolean;
 };
 
 const WithCheckboxField = ({
@@ -21,10 +21,10 @@ const WithCheckboxField = ({
   isDisabled,
   onChange,
   children,
-  condition,
+  showChlidren,
 }: WithCheckboxFieldProps) => {
   const [{ value }] = useField<boolean>(checkboxFieldName);
-  const showChildren = condition ? condition() : value && !isDisabled;
+  const _showChildren = showChlidren ?? (value && !isDisabled);
   return (
     <Stack hasGutter>
       <StackItem style={{ marginBottom: 'var(--pf-global--spacer--sm)' }}>
@@ -36,7 +36,7 @@ const WithCheckboxField = ({
           isDisabled={isDisabled}
         />
       </StackItem>
-      {showChildren && <StackItem style={{ marginLeft: '20px' }}>{children}</StackItem>}
+      {_showChildren && <StackItem style={{ marginLeft: '20px' }}>{children}</StackItem>}
     </Stack>
   );
 };

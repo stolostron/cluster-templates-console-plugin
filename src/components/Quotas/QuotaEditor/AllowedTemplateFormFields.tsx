@@ -45,7 +45,7 @@ const TemplateIsInOtherQuotasAlert = ({
     <Alert title={title} variant="info" isInline>
       <>{message}&nbsp;</>
       <>
-        {otherQuotas.slice(0, 3).map((otherQuota, idx) => (
+        {otherQuotas.slice(0, 3).map((otherQuota) => (
           <>
             <ResourceLink
               key={otherQuota.metadata?.uid}

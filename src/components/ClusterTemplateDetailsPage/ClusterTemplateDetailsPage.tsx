@@ -22,7 +22,7 @@ const PageHeader = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) =
   return (
     <WithBreadcrumb
       activeItemText={clusterTemplate.metadata?.name || ''}
-      onBack={() => navigation.goToClusterTemplatesPage()}
+      onBack={navigation.goToClusterTemplatesPage}
       prevItemText={t('Cluster templates')}
     >
       <Flex>

@@ -39,8 +39,7 @@ const QuotaFormToolbar = ({
       >
         {isCreateFlow ? t('Create') : t('Save')}
       </Button>
-
-      <Button onClick={onCancel} variant="link">
+      <Button onClick={onCancel} variant="link" isDisabled={isSubmitting}>
         {t('Cancel')}
       </Button>
     </ActionGroup>

@@ -31,7 +31,6 @@ const EditLabelsDialog = ({
 
   const handleSubmit = async () => {
     setError(undefined);
-
     try {
       setSubmitting(true);
       const newResource = {
@@ -74,7 +73,7 @@ const EditLabelsDialog = ({
             >
               {t('Save')}
             </Button>
-            <Button variant="link" onClick={close}>
+            <Button variant="link" onClick={close} isDisabled={submitting}>
               {t('cancel')}
             </Button>
           </ActionGroup>

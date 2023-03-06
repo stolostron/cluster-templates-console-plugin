@@ -25,7 +25,6 @@ const useActiveTab = () => {
   const activeTab = React.useMemo(() => {
     const query = new URLSearchParams(search);
     const tab = query.get('tab');
-
     return tab ?? 'templates';
   }, [search]);
   return activeTab;
