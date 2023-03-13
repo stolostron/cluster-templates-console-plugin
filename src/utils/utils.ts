@@ -1,7 +1,5 @@
 import isString from 'lodash/isString';
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
-import { getResourceUrl } from './k8s';
-import { clusterTemplateGVK } from '../constants';
 
 export const getNavLabelWithCount = (label: string, count?: number) => {
   if (count === undefined) {
@@ -10,7 +8,6 @@ export const getNavLabelWithCount = (label: string, count?: number) => {
   return `${label} (${count})`;
 };
 
-/* istanbul ignore next */
 export const createDownloadFile = (filename: string, content: string, type?: string) => {
   const a = document.createElement('a');
   const blob = new Blob([content], { type: type || 'text/plain' });
@@ -43,6 +40,3 @@ export const getErrorMessage = (error: unknown) => {
   }
   return 'Unexpected error';
 };
-
-export const getEditClusterTemplateUrl = (name: string) =>
-  `${getResourceUrl(clusterTemplateGVK, name)}/edit`;

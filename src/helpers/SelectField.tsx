@@ -68,8 +68,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
   };
 
   const _setValue = (value: string | SelectOptionObject) => {
-    setValue(value, true);
-    onSelectValue && onSelectValue(value);
+    onSelectValue ? onSelectValue(value) : setValue(value);
   };
 
   const onSelect: SelectProps['onSelect'] = (_, value) => {
@@ -108,7 +107,7 @@ const SelectField: React.FC<SelectFieldProps> = ({
           typeAheadAriaLabel={props.typeAheadAriaLabel || name}
           toggleId={name}
           onCreateOption={onCreateOption}
-          className="cluster-templates-select-field"
+          maxHeight={200}
           {...props}
         >
           {options.map((op, idx) => {

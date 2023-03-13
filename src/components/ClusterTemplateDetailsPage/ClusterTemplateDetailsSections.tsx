@@ -1,10 +1,9 @@
 import { Stack, StackItem } from '@patternfly/react-core';
 import { TFunction } from 'i18next';
 import * as React from 'react';
-import { ClusterTemplate } from '../../types';
+import { ClusterTemplate } from '../../types/resourceTypes';
 import DetailsSection from './DetailsSection';
 import InstanceYamlSection from './InstanceYamlSection';
-import QuotasSection from './QuotasSection';
 import UsageSection from './UsageSection';
 import {
   Card,
@@ -18,7 +17,6 @@ import ErrorBoundary from '../../helpers/ErrorBoundary';
 
 enum Section {
   Details = 'details',
-  Quotas = 'quotas',
   Uses = 'uses',
   InstanceYaml = 'instanceYaml',
 }
@@ -26,7 +24,6 @@ enum Section {
 const getSectionTitles = (t: TFunction): { [i in Section]: string } => ({
   [Section.InstanceYaml]: t('Download template instance YAML file to instantiate the template'),
   [Section.Details]: t('Details'),
-  [Section.Quotas]: t('Quotas'),
   [Section.Uses]: t('Template uses'),
 });
 
@@ -35,7 +32,6 @@ const getSectionComponents = (): {
 } => ({
   [Section.InstanceYaml]: InstanceYamlSection,
   [Section.Details]: DetailsSection,
-  [Section.Quotas]: QuotasSection,
   [Section.Uses]: UsageSection,
 });
 

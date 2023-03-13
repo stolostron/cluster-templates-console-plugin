@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
-import { ArgoCDSecretData, Secret } from '../../types';
+import { ArgoCDSecretData, Secret } from '../../types/resourceTypes';
 import { k8sCreate, useK8sModels } from '@openshift-console/dynamic-plugin-sdk';
-import { ARGOCD_NAMESPACE, ARGOCD_SECRET_LABELS, secretGVK } from '../../constants';
+import { ARGOCD_SECRET_LABELS, secretGVK } from '../../constants';
 import { Formik } from 'formik';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getErrorMessage } from '../../utils/utils';
@@ -10,8 +10,8 @@ import ModalDialogLoader from '../../helpers/ModalDialogLoader';
 import { getValidationSchema } from './utils';
 import { FormError, RepositoryFormValues } from './types';
 import RepositoryForm from './RepositoryForm';
-import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 import { getDecodedSecretData } from '../../utils/secrets';
+import useArgocdNamespace from '../../hooks/useArgocdNamespace';
 
 type NewRepositoryDialogProps = {
   closeDialog: () => void;
@@ -36,9 +36,7 @@ export function getInitialValues(): RepositoryFormValues {
 const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps) => {
   const { t } = useTranslation();
   const [formError, setFormError] = React.useState<FormError | undefined>();
-  // const [secrets, secretsLoaded, secretsError] = useArgoCDSecrets();
-  const [, secretsLoaded] = useArgoCDSecrets();
-
+  const [namespace, namespaceLoaded, error] = useArgocdNamespace();
   const [{ Secret: secretModel }] = useK8sModels();
 
   const handleSubmit = async (formValues: RepositoryFormValues) => {
@@ -73,7 +71,7 @@ const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps
         kind: secretGVK.kind,
         metadata: {
           name,
-          namespace: ARGOCD_NAMESPACE,
+          namespace,
           labels: ARGOCD_SECRET_LABELS,
         },
         stringData: useCredentials
@@ -106,7 +104,7 @@ const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps
       showClose
       hasNoBodyWrapper
     >
-      <ModalDialogLoader loaded={secretsLoaded}>
+      <ModalDialogLoader loaded={namespaceLoaded} error={error}>
         <Formik<RepositoryFormValues>
           initialValues={getInitialValues()}
           onSubmit={handleSubmit}

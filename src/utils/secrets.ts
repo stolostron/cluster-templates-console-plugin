@@ -1,4 +1,4 @@
-import { Secret } from '../types';
+import { Secret } from '../types/resourceTypes';
 import { Buffer } from 'buffer';
 
 export function getDecodedSecretData<T extends Record<string, unknown>>(

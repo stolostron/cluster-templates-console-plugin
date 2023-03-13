@@ -3,12 +3,12 @@ import { Skeleton, SkeletonProps } from '@patternfly/react-core';
 import Loader, { LoaderProps } from './Loader';
 
 type SkeletonLoaderProps = Omit<LoaderProps, 'loadingState'> & {
-  numRows: number;
+  numRows?: number;
   fontSize?: SkeletonProps['fontSize'];
 };
 
 export const SkeletonLoader = ({
-  numRows,
+  numRows = 3,
   fontSize = '2xl',
   children,
   ...props

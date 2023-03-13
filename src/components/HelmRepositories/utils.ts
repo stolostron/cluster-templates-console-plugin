@@ -1,5 +1,5 @@
 import * as Yup from 'yup';
-import { Secret } from '../../types';
+import { Secret } from '../../types/resourceTypes';
 import { TFunction } from 'react-i18next';
 
 export const SECRET_TYPE = 'kubernetes.io/tls';

@@ -1,7 +1,6 @@
 import { Button, Flex, FlexItem, Popover } from '@patternfly/react-core';
 import { OutlinedQuestionCircleIcon } from '@patternfly/react-icons';
 import React from 'react';
-import './styles.css';
 
 const PopoverHelpIcon = ({
   helpText,
@@ -26,17 +25,15 @@ const PopoverHelpIcon = ({
 export const WithHelpIcon = ({
   children,
   helpText,
-  noVerticalAlign,
 }: {
   children: React.ReactNode;
-  helpText?: React.ReactNode;
-  noVerticalAlign?: boolean;
+  helpText: React.ReactNode;
 }) =>
   helpText ? (
     <Flex>
       <FlexItem spacer={{ default: 'spacerXs' }}>{children}</FlexItem>
       <FlexItem>
-        <PopoverHelpIcon helpText={helpText} noVerticalAlign={noVerticalAlign} />
+        <PopoverHelpIcon helpText={helpText} noVerticalAlign={true} />
       </FlexItem>
     </Flex>
   ) : (

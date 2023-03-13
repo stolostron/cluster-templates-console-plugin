@@ -13,8 +13,7 @@ import {
 import { PlusIcon } from '@patternfly/react-icons';
 import { FieldArray, FieldArrayRenderProps, useField } from 'formik';
 import { useTranslation } from '../../../../hooks/useTranslation';
-import '../styles.css';
-import { PostInstallationFormikValues, isHelmSource } from '../../types';
+import { PostInstallationFormikValues, isHelmSource } from '../../../../types/wizardFormTypes';
 import { getNewGitOpsFormValues } from '../../../../utils/toWizardFormValues';
 import { WithRemoveButton } from '../../../../helpers/WithRemoveButton';
 import HelmFields from '../../../sharedFields/HelmFields';
@@ -56,7 +55,7 @@ const PostInstallationSettings = ({
             labelIcon={
               <PopoverHelpIcon
                 helpText={t(
-                  "Specify the target namespace for the application's resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace",
+                  'Specify the target namespace for the resources. The namespace will only be set for namespace-scoped resources that have not set a value for .metadata.namespace',
                 )}
               />
             }
@@ -105,7 +104,7 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
             variant="link"
             onClick={() => push(getNewGitOpsFormValues('git'))}
             icon={<PlusIcon />}
-            className="cluster-templates-field-array__btn"
+            isInline
           >
             {t('Add Git repository')}
           </Button>
@@ -113,7 +112,7 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
             variant="link"
             onClick={() => push(getNewGitOpsFormValues('helm'))}
             icon={<PlusIcon />}
-            className="cluster-templates-field-array__btn"
+            isInline
           >
             {t('Add Helm chart')}
           </Button>

@@ -3,10 +3,9 @@ import { useField } from 'formik';
 import React from 'react';
 import ErrorBoundary from '../../../../helpers/ErrorBoundary';
 import { useTranslation } from '../../../../hooks/useTranslation';
-import '../styles.css';
 import DescriptionField from './DescriptionField';
-import CostField from './CostField';
 import NameField from '../../../sharedFields/NameField';
+import LabelsField from '../../../Labels/LabelsField';
 
 const DetailsForm = () => {
   const { t } = useTranslation();
@@ -19,7 +18,13 @@ const DetailsForm = () => {
         label={t('Cluster template name')}
       />
       <DescriptionField />
-      <CostField />
+      <LabelsField
+        name={'details.labels'}
+        label={t('Labels')}
+        helperText={t(
+          `Use labels to organize and place application subscriptions and policies on this cluster. The placement of resources are controlled by label selectors. If your cluster has the labels that match the resource placement’s label selector, the resource will be installed on your cluster after creation`,
+        )}
+      />
     </Form>
   );
 };

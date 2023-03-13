@@ -1,7 +1,7 @@
 import { load } from 'js-yaml';
 import * as React from 'react';
 import { consoleFetch } from '@openshift-console/dynamic-plugin-sdk';
-import { HelmRepository } from '../types';
+import { HelmRepository } from '../types/resourceTypes';
 import { RepositoriesContext } from '../contexts/helmRepositoriesContext';
 
 const HELM_REPOSITORIES_ENDPOINT =
@@ -43,5 +43,6 @@ export const useHelmChartRepositories = (): HelmChartRepositoryListResult & {
   }
 };
 
-export const getNumRepoCharts = (repo: HelmRepository): number | undefined =>
-  repo.index ? Object.keys(repo.index?.entries).length : undefined;
+export const getNumRepoCharts = (repo: HelmRepository): number | undefined => {
+  return repo.index?.entries ? Object.keys(repo.index.entries).length : undefined;
+};

@@ -1,10 +1,7 @@
 import * as React from 'react';
-import { k8sDelete, ResourceLink, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
+import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import {
-  Button,
   Label,
-  Modal,
-  ModalVariant,
   PageSection,
   Truncate,
   Text,
@@ -32,7 +29,7 @@ import {
   DecodedSecret,
   RowProps,
   TableColumn,
-} from '../../types';
+} from '../../types/resourceTypes';
 import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
@@ -49,6 +46,8 @@ import {
 import RepositoriesEmptyState from '../HelmRepositories/RepositoriesEmptyState';
 import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
 import { WatchK8sResult } from '../../hooks/k8s';
+import ErrorBoundary from '../../helpers/ErrorBoundary';
+import DeleteDialog from '../sharedDialogs/DeleteDialog';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -100,7 +99,6 @@ export const RepositoryRow = ({
   const { t } = useTranslation();
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
-  const [model] = useK8sModel(secretGVK);
   const { repos, loaded, error } = helmChartRepositoriesResult;
   const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
 
@@ -108,13 +106,15 @@ export const RepositoryRow = ({
     (t) => t.spec.clusterDefinition.source.repoURL === obj.data?.url,
   );
 
-  const repository = repos.find((r) => r.url === obj.data?.url);
-
-  const repoChartsCount = repository ? getNumRepoCharts(repository) : '-';
-
-  const repoChartsUpdatedAt = repository?.index
-    ? new Date(repository.index.generated).toLocaleString()
-    : '-';
+  let repoChartsCount: string | number = '-';
+  let repoChartsUpdatedAt = '-';
+  let repository;
+  if (obj.data.type === 'helm') {
+    repository = repos.find((r) => r.url === obj.data?.url);
+    repoChartsCount = (repository && getNumRepoCharts(repository)) || '-';
+    repoChartsUpdatedAt =
+      (repository?.index && new Date(repository.index.generated).toLocaleString()) || '-';
+  }
 
   const getRowActions = (): IAction[] => {
     return [
@@ -133,7 +133,7 @@ export const RepositoryRow = ({
 
   return (
     <Tr>
-      <Td dataLabel={columns[0].title}>
+      <Td dataLabel={columns[0].id}>
         <ResourceLink
           groupVersionKind={secretGVK}
           name={obj.metadata?.name}
@@ -141,20 +141,20 @@ export const RepositoryRow = ({
           hideIcon
         />
       </Td>
-      <Td dataLabel={columns[1].title}>
+      <Td dataLabel={columns[1].id}>
         <Text component="a" href={obj.data?.url} target="_blank" rel="noopener noreferrer">
           <Truncate content={obj.data?.url || ''} position={'middle'} trailingNumChars={10} />
         </Text>
       </Td>
-      <Td dataLabel={columns[2].title}>
+      <Td dataLabel={columns[2].id}>
         {obj.data?.username ? t('Authenticated') : t('Not required')}
       </Td>
-      <Td dataLabel={columns[3].title}>
+      <Td dataLabel={columns[3].id}>
         <CellLoader loaded={loaded} error={error}>
           {repoChartsUpdatedAt}
         </CellLoader>
       </Td>
-      <Td dataLabel={columns[4].title}>
+      <Td dataLabel={columns[4].id}>
         <CellLoader loaded={loaded} error={error}>
           {repository?.error ? (
             <RepositoryErrorPopover error={repository.error} />
@@ -163,7 +163,7 @@ export const RepositoryRow = ({
           )}
         </CellLoader>
       </Td>
-      <Td dataLabel={columns[5].title}>
+      <Td dataLabel={columns[5].id}>
         <CellLoader loaded={templatesLoaded} error={templatesLoadError}>
           <Label color="green" icon={<CheckCircleIcon />}>
             {templatesFromRepo.length}
@@ -176,38 +176,12 @@ export const RepositoryRow = ({
           actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
         />
       </Td>
-      {isDialogOpen('deleteDialog') && (
-        <Modal
-          variant={ModalVariant.small}
-          isOpen
-          title={t('Delete Helm chart repository')}
-          titleIconVariant="warning"
-          showClose
-          onClose={() => closeDialog('deleteDialog')}
-          actions={[
-            <Button
-              key="confirm"
-              variant="danger"
-              onClick={
-                void (async () => {
-                  await k8sDelete({
-                    model,
-                    resource: obj,
-                  });
-                  closeDialog('deleteDialog');
-                })()
-              }
-            >
-              {t('Delete')}
-            </Button>,
-            <Button key="cancel" variant="link" onClick={() => closeDialog('deleteDialog')}>
-              {t('Cancel')}
-            </Button>,
-          ]}
-        >
-          {t('Are you sure you want to delete?')}
-        </Modal>
-      )}
+      <DeleteDialog
+        isOpen={isDialogOpen('deleteDialog')}
+        onClose={() => closeDialog('deleteDialog')}
+        gvk={secretGVK}
+        resource={obj}
+      />
       {isDialogOpen('editRepositoryDialog') && (
         <EditRepositoryDialog
           argoCDSecret={obj}
@@ -229,46 +203,48 @@ const RepositoriesTab = ({ openNewRepositoryDialog }: RepositoriesTabProps) => {
   const { t } = useTranslation();
 
   return (
-    <Page>
-      <PageSection>
-        <TableLoader
-          loaded={loaded}
-          error={error}
-          errorId="repositories-load-error"
-          errorMessage={t('Repositories could not be loaded.')}
-        >
-          <Card>
-            {!secrets.length ? (
-              <RepositoriesEmptyState addRepository={openNewRepositoryDialog} />
-            ) : (
-              <TableComposable
-                aria-label="repositories table"
-                data-testid="repositories-table"
-                variant="compact"
-              >
-                <Thead>
-                  <Tr>
-                    {getTableColumns(t).map((column) => (
-                      <Th key={column.id}>{column.title}</Th>
+    <ErrorBoundary>
+      <Page>
+        <PageSection>
+          <TableLoader
+            loaded={loaded}
+            error={error}
+            errorId="repositories-load-error"
+            errorMessage={t('Repositories could not be loaded.')}
+          >
+            <Card>
+              {!secrets.length ? (
+                <RepositoriesEmptyState addRepository={openNewRepositoryDialog} />
+              ) : (
+                <TableComposable
+                  aria-label="repositories table"
+                  data-testid="repositories-table"
+                  variant="compact"
+                >
+                  <Thead>
+                    <Tr>
+                      {getTableColumns(t).map((column) => (
+                        <Th key={column.id}>{column.title}</Th>
+                      ))}
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {secrets.map((secret) => (
+                      <RepositoryRow
+                        key={secret.metadata?.uid}
+                        obj={secret}
+                        clusterTemplatesResult={clusterTemplatesResult}
+                        helmChartRepositoriesResult={helmChartRepositoriesResult}
+                      />
                     ))}
-                  </Tr>
-                </Thead>
-                <Tbody>
-                  {secrets.map((secret) => (
-                    <RepositoryRow
-                      key={secret.data?.name}
-                      obj={secret}
-                      clusterTemplatesResult={clusterTemplatesResult}
-                      helmChartRepositoriesResult={helmChartRepositoriesResult}
-                    />
-                  ))}
-                </Tbody>
-              </TableComposable>
-            )}
-          </Card>
-        </TableLoader>
-      </PageSection>
-    </Page>
+                  </Tbody>
+                </TableComposable>
+              )}
+            </Card>
+          </TableLoader>
+        </PageSection>
+      </Page>
+    </ErrorBoundary>
   );
 };
 

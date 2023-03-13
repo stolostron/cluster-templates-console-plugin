@@ -8,6 +8,8 @@ import {
   ModalVariant,
   Page,
   PageSection,
+  TextContent,
+  Text,
 } from '@patternfly/react-core';
 import {
   ActionsColumn,
@@ -21,19 +23,32 @@ import {
   Tbody,
 } from '@patternfly/react-table';
 import { clusterTemplateGVK } from '../../constants';
-import { ClusterTemplate, RowProps, TableColumn } from '../../types';
+import { ClusterTemplate, RowProps, TableColumn } from '../../types/resourceTypes';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 import { TFunction } from 'react-i18next';
 import TableLoader from '../../helpers/TableLoader';
 
 import {
-  ClusterTemplateCost,
+  ClusterTemplateQuotasSummary,
   ClusterTemplateUsage,
 } from '../sharedDetailItems/clusterTemplateDetailItems';
 import { AlertsContextProvider } from '../../alerts/AlertsContext';
-import { useHistory } from 'react-router';
-import { getEditClusterTemplateUrl } from '../../utils/utils';
 import { useTranslation } from '../../hooks/useTranslation';
+import { getQuotasPageUrl, useNavigation } from '../../hooks/useNavigation';
+import { WithHelpIcon } from '../../helpers/PopoverHelpIcon';
+
+const QuotasColumnTitle = () => {
+  const { t } = useTranslation();
+  const helpText = (
+    <TextContent>
+      <Text>{t('You can limit the use of templates with quotas by adding templates to them')}</Text>
+      <a href={getQuotasPageUrl()} target="_blank" rel="noopener noreferrer">
+        {t('Quota management')}
+      </a>
+    </TextContent>
+  );
+  return <WithHelpIcon helpText={helpText}>{t('Quotas')}</WithHelpIcon>;
+};
 
 function getTableColumns(t: TFunction): TableColumn[] {
   return [
@@ -42,12 +57,12 @@ function getTableColumns(t: TFunction): TableColumn[] {
       id: 'name',
     },
     {
-      title: t('Cost'),
-      id: 'cost',
+      title: t('Instances'),
+      id: 'instances',
     },
     {
-      title: t('Template uses'),
-      id: 'usage',
+      title: <QuotasColumnTitle />,
+      id: 'quotas',
     },
     {
       title: '',
@@ -60,7 +75,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
   const { t } = useTranslation();
   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
   const [model] = useK8sModel(clusterTemplateGVK);
-  const history = useHistory();
+  const navigation = useNavigation();
 
   const getRowActions = (): IAction[] => [
     {
@@ -69,7 +84,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
     },
     {
       title: t('Edit template'),
-      onClick: () => history.push(getEditClusterTemplateUrl(obj.metadata?.name || '')),
+      onClick: () => navigation.goToClusterTemplateEditPage(obj),
     },
   ];
 
@@ -77,7 +92,7 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
 
   return (
     <Tr>
-      <Td data-testid={columns[0].id} dataLabel={columns[0].title}>
+      <Td data-testid={columns[0].id} dataLabel={columns[0].id}>
         <ResourceLink
           groupVersionKind={clusterTemplateGVK}
           name={obj.metadata?.name}
@@ -85,11 +100,11 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
           hideIcon
         />
       </Td>
-      <Td data-testid={columns[1].id} dataLabel={columns[1].title}>
-        <ClusterTemplateCost clusterTemplate={obj} />
-      </Td>
-      <Td data-testid={columns[2].id} dataLabel={columns[2].title}>
+      <Td data-testid={columns[1].id} dataLabel={columns[1].id}>
         <ClusterTemplateUsage clusterTemplate={obj} />
+      </Td>
+      <Td data-testid={columns[2].id} dataLabel={columns[2].id}>
+        <ClusterTemplateQuotasSummary clusterTemplate={obj} />
       </Td>
       <Td data-testid={columns[3].id} isActionCell>
         <ActionsColumn
