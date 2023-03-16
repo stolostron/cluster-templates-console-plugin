@@ -11,7 +11,11 @@ const GitRepoField = ({ fieldName }: { fieldName: string }) => {
   return (
     <Stack hasGutter>
       <StackItem>
-        <RepositoryField fieldName={`${fieldName}.url`} label={t('Git repository URL')} />
+        <RepositoryField
+          fieldName={`${fieldName}.url`}
+          label={t('Git repository URL')}
+          type={'git'}
+        />
       </StackItem>
       <StackItem>
         <Flex>

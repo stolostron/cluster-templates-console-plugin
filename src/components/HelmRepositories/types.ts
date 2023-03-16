@@ -1,29 +1,10 @@
-export type FormError = {
-  title: string;
-  message: string;
-};
-
-export type HelmRepositoryFormValues = {
-  name: string;
-  url: string;
-  description: string;
-  useCredentials: boolean;
-  existingSecretName: string;
-  existingConfigMapName: string;
-  caCertificate: string;
-  tlsClientCert: string;
-  tlsClientKey: string;
-};
+import { RepositoryType } from '../../types/resourceTypes';
 
 export type RepositoryFormValues = {
   useCredentials: boolean;
   name: string;
   url: string;
-  type: 'helm' | 'git';
+  type: RepositoryType;
   username: string;
   password: string;
-  tlsClientCertData: string;
-  tlsClientCertKey: string;
-  insecure: boolean;
-  description: string;
 };
