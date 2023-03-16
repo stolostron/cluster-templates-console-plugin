@@ -12,7 +12,7 @@ const CreateRepositoryButton = () => {
   const { t } = useTranslation();
   return (
     <>
-      <Button variant="primary" onClick={() => setAddDialogOpen(false)}>
+      <Button variant="primary" onClick={() => setAddDialogOpen(true)}>
         {t('Add a repository')}
       </Button>
       {addDialogOpen && <NewRepositoryDialog closeDialog={() => setAddDialogOpen(false)} />}

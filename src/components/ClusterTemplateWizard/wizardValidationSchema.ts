@@ -55,7 +55,7 @@ const useWizardValidationSchema = (
   const gitRepoValidationSchema = objectSchema().shape({
     directory: stringSchema().optional(),
     url: stringSchema().required(requiredMsg),
-    commit: stringSchema().required(requiredMsg),
+    commit: stringSchema(),
   });
 
   const postInstallationValidationSchema = objectSchema().shape({

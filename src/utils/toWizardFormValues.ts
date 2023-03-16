@@ -1,6 +1,11 @@
 import React from 'react';
 import { CREATE_NAMESPACE_SYNC_OPTION, INSTANCE_NAMESPACE_VAR } from '../constants';
-import { ApplicationSource, ArgoCDSpec, ClusterTemplate } from '../types/resourceTypes';
+import {
+  ApplicationSource,
+  ArgoCDSpec,
+  ClusterTemplate,
+  RepositoryType,
+} from '../types/resourceTypes';
 import {
   WizardFormikValues,
   InstallationFormikValues,
@@ -17,7 +22,7 @@ export const getNewHelmSourceFormValues = (): HelmSourceFormikValues => ({
   version: '',
 });
 
-export const getNewGitOpsFormValues = (type: 'helm' | 'git'): PostInstallationFormikValues => ({
+export const getNewGitOpsFormValues = (type: RepositoryType): PostInstallationFormikValues => ({
   destinationNamespace: '',
   autoSync: true,
   pruneResources: false,

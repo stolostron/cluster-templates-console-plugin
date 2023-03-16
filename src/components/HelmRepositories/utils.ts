@@ -1,34 +1,7 @@
-import * as Yup from 'yup';
 import { Secret } from '../../types/resourceTypes';
-import { TFunction } from 'react-i18next';
 
 export const SECRET_TYPE = 'kubernetes.io/tls';
 export const NAMESPACE = 'openshift-config';
-
-export const getValidationSchema = (t: TFunction) =>
-  Yup.object().shape({
-    name: Yup.string().required(t('Required.')),
-    url: Yup.string()
-      .url(t('URL must be a valid URL starting with "http://" or "https://"'))
-      .required(t('Required.')),
-    useCredentials: Yup.boolean(),
-    username: Yup.string().when('useCredentials', {
-      is: true,
-      then: (schema) => schema.required(t('Required.')),
-    }),
-    password: Yup.string().when('useCredentials', {
-      is: true,
-      then: (schema) => schema.required(t('Required.')),
-    }),
-    // tlsClientCertData: Yup.string().when('useCredentials', {
-    //   is: true,
-    //   then: (schema) => schema.required(t('Required.')),
-    // }),
-    // tlsClientCertKey: Yup.string().when('useCredentials', {
-    //   is: true,
-    //   then: (schema) => schema.required(t('Required.')),
-    // }),
-  });
 
 export function getDecodedSecretData(secretData: Secret['data'] = {}) {
   const decodedSecretData = Object.entries(secretData).reduce<{

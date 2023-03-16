@@ -11,7 +11,7 @@ function RepositoryErrorPopover({ error }: RepositoryErrorPopoverProps) {
       headerContent="Error"
       headerIcon={icon}
       alertSeverityVariant="danger"
-      bodyContent={<div>{error}</div>}
+      bodyContent={<div style={{ maxHeight: '300px', overflowY: 'auto' }}>{error}</div>}
     >
       <Button variant={ButtonVariant.link} isInline>
         {icon}

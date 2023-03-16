@@ -26,14 +26,14 @@ import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
 import useDialogsReducer from '../../hooks/useDialogsReducer';
-import EditRepositoryDialog from '../HelmRepositories/EditRepositoryDialog';
+import EditRepositoryDialog from './EditRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
 import {
   HelmChartRepositoryListResult,
   useHelmChartRepositories,
 } from '../../hooks/useHelmChartRepositories';
-import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
+import RepositoryErrorPopover from './RepositoryErrorPopover';
 import { WatchK8sResult } from '../../hooks/k8s';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
 

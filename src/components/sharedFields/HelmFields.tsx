@@ -8,11 +8,11 @@ import { useTranslation } from '../../hooks/useTranslation';
 import SelectField from '../../helpers/SelectField';
 import { Flex, FlexItem, SelectOptionObject } from '@patternfly/react-core';
 import { useAlerts } from '../../alerts/AlertsContext';
-import { humanizeUrl } from '../../utils/humanizing';
 import { getErrorMessage } from '../../utils/utils';
 import { WizardFormikValues } from '../../types/wizardFormTypes';
 import set from 'lodash/set';
 import PopoverHelpIcon from '../../helpers/PopoverHelpIcon';
+import { humanizeErrorMsg } from '../../utils/humanizing';
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
   return (
     <Flex>
@@ -26,7 +26,7 @@ const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
 };
 
 const getChartToVersions = (repo?: HelmRepository): Record<string, string[]> | undefined => {
-  if (!repo || !repo.index) {
+  if (!repo || !repo.index || repo.error) {
     return undefined;
   }
   const map: Record<string, string[]> = {};
@@ -60,8 +60,18 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
   const repoFieldName = `${fieldName}.url`;
   const url = get(values, repoFieldName) as string;
   const selectedRepo = url ? repos.find((repo) => repo.url === url) : undefined;
-  const chartToVersions = getChartToVersions(selectedRepo);
+  const chartToVersions = React.useMemo(() => getChartToVersions(selectedRepo), [selectedRepo]);
   const chart = get(values, chartFieldName) as string;
+
+  const getRepoErrorMsg = () => {
+    if (!loaded || !url) {
+      return;
+    } else if (!selectedRepo) {
+      return t('Failed to retrieve data on repository {{url}}', { url: url });
+    } else {
+      return selectedRepo.error ? humanizeErrorMsg(selectedRepo.error) : undefined;
+    }
+  };
 
   React.useEffect(() => {
     if (error) {
@@ -71,16 +81,6 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
       });
     }
   }, [addAlert, error]);
-
-  React.useEffect(() => {
-    if (loaded && url && !selectedRepo) {
-      // t('Failed to initialize')
-      addAlert({
-        title: 'Failed to initialize',
-        message: `Repositories list doesn't contain repository ${humanizeUrl(url)}`,
-      });
-    }
-  }, [selectedRepo, loaded, url, addAlert]);
 
   const updateChart = React.useCallback(
     (chart: string) => {
@@ -93,11 +93,17 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
   );
 
   React.useEffect(() => {
+    //respond to repository selection
     if (prevUrl.current && url !== prevUrl.current) {
-      updateChart('');
+      const charts = chartToVersions ? Object.keys(chartToVersions) : [];
+      if (charts.length === 1) {
+        updateChart(charts[0]);
+      } else {
+        updateChart('');
+      }
     }
     prevUrl.current = url;
-  }, [updateChart, url, prevUrl]);
+  }, [updateChart, url, prevUrl, chartToVersions]);
 
   const fields = [
     <RepositoryField
@@ -113,6 +119,8 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
           />
         ) : undefined
       }
+      type="helm"
+      error={getRepoErrorMsg()}
     />,
     <SelectField
       name={chartFieldName}

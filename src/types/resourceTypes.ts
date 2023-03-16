@@ -53,11 +53,11 @@ export type HelmChartSchema = {
 
 export type ClusterTemplateStatus = {
   clusterDefinition: {
-    values: string;
+    values?: string;
   };
   clusterSetup?: {
     name: string;
-    values: string;
+    values?: string;
   }[];
 };
 
@@ -174,6 +174,8 @@ export type DecodedSecret<DecodedDataType> = Omit<Secret, 'data'> & {
   data: DecodedDataType;
 };
 
+export type RepositoryType = 'helm' | 'git';
+
 export type ArgoCDSecretData = {
   name?: string;
   url?: string;
@@ -183,7 +185,7 @@ export type ArgoCDSecretData = {
   project?: string;
   tlsClientCertData?: string;
   tlsClientCertKey?: string;
-  type?: 'helm' | 'git';
+  type?: RepositoryType;
   insecure?: boolean;
 };
 

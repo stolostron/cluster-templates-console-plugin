@@ -10,10 +10,13 @@ import { getApiVersion } from './k8s';
 import { createDownloadFile } from './utils';
 
 const getProperties = (
-  valuesStr: string,
+  valuesStr?: string,
   clusterSetupName?: string,
 ): ClusterTemplateInstancePropertyValue[] => {
   try {
+    if (!valuesStr) {
+      return [];
+    }
     const valuesObject = load(valuesStr) as Record<string, string>;
     if (!valuesObject) {
       return [];
@@ -32,9 +35,7 @@ const getProperties = (
 const getAllProperties = (
   status: ClusterTemplateStatus,
 ): ClusterTemplateInstancePropertyValue[] => {
-  const clusterDefinitionProperties = status.clusterDefinition.values
-    ? getProperties(status.clusterDefinition.values)
-    : [];
+  const clusterDefinitionProperties = getProperties(status.clusterDefinition.values);
   if (!status.clusterSetup) {
     return clusterDefinitionProperties;
   }
