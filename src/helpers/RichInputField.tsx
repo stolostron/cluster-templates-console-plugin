@@ -12,6 +12,7 @@ import {
   InputGroup,
   Button,
   TextInputTypes,
+  Tooltip,
 } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
@@ -77,6 +78,7 @@ type RichInputFieldPropsProps = {
   showErrorMessage?: boolean;
   richValidationMessages: { [key: string]: string };
   isDisabled?: boolean;
+  tooltip?: string;
 } & FieldProps;
 
 // eslint-disable-next-line react/display-name
@@ -89,6 +91,7 @@ const RichInputField = React.forwardRef(
       isRequired,
       richValidationMessages,
       isDisabled = false,
+      tooltip,
       ...props
     }: RichInputFieldPropsProps,
     ref: React.Ref<HTMLInputElement>,
@@ -114,55 +117,58 @@ const RichInputField = React.forwardRef(
         isRequired={isRequired}
         labelIcon={labelIcon}
       >
-        <InputGroup
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
-          className={classNames('rich-input__group', { 'rich_input__group--invalid': !isValid })}
-        >
-          <TextInput
-            value={value}
-            ref={ref}
-            name={props.name}
-            isRequired={isRequired}
-            aria-describedby={`${props.name}-helper`}
-            onChange={(value, event) => {
-              !popoverOpen && setPopoverOpen(true);
-              setTouched(true, false);
-              onChange(event);
-            }}
-            className="rich-input__text"
-            onBlur={() => setPopoverOpen(false)}
-            autoComplete="off"
-            isDisabled={isDisabled}
-          />
-          <Popover
-            isVisible={popoverOpen}
-            shouldClose={() => setPopoverOpen(false)}
-            shouldOpen={() => setPopoverOpen(true)}
-            aria-label="validation popover"
-            position={PopoverPosition.top}
-            bodyContent={
-              <RichValidation
-                value={value}
-                error={error}
-                richValidationMessages={richValidationMessages as Record<string, string>}
-              />
-            }
+        <Tooltip hidden={!tooltip} content={tooltip}>
+          <InputGroup
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+            className={classNames('rich-input__group', { 'rich_input__group--invalid': !isValid })}
           >
-            <div>
-              {!isDisabled && (
-                <Button variant="plain" aria-label="Validation">
-                  {!isValid ? (
-                    <ExclamationCircleIcon color={dangerColor.value} />
-                  ) : value ? (
-                    <CheckCircleIcon color={okColor.value} />
-                  ) : (
-                    <InfoCircleIcon color={blueInfoColor.value} />
-                  )}
-                </Button>
-              )}
-            </div>
-          </Popover>
-        </InputGroup>
+            <TextInput
+              value={value}
+              ref={ref}
+              name={props.name}
+              isRequired={isRequired}
+              aria-describedby={`${props.name}-helper`}
+              onChange={(value, event) => {
+                !popoverOpen && setPopoverOpen(true);
+                setTouched(true, false);
+                onChange(event);
+              }}
+              className="rich-input__text"
+              onBlur={() => setPopoverOpen(false)}
+              autoComplete="off"
+              isDisabled={isDisabled}
+            />
+
+            <Popover
+              isVisible={popoverOpen}
+              shouldClose={() => setPopoverOpen(false)}
+              shouldOpen={() => setPopoverOpen(true)}
+              aria-label="validation popover"
+              position={PopoverPosition.top}
+              bodyContent={
+                <RichValidation
+                  value={value}
+                  error={error}
+                  richValidationMessages={richValidationMessages as Record<string, string>}
+                />
+              }
+            >
+              <div>
+                {!isDisabled && (
+                  <Button variant="plain" aria-label="Validation">
+                    {!isValid ? (
+                      <ExclamationCircleIcon color={dangerColor.value} />
+                    ) : value ? (
+                      <CheckCircleIcon color={okColor.value} />
+                    ) : (
+                      <InfoCircleIcon color={blueInfoColor.value} />
+                    )}
+                  </Button>
+                )}
+              </div>
+            </Popover>
+          </InputGroup>
+        </Tooltip>
       </FormGroup>
     );
   },

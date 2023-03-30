@@ -15,27 +15,20 @@ import {
 } from '@patternfly/react-table';
 import { TFunction } from 'react-i18next';
 import { secretGVK } from '../../constants';
-import {
-  ArgoCDSecretData,
-  ClusterTemplate,
-  DecodedSecret,
-  RowProps,
-  TableColumn,
-} from '../../types/resourceTypes';
+import { ArgoCDSecretData, DecodedSecret, RowProps, TableColumn } from '../../types/resourceTypes';
 import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
-import { useClusterTemplates } from '../../hooks/useClusterTemplates';
 
 import useDialogsReducer from '../../hooks/useDialogsReducer';
-import EditRepositoryDialog from '../HelmRepositories/EditRepositoryDialog';
+import EditRepositoryDialog from './EditRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
 import {
   HelmChartRepositoryListResult,
   useHelmChartRepositories,
 } from '../../hooks/useHelmChartRepositories';
-import RepositoryErrorPopover from '../HelmRepositories/RepositoryErrorPopover';
-import { WatchK8sResult } from '../../hooks/k8s';
+import RepositoryErrorPopover from './RepositoryErrorPopover';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
+import { useClusterTemplatesFromRepo } from '../../hooks/useClusterTemplates';
 
 const getTableColumns = (t: TFunction): TableColumn[] => [
   {
@@ -76,22 +69,15 @@ const RepositoryActionDialogIds: RepositoryActionDialogIds[] = [
 
 type RepositoryRowProps = RowProps<DecodedSecret<ArgoCDSecretData>> & {
   helmChartRepositoriesResult: HelmChartRepositoryListResult;
-  clusterTemplatesResult: WatchK8sResult<ClusterTemplate[]>;
 };
 
-export const RepositoryRow = ({
-  obj,
-  helmChartRepositoriesResult,
-  clusterTemplatesResult,
-}: RepositoryRowProps) => {
+export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRowProps) => {
   const { t } = useTranslation();
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
   const { repos, loaded, error } = helmChartRepositoriesResult;
-  const [templates, templatesLoaded, templatesLoadError] = clusterTemplatesResult;
-
-  const templatesFromRepo = templates.filter(
-    (t) => t.spec.clusterDefinition.source.repoURL === obj.data?.url,
+  const [templatesFromRepo, templatesLoaded, templatesLoadError] = useClusterTemplatesFromRepo(
+    obj.data.url,
   );
 
   let repoChartsCount: string | number = '-';
@@ -113,6 +99,11 @@ export const RepositoryRow = ({
       {
         title: t('Remove'),
         onClick: () => openDialog('deleteDialog'),
+        disabled: templatesFromRepo.length > 0,
+        description:
+          templatesFromRepo.length > 0
+            ? t('To remove the repository, delete the templates using it')
+            : undefined,
       },
     ];
   };
@@ -159,10 +150,12 @@ export const RepositoryRow = ({
         </CellLoader>
       </Td>
       <Td isActionCell>
-        <ActionsColumn
-          items={getRowActions()}
-          actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
-        />
+        <CellLoader loaded={templatesLoaded}>
+          <ActionsColumn
+            items={getRowActions()}
+            actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
+          />
+        </CellLoader>
       </Td>
       <DeleteDialog
         isOpen={isDialogOpen('deleteDialog')}
@@ -183,7 +176,6 @@ export const RepositoryRow = ({
 
 const RepositoriesTable = ({ secrets }: { secrets: DecodedSecret<ArgoCDSecretData>[] }) => {
   const helmChartRepositoriesResult = useHelmChartRepositories();
-  const clusterTemplatesResult = useClusterTemplates();
   const { t } = useTranslation();
 
   return (
@@ -204,7 +196,6 @@ const RepositoriesTable = ({ secrets }: { secrets: DecodedSecret<ArgoCDSecretDat
           <RepositoryRow
             key={secret.data?.name}
             obj={secret}
-            clusterTemplatesResult={clusterTemplatesResult}
             helmChartRepositoriesResult={helmChartRepositoriesResult}
           />
         ))}

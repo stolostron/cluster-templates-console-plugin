@@ -1,67 +1,56 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
-import { ArgoCDSecretData, Secret } from '../../types/resourceTypes';
+import { ArgoCDSecretData, RepositoryType, Secret } from '../../types/resourceTypes';
 import { k8sCreate, useK8sModels } from '@openshift-console/dynamic-plugin-sdk';
 import { ARGOCD_SECRET_LABELS, secretGVK } from '../../constants';
 import { Formik } from 'formik';
 import { useTranslation } from '../../hooks/useTranslation';
-import { getErrorMessage } from '../../utils/utils';
 import ModalDialogLoader from '../../helpers/ModalDialogLoader';
-import { getValidationSchema } from './utils';
-import { FormError, RepositoryFormValues } from './types';
+import { RepositoryFormValues } from './types';
 import RepositoryForm from './RepositoryForm';
 import { getDecodedSecretData } from '../../utils/secrets';
 import useArgocdNamespace from '../../hooks/useArgocdNamespace';
+import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
+import useRepositoryFormValidationSchema from './useRepositoryFormValidationSchema';
 
 type NewRepositoryDialogProps = {
   closeDialog: () => void;
-  onCreate?: (secretData: ArgoCDSecretData) => Promise<void>;
+  afterCreate?: (secretData: ArgoCDSecretData) => void;
+  predefinedType?: RepositoryType;
 };
 
-export function getInitialValues(): RepositoryFormValues {
+export function getInitialValues(type: RepositoryType): RepositoryFormValues {
   return {
     useCredentials: false,
     name: '',
     url: '',
-    type: 'helm',
+    type,
     username: '',
     password: '',
-    tlsClientCertData: '',
-    tlsClientCertKey: '',
-    insecure: false,
-    description: '',
   };
 }
 
-const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps) => {
+const NewRepositoryDialog = ({
+  closeDialog,
+  afterCreate,
+  predefinedType,
+}: NewRepositoryDialogProps) => {
   const { t } = useTranslation();
-  const [formError, setFormError] = React.useState<FormError | undefined>();
+  const [submitError, setSubmitError] = React.useState<unknown>();
   const [namespace, namespaceLoaded, error] = useArgocdNamespace();
+  const [validationSchema, validationSchemaLoaded, validationSchemaError] =
+    useRepositoryFormValidationSchema(true);
   const [{ Secret: secretModel }] = useK8sModels();
-
+  const { refetch } = useHelmChartRepositories();
   const handleSubmit = async (formValues: RepositoryFormValues) => {
-    const {
-      name,
-      url,
-      type,
-      description,
-      useCredentials,
-      username,
-      password,
-      tlsClientCertData,
-      tlsClientCertKey,
-      insecure,
-    } = formValues;
+    const { name, url, type, useCredentials, username, password } = formValues;
 
-    setFormError(undefined);
+    setSubmitError(undefined);
 
-    const baseSecretData = { name, url, type, description };
+    const baseSecretData = { name, url, type };
     const authenticatedSecretData = {
       username,
       password,
-      tlsClientCertData,
-      tlsClientCertKey,
-      insecure,
     };
 
     const createArgoCDSecret = k8sCreate<Secret>({
@@ -83,14 +72,14 @@ const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps
 
     try {
       const secret = await createArgoCDSecret;
+      if (formValues.type === 'helm') {
+        await refetch();
+      }
       const decodedSecretData = getDecodedSecretData<ArgoCDSecretData>(secret.data);
-      !!onCreate && (await onCreate(decodedSecretData));
+      !!afterCreate && afterCreate(decodedSecretData);
       closeDialog();
     } catch (e) {
-      setFormError({
-        title: t('Something went wrong'),
-        message: getErrorMessage(e),
-      });
+      setSubmitError(e);
     }
   };
 
@@ -104,13 +93,21 @@ const NewRepositoryDialog = ({ closeDialog, onCreate }: NewRepositoryDialogProps
       showClose
       hasNoBodyWrapper
     >
-      <ModalDialogLoader loaded={namespaceLoaded} error={error}>
+      <ModalDialogLoader
+        loaded={namespaceLoaded && validationSchemaLoaded}
+        error={error || validationSchemaError}
+      >
         <Formik<RepositoryFormValues>
-          initialValues={getInitialValues()}
+          initialValues={getInitialValues(predefinedType || 'git')}
           onSubmit={handleSubmit}
-          validationSchema={getValidationSchema(t)}
+          validationSchema={validationSchema}
           component={(props) => (
-            <RepositoryForm {...props} formError={formError} closeDialog={closeDialog} />
+            <RepositoryForm
+              {...props}
+              submitError={submitError}
+              closeDialog={closeDialog}
+              predefinedType={predefinedType}
+            />
           )}
         />
       </ModalDialogLoader>
