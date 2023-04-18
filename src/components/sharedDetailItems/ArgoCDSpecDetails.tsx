@@ -21,11 +21,15 @@ const ArgoCDSpecDetails = ({ argocdSpec }: { argocdSpec: ArgoCDSpec }) => {
   if (argocdSpec.source.targetRevision) {
     parts.push(argocdSpec.source.targetRevision);
   }
+  const href =
+    secret?.data.type === 'helm'
+      ? `${argocdSpec.source.repoURL}/index.yaml`
+      : argocdSpec.source.repoURL;
   return (
     <CellLoader loaded={loaded} error={error}>
       {secret && secret.metadata?.name ? (
         <Text>
-          <ExternalLink href={argocdSpec.source.repoURL}>{secret.metadata?.name}</ExternalLink>
+          <ExternalLink href={href}>{secret.metadata?.name}</ExternalLink>
           {argocdSpec.source.chart && <span> / {argocdSpec.source.chart}</span>}
           {argocdSpec.source.targetRevision && <span> / {argocdSpec.source.targetRevision}</span>}
         </Text>

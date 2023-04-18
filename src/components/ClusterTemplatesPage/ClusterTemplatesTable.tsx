@@ -72,7 +72,7 @@ function getTableColumns(t: TFunction): TableColumn[] {
 export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj }) => {
   const { t } = useTranslation();
   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
-  const actions = useClusterTemplateActions(obj, () => setDeleteOpen(true), true);
+  const actions = useClusterTemplateActions(obj, () => setDeleteOpen(true));
 
   const columns = React.useMemo(() => getTableColumns(t), [t]);
 

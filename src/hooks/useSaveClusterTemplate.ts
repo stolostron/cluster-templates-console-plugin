@@ -9,7 +9,7 @@ import { ClusterTemplate } from '../types/resourceTypes';
 export const useSaveClusterTemplate = (
   originalClusterTemplate?: ClusterTemplate,
 ): [(values: WizardFormikValues) => Promise<boolean>, boolean] => {
-  const [createNamespace, loadingCreateNamespace] = useCreateNamespace();
+  const [createNamespace, createNamespaceLoaded] = useCreateNamespace();
   const [clusterTemplateModel, clusterTemplateModelLoading] = useK8sModel(clusterTemplateGVK);
 
   const saveClusterTemplate = async (values: WizardFormikValues) => {
@@ -30,5 +30,5 @@ export const useSaveClusterTemplate = (
     await Promise.all(promises);
     return true;
   };
-  return [saveClusterTemplate, !clusterTemplateModelLoading && !loadingCreateNamespace];
+  return [saveClusterTemplate, !clusterTemplateModelLoading && createNamespaceLoaded];
 };

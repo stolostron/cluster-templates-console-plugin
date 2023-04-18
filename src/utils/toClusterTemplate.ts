@@ -35,7 +35,7 @@ const getArgoSpec = (
   destinationServer: string,
   destinationNamespace: string | undefined,
   source: ApplicationSource,
-  syncPolicy?: ArgoCDSpec['syncPolicy'],
+  syncPolicy: ArgoCDSpec['syncPolicy'],
 ): ArgoCDSpec => {
   return {
     source,
@@ -84,6 +84,7 @@ export const getClusterDefinition = (values: WizardFormikValues): ArgoCDSpec =>
       ? INSTANCE_NAMESPACE_VAR
       : values.installation.destinationNamespace,
     getArgoHelmSource(values.installation.source),
+    { automated: {} },
   );
 
 export const getAnnotations = (

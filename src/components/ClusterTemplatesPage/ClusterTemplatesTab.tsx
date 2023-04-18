@@ -1,4 +1,4 @@
-import { Button, Card, Toolbar, ToolbarContent } from '@patternfly/react-core';
+import { Button, Toolbar, ToolbarContent } from '@patternfly/react-core';
 import React from 'react';
 import EmptyPageState from '../../helpers/EmptyPageState';
 import TableLoader from '../../helpers/TableLoader';
@@ -45,13 +45,11 @@ const ClusterTemplatesTab = () => {
           <ClusterTemplatesTable clusterTemplates={clusterTemplates} />
         </>
       ) : (
-        <Card>
-          <EmptyPageState
-            title={t('You have no cluster templates')}
-            message={t('Click Create a template to create the first one')}
-            action={<CreateClusterTemplateButton />}
-          />
-        </Card>
+        <EmptyPageState
+          title={t('You have no cluster templates')}
+          message={t('Click Create a template to create the first one')}
+          action={<CreateClusterTemplateButton />}
+        />
       )}
     </TableLoader>
   );

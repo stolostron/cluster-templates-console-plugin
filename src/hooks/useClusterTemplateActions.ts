@@ -2,18 +2,20 @@ import { DropdownItemProps } from '@patternfly/react-core';
 
 import { ClusterTemplate } from '../types/resourceTypes';
 import { isRedHatTemplate } from '../utils/clusterTemplateDataUtils';
-import downloadInstanceYaml from '../utils/instanceYaml';
 import { useNavigation } from './useNavigation';
 import { useTranslation } from './useTranslation';
 
 const useClusterTemplateActions = (
   clusterTemplate: ClusterTemplate,
   onDelete: () => void,
-  includeDonwnloadInstance: boolean,
 ): DropdownItemProps[] => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const actions: DropdownItemProps[] = [
+    {
+      title: t('Create a cluster'),
+      onClick: () => navigation.goToInstanceCreatePage(clusterTemplate),
+    },
     {
       title: t('Edit'),
       disabled: isRedHatTemplate(clusterTemplate),
@@ -31,12 +33,7 @@ const useClusterTemplateActions = (
       onClick: onDelete,
     },
   ];
-  if (includeDonwnloadInstance) {
-    actions.push({
-      title: t('Download instance YAML'),
-      onClick: () => downloadInstanceYaml(clusterTemplate),
-    });
-  }
+
   return actions;
 };
 

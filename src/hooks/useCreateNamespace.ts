@@ -35,5 +35,5 @@ export const useCreateNamespace = (): [(name: string) => Promise<void>, boolean]
       throw err;
     }
   };
-  return [createNamespace, loading];
+  return [createNamespace, !loading];
 };

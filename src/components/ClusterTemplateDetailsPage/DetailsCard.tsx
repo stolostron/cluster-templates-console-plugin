@@ -8,8 +8,6 @@ import {
   DescriptionListTerm,
   Flex,
   FlexItem,
-  Grid,
-  GridItem,
 } from '@patternfly/react-core';
 
 import {
@@ -34,12 +32,7 @@ export type ListItem = {
 
 const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   return (
-    <DescriptionList
-      isHorizontal
-      horizontalTermWidthModifier={{
-        default: '20ch',
-      }}
-    >
+    <DescriptionList isHorizontal>
       {items.map(({ label, action, value }) => (
         <DescriptionListGroup label={label} key={label}>
           <DescriptionListTerm data-testid={`${label} label`}>
@@ -61,7 +54,7 @@ const DetailsCard: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTe
   const { t } = useTranslation();
   const name = clusterTemplate.metadata?.name;
   const [showEditLabels, setShowEditLabels] = React.useState<boolean>(false);
-  const leftItems: ListItem[] = [
+  const items: ListItem[] = [
     {
       label: t('Template name'),
       value: name,
@@ -69,6 +62,18 @@ const DetailsCard: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTe
     {
       label: t('Created'),
       value: <Timestamp timestamp={clusterTemplate.metadata?.creationTimestamp || ''} />,
+    },
+    {
+      label: t('Installation settings'),
+      value: <InstallationDetails clusterTemplate={clusterTemplate} />,
+    },
+    {
+      label: t('Post installation'),
+      value: <PostInstallationDetails clusterSetup={clusterTemplate.spec.clusterSetup} />,
+    },
+    {
+      label: t('Vendor'),
+      value: <ClusterTemplateVendorLabel clusterTemplate={clusterTemplate} />,
     },
     {
       label: t('Labels'),
@@ -84,31 +89,9 @@ const DetailsCard: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTe
     },
   ];
 
-  const rightItems: ListItem[] = [
-    {
-      label: t('Installation settings'),
-      value: <InstallationDetails clusterTemplate={clusterTemplate} />,
-    },
-    {
-      label: t('Post installation'),
-      value: <PostInstallationDetails clusterSetup={clusterTemplate.spec.clusterSetup} />,
-    },
-    {
-      label: t('Vendor'),
-      value: <ClusterTemplateVendorLabel clusterTemplate={clusterTemplate} />,
-    },
-  ];
-
   return (
     <>
-      <Grid sm={12} md={6}>
-        <GridItem>
-          <List items={leftItems} />
-        </GridItem>
-        <GridItem>
-          <List items={rightItems} />
-        </GridItem>
-      </Grid>
+      <List items={items} />
       {showEditLabels && (
         <EditLabelsDialog
           resource={clusterTemplate}

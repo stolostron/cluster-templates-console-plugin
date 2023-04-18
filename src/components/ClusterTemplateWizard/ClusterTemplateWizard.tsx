@@ -133,12 +133,6 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
   const [saveClusterTemplate, saveClusterTemplateLoaded] = useSaveClusterTemplate(clusterTemplate);
   const { t } = useTranslation();
 
-  const reviewStep = (
-    <Loader loaded={saveClusterTemplateLoaded}>
-      <ReviewStep />
-    </Loader>
-  );
-
   const steps: WizardStep[] = [
     {
       name: t('Details'),
@@ -160,7 +154,7 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
     },
     {
       name: t('Review'),
-      component: reviewStep,
+      component: <ReviewStep />,
       id: StepId.REVIEW,
       canJumpTo: activeStepIndex === 3,
     },
@@ -178,7 +172,10 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
   };
 
   return (
-    <Loader loaded={initialValuesLoaded && validationSchemaLoaded} error={validationSchemaError}>
+    <Loader
+      loaded={initialValuesLoaded && validationSchemaLoaded && saveClusterTemplateLoaded}
+      error={validationSchemaError}
+    >
       {!!initialValues && (
         <Formik<WizardFormikValues>
           initialValues={initialValues}

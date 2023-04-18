@@ -1,4 +1,4 @@
-import { Button, Card, Toolbar, ToolbarContent } from '@patternfly/react-core';
+import { Button, Toolbar, ToolbarContent } from '@patternfly/react-core';
 import React from 'react';
 import EmptyPageState from '../../helpers/EmptyPageState';
 import TableLoader from '../../helpers/TableLoader';
@@ -39,13 +39,11 @@ const QuotasTab = () => {
           <QuotasTable quotas={quotas} />
         </>
       ) : (
-        <Card>
-          <EmptyPageState
-            title={t('You have no quota')}
-            message={t('Click Create a quota to add the first one')}
-            action={<CreateQuotaButton />}
-          />
-        </Card>
+        <EmptyPageState
+          title={t('No cluster created from this template yet')}
+          message={t('Create a cluster from this template')}
+          action={<CreateQuotaButton />}
+        />
       )}
     </TableLoader>
   );
