@@ -8,7 +8,7 @@ oc get oauthclient console-oauth-client -o jsonpath='{.secret}' > ocp-console/co
 oc get secrets -n default --field-selector type=kubernetes.io/service-account-token -o json | \
     jq '.items[0].data."ca.crt"' -r | python -m base64 -d > ocp-console/ca.crt
 
-CONSOLE_IMAGE=${CONSOLE_IMAGE:="quay.io/openshift/origin-console:latest"}
+CONSOLE_IMAGE=${CONSOLE_IMAGE:="quay.io/openshift/origin-console:4.12"}
 CONSOLE_PORT=${CONSOLE_PORT:=9000}
 
 echo "Starting local OpenShift console..."

@@ -53,8 +53,7 @@
       }
     },
     "flags": {
-      "required": ["CLUSTER_TEMPLATES_FLAG"],
-      "disallowed": ["MCE_FLAG"]
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
     }
   },
   {
@@ -116,20 +115,6 @@
     }
   },
   {
-    "type": "console.navigation/href",
-    "properties": {
-      "id": "admin-cluster-templates-console",
-      "perspective": "admin",
-      "section": "compute",
-      "name": "%plugin__clustertemplates-plugin~Cluster templates%",
-      "href": "/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate",
-      "insertAfter": "nodes"
-    },
-    "flags": {
-      "required": ["CLUSTER_TEMPLATES_FLAG"]
-    }
-  },
-  {
     "type": "console.resource/create",
     "properties": {
       "model": {
@@ -160,6 +145,18 @@
     "properties": {
       "provider": { "$codeRef": "repositoriesContext.repositoriesContextProvider" },
       "useValueHook": { "$codeRef": "repositoriesContext.useHelmRepositoriesState" }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.page/route",
+    "properties": {
+      "path": [
+        "/k8s/cluster/clustertemplate.openshift.io~v1alpha1~ClusterTemplate/:name/~newinstance"
+      ],
+      "component": { "$codeRef": "createInstance.default" }
     },
     "flags": {
       "required": ["CLUSTER_TEMPLATES_FLAG"]

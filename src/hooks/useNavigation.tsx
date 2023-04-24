@@ -32,6 +32,9 @@ export const getClusterTemplatesPageUrl = (tab?: ClusterTemplatePageTab) => {
 
 export const getQuotasPageUrl = () => getClusterTemplatesPageUrl('quotas');
 
+export const getNewInstancePageUrl = (template: ClusterTemplate) =>
+  `${getResourceDetailsPageUrl(clusterTemplateGVK, template)}/~newinstance`;
+
 export const useNavigation = () => {
   const history = useHistory();
   return {
@@ -48,5 +51,7 @@ export const useNavigation = () => {
       history.push(getResourceDetailsPageUrl(clusterTemplateQuotaGVK, quota)),
     goToClusterTemplateDetailsPage: (clusterTemplate: ClusterTemplate, tab?: string) =>
       history.push(getResourceDetailsPageUrl(clusterTemplateGVK, clusterTemplate, tab)),
+    goToInstanceCreatePage: (template: ClusterTemplate) =>
+      history.push(getNewInstancePageUrl(template)),
   };
 };

@@ -84,7 +84,8 @@
       "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx",
       "createQuota": "./components/Quotas/QuotaEditor/QuotaFormPage.tsx",
       "editQuota": "./components/Quotas/QuotaEditor/QuotaEditPage.tsx",
-      "repositoriesContext": "./contexts/helmRepositoriesContext.ts"
+      "repositoriesContext": "./contexts/helmRepositoriesContext.ts",
+      "createInstance": "./components/Instances/InstanceCreatePage.tsx"
     },
     "dependencies": {
       "@console/pluginAPI": "^4.11"

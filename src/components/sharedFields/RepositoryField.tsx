@@ -41,25 +41,38 @@ const RepositoryField = ({
   const [isOpen, setIsOpen] = React.useState<boolean>(false);
   const [repos, loaded, reposLoadError] = useArgoCDSecrets();
   const [newRepositoryDialogOpen, setNewRepositoryDialogOpen] = React.useState(false);
+  const [selectedRepoName, setSelectedRepoName] = React.useState<string>('');
   // t('Failed to load repository secrets')
   useAddAlertOnError(reposLoadError, 'Failed to load repository Secrets');
   const errorMsg = formError || error;
-  const selectedRepo = url ? repos.find((repo) => repo.data.url === url) : undefined;
 
   React.useEffect(() => {
-    if (loaded && url && !selectedRepo) {
-      // t('Failed to find the selected repository')
-      addAlert({
-        title: 'Failed to find the selected repository',
-        message: `Failed to find a Secret matching the label argocd.argoproj.io/secret-type for accessing URL ${humanizeUrl(
-          url,
-        )}. Use 'Add a repository' to create a Secret with this URL`,
-      });
-      setValue('');
+    //initialize selected repo name
+    if (!loaded || selectedRepoName) {
+      return;
     }
-  }, [addAlert, loaded, selectedRepo, setValue, url]);
+    if (url) {
+      const repo = repos.find((repo) => repo.data.url === url);
+      if (!repo) {
+        // t('Failed to find the selected repository')
+        addAlert({
+          title: 'Failed to find the selected repository',
+          message: `Failed to find a Secret matching the label argocd.argoproj.io/secret-type for accessing URL ${humanizeUrl(
+            url,
+          )}. Use 'Add a repository' to create a Secret with this URL`,
+        });
+        setValue('');
+      } else {
+        setSelectedRepoName(repo.data.name || '');
+      }
+    } else if (repos.length === 1) {
+      setValue(repos[0].data.url || '');
+      setSelectedRepoName(repos[0].data.name || '');
+    }
+  }, [addAlert, loaded, selectedRepoName, setValue, url, setSelectedRepoName, repos]);
 
   const onNewRepoCreated = (argoCDSecretData: ArgoCDSecretData) => {
+    setSelectedRepoName(argoCDSecretData.name || '');
     setValue(argoCDSecretData.url || '', true);
   };
 
@@ -75,6 +88,7 @@ const RepositoryField = ({
     } else {
       setValue(repo.data.url || '', true);
     }
+    setSelectedRepoName(value as string);
     setIsOpen(false);
   };
 
@@ -101,7 +115,7 @@ const RepositoryField = ({
           onToggle={() => setIsOpen(!isOpen)}
           onSelect={onSelect}
           isOpen={isOpen}
-          selections={selectedRepo ? selectedRepo.data.name : ''}
+          selections={selectedRepoName}
           typeAheadAriaLabel={t('Type a repository name')}
           placeholderText={t('Select a repository')}
           toggleId={fieldName}

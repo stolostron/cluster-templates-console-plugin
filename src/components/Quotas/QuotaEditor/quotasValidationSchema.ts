@@ -6,21 +6,14 @@ import {
   array as arraySchema,
   string as stringSchema,
 } from 'yup';
-import { useAllQuotas } from '../../../hooks/useQuotas';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { AllowedTemplateFormValues, QuotaFormValues } from '../../../types/quotaFormTypes';
 import { nameSchema, positiveIntegerSchema } from '../../../utils/commonValidationSchemas';
 
-const useQuotasValidationSchema = (
-  isCreateFlow: boolean,
-): [SchemaOf<QuotaFormValues> | undefined, boolean, unknown] => {
+const useQuotasValidationSchema = (isCreateFlow: boolean): SchemaOf<QuotaFormValues> => {
   const { t } = useTranslation();
-  const [allTemplates, loaded, error] = useAllQuotas();
 
   const validationSchema: SchemaOf<QuotaFormValues> | undefined = React.useMemo(() => {
-    if (!loaded || error) {
-      return undefined;
-    }
     const requiredMsg = t('Required');
 
     const allowedTemplateSchema: SchemaOf<AllowedTemplateFormValues> = objectSchema().shape({
@@ -33,14 +26,7 @@ const useQuotasValidationSchema = (
 
     return objectSchema().shape({
       name: isCreateFlow
-        ? stringSchema()
-            .concat(
-              nameSchema(
-                t,
-                allTemplates.map((template) => template.metadata?.name || ''),
-              ),
-            )
-            .required(requiredMsg)
+        ? stringSchema().concat(nameSchema(t)).required(requiredMsg)
         : stringSchema().required(),
       limitByBudget: booleanSchema().required(),
       namespace: stringSchema().required(requiredMsg),
@@ -48,8 +34,8 @@ const useQuotasValidationSchema = (
       templates: arraySchema().of(allowedTemplateSchema),
       isCreateFlow: booleanSchema().required(),
     });
-  }, [allTemplates, loaded, error, t, isCreateFlow]);
-  return [validationSchema, loaded, error];
+  }, [t, isCreateFlow]);
+  return validationSchema;
 };
 
 export default useQuotasValidationSchema;

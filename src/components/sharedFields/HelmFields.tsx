@@ -13,6 +13,7 @@ import { WizardFormikValues } from '../../types/wizardFormTypes';
 import set from 'lodash/set';
 import PopoverHelpIcon from '../../helpers/PopoverHelpIcon';
 import { humanizeErrorMsg } from '../../utils/humanizing';
+import { InputField } from 'formik-pf';
 const WithFlex = ({ flexItems }: { flexItems: React.ReactNode[] }) => {
   return (
     <Flex>
@@ -75,13 +76,15 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
 
   React.useEffect(() => {
     if (error) {
-      // t('Failed to load the Helm repository indexes')
+      // t('Failed to load the Helm repository index. Options for charts and versions are not available. You can still set these fields and continue.')
       addAlert({
-        title: 'Failed to load the Helm repository indexes',
+        title: t(
+          'Failed to load the Helm repository index. Options for charts and versions are not available. You can still set these fields and continue.',
+        ),
         message: getErrorMessage(error),
       });
     }
-  }, [addAlert, error]);
+  }, [addAlert, error, t]);
 
   const updateChart = React.useCallback(
     (chart: string) => {
@@ -106,6 +109,59 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
     prevUrl.current = url;
   }, [updateChart, url, prevUrl, chartToVersions]);
 
+  const chartField = error ? (
+    <InputField
+      name={chartFieldName}
+      isRequired
+      label={t('Helm chart')}
+      key={chartFieldName}
+      placeholder={t('Enter the chart')}
+      fieldId={''}
+    />
+  ) : (
+    <SelectField
+      name={chartFieldName}
+      options={
+        chartToVersions
+          ? Object.keys(chartToVersions).sort((key1, key2) => key1.localeCompare(key2))
+          : []
+      }
+      isRequired
+      label={t('Helm chart')}
+      isDisabled={!chartToVersions}
+      key={chartFieldName}
+      placeholderText={!chartToVersions ? t('Select a repository first') : t('Select a chart')}
+      onSelectValue={(chart: string | SelectOptionObject) => {
+        updateChart(chart as string);
+      }}
+      loaded={loaded}
+    />
+  );
+
+  const versionField = error ? (
+    <InputField
+      name={versionFieldName}
+      isRequired
+      label={t('Helm chart version')}
+      key={versionFieldName}
+      placeholder={t('Enter a version')}
+      fieldId={''}
+    />
+  ) : (
+    <SelectField
+      name={versionFieldName}
+      label={t('Helm chart version')}
+      key={versionFieldName}
+      isDisabled={!chartToVersions || !chart}
+      options={chart && chartToVersions && chartToVersions[chart] ? chartToVersions[chart] : []}
+      isRequired
+      placeholderText={
+        !selectedRepo ? t('Select a repository first') : !chart ? t('Select a chart first') : ''
+      }
+      loaded={loaded}
+    />
+  );
+
   const fields = [
     <RepositoryField
       fieldName={`${fieldName}.url`}
@@ -123,35 +179,8 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
       type="helm"
       error={getRepoErrorMsg()}
     />,
-    <SelectField
-      name={chartFieldName}
-      options={
-        chartToVersions
-          ? Object.keys(chartToVersions).sort((key1, key2) => key1.localeCompare(key2))
-          : []
-      }
-      isRequired
-      label={t('Helm chart')}
-      isDisabled={!chartToVersions}
-      key={chartFieldName}
-      placeholderText={!chartToVersions ? t('Select a repository first') : t('Select a chart')}
-      onSelectValue={(chart: string | SelectOptionObject) => {
-        updateChart(chart as string);
-      }}
-      loaded={loaded}
-    />,
-    <SelectField
-      name={versionFieldName}
-      label={t('Helm chart version')}
-      key={versionFieldName}
-      isDisabled={!chartToVersions || !chart}
-      options={chart && chartToVersions && chartToVersions[chart] ? chartToVersions[chart] : []}
-      isRequired
-      placeholderText={
-        !selectedRepo ? t('Select a repository first') : !chart ? t('Select a chart first') : ''
-      }
-      loaded={loaded}
-    />,
+    chartField,
+    versionField,
   ];
   return horizontal ? <WithFlex flexItems={fields} /> : <>{fields}</>;
 };

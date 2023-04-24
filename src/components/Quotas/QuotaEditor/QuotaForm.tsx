@@ -49,8 +49,7 @@ const QuotaFormToolbar = ({
 const QuotaForm = ({ quota }: { quota?: Quota }) => {
   const { t } = useTranslation();
   const [initialValues, initialValuesLoaded, initialValuesError] = useQuotaFormValues(quota);
-  const [validationSchema, validationSchemaLoaded, validationSchemaError] =
-    useQuotasValidationSchema(!quota);
+  const validationSchema = useQuotasValidationSchema(!quota);
   const [save, saveLoaded] = useSaveQuota(quota);
   const [submitError, setSubmitError] = React.useState<unknown>();
   const history = useHistory();
@@ -67,8 +66,8 @@ const QuotaForm = ({ quota }: { quota?: Quota }) => {
     <AlertsContextProvider>
       <SkeletonLoader
         numRows={8}
-        loaded={saveLoaded && initialValuesLoaded && validationSchemaLoaded}
-        error={initialValuesError || validationSchemaError}
+        loaded={saveLoaded && initialValuesLoaded}
+        error={initialValuesError}
       >
         {initialValues && (
           <Formik<QuotaFormValues>

@@ -110,11 +110,7 @@ const PageHeader = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) =
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
   const isRedhatTemplate =
     getClusterTemplateVendor(clusterTemplate) === ClusterTemplateVendor.REDHAT;
-  const actions = useClusterTemplateActions(
-    clusterTemplate,
-    () => setDeleteDialogOpen(true),
-    false,
-  );
+  const actions = useClusterTemplateActions(clusterTemplate, () => setDeleteDialogOpen(true));
   return (
     <>
       <PageSection type="breadcrumb">
