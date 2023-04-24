@@ -9,7 +9,6 @@ import {
 } from 'yup';
 import { useTranslation } from '../../hooks/useTranslation';
 import { InstanceFormValues, InstanceParameter } from '../../types/instanceFormTypes';
-import { ArgoCDSpec } from '../../types/resourceTypes';
 import { nameSchema } from '../../utils/commonValidationSchemas';
 
 const useInstanceValidationSchema = (): SchemaOf<InstanceFormValues> => {
@@ -21,7 +20,10 @@ const useInstanceValidationSchema = (): SchemaOf<InstanceFormValues> => {
     const parametersSchema: SchemaOf<InstanceParameter[]> = arraySchema().of(
       objectSchema().shape({
         name: stringSchema().required(requiredMsg),
-        value: mixedSchema(),
+        value: mixedSchema().when('required', {
+          is: true,
+          then: (schema) => schema.required(requiredMsg),
+        }),
         required: booleanSchema().required(),
         title: stringSchema().required(),
         description: stringSchema(),
@@ -30,19 +32,16 @@ const useInstanceValidationSchema = (): SchemaOf<InstanceFormValues> => {
       }),
     );
 
-    const argoSchema = objectSchema() as SchemaOf<ArgoCDSpec>;
-
     return objectSchema().shape({
       name: nameSchema(t).required(requiredMsg),
       namespace: stringSchema().required(requiredMsg),
       installation: objectSchema().shape({
-        argoSpec: argoSchema,
+        name: stringSchema().required(),
         parameters: parametersSchema,
       }),
       postInstallation: arraySchema().of(
         objectSchema().shape({
           name: stringSchema().required(),
-          argoSpec: argoSchema,
           parameters: parametersSchema,
         }),
       ),

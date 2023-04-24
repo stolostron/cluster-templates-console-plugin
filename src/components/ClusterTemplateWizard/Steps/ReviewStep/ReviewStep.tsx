@@ -13,10 +13,9 @@ import React from 'react';
 import { useTranslation } from '../../../../hooks/useTranslation';
 import { WizardFormikValues } from '../../../../types/wizardFormTypes';
 
-import { PostInstallationDetails } from '../../../sharedDetailItems/clusterTemplateDetailItems';
 import ErrorBoundary from '../../../../helpers/ErrorBoundary';
 import ArgoCDSpecDetails from '../../../sharedDetailItems/ArgoCDSpecDetails';
-import { getClusterDefinition, getClusterSetup } from '../../../../utils/toClusterTemplate';
+import { toInstallationArgoSpec, toPostInstallationArgoSpec } from '../../../../utils/toArgoSpec';
 
 const ReviewStep = () => {
   const { values } = useFormikContext<WizardFormikValues>();
@@ -38,13 +37,18 @@ const ReviewStep = () => {
             <DescriptionListGroup>
               <DescriptionListTerm>{t('Installation settings')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <ArgoCDSpecDetails argocdSpec={getClusterDefinition(values)} />
+                <ArgoCDSpecDetails argocdSpec={toInstallationArgoSpec(values.installation)} />
               </DescriptionListDescription>
             </DescriptionListGroup>
             <DescriptionListGroup>
               <DescriptionListTerm>{t('Post installation')}</DescriptionListTerm>
               <DescriptionListDescription>
-                <PostInstallationDetails clusterSetup={getClusterSetup(values)} />
+                {values.postInstallation.map((postInstallationValues, index) => (
+                  <ArgoCDSpecDetails
+                    argocdSpec={toPostInstallationArgoSpec(postInstallationValues)}
+                    key={index}
+                  />
+                ))}
               </DescriptionListDescription>
             </DescriptionListGroup>
           </DescriptionList>

@@ -4,15 +4,15 @@ import { CheckboxField, InputField, NumberSpinnerField } from 'formik-pf';
 import React from 'react';
 import FormSection from '../../helpers/FormSection';
 import { InstanceParameter, InstanceParametersFormValues } from '../../types/instanceFormTypes';
-import { ArgoCDSpec } from '../../types/resourceTypes';
-import ArgoCDSpecDetails from '../sharedDetailItems/ArgoCDSpecDetails';
-import { FieldProps } from '../../helpers/types';
 
-const SectionTitle = ({ title, argoSpec }: { title: string; argoSpec: ArgoCDSpec }) => (
+import { FieldProps } from '../../helpers/types';
+import { ApplicationSetLink } from '../sharedDetailItems/clusterTemplateDetailItems';
+
+const SectionTitle = ({ title, appSetName }: { title: string; appSetName: string }) => (
   <Flex>
     <FlexItem spacer={{ default: 'spacerSm' }}>{`${title}:`}</FlexItem>
     <FlexItem>
-      <ArgoCDSpecDetails argocdSpec={argoSpec} />
+      <ApplicationSetLink appSetName={appSetName} />
     </FlexItem>
   </Flex>
 );
@@ -52,7 +52,7 @@ const InstanceParametersFormFields = ({
     return null;
   }
   return (
-    <FormSection title={<SectionTitle title={title} argoSpec={field.value.argoSpec} />}>
+    <FormSection title={<SectionTitle title={title} appSetName={field.value.name} />}>
       {field.value.parameters.map((param, idx) => {
         const name = `${fieldName}.parameters[${idx}]`;
         return <InstanceParameterField key={name} fieldName={name} />;

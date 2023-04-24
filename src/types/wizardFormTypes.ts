@@ -29,6 +29,7 @@ export type InstallationFormikValues = {
   useInstanceNamespace: boolean;
   source: HelmSourceFormikValues;
   destinationNamespace?: string;
+  appSetName: string;
 };
 
 export type PostInstallationFormikValues = {
@@ -37,6 +38,7 @@ export type PostInstallationFormikValues = {
   createNamespace: boolean;
   destinationNamespace?: string;
   source: GitRepoSourceFormikValues | HelmSourceFormikValues;
+  appSetName: string;
 };
 
 export const isHelmSource = (

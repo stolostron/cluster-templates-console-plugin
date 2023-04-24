@@ -1,5 +1,5 @@
 import { K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
-import { ClusterTemplate, ClusterTemplateVendor, ApplicationSource } from '../types/resourceTypes';
+import { DeserializedClusterTemplate, ClusterTemplateVendor } from '../types/resourceTypes';
 
 const TEMPLATES_LABEL_PREFIX = 'clustertemplates.openshift.io';
 
@@ -12,7 +12,7 @@ const getLabelValue = (resource: K8sResourceCommon, labelName: string) =>
   resource.metadata?.labels?.[labelName];
 
 export const getClusterTemplateVendor = (
-  clusterTemplate: ClusterTemplate,
+  clusterTemplate: DeserializedClusterTemplate,
 ): ClusterTemplateVendor | undefined => {
   const labelValue = getLabelValue(clusterTemplate, TEMPLATE_LABELS.vendor);
   if (!labelValue) {
@@ -23,16 +23,8 @@ export const getClusterTemplateVendor = (
     : ClusterTemplateVendor.CUSTOM;
 };
 
-export const isRedHatTemplate = (clusterTemplate: ClusterTemplate) =>
+export const isRedHatTemplate = (clusterTemplate: DeserializedClusterTemplate) =>
   getClusterTemplateVendor(clusterTemplate) === ClusterTemplateVendor.REDHAT;
 
-export const getClusterTemplateDescription = (clusterTemplate?: ClusterTemplate) =>
+export const getClusterTemplateDescription = (clusterTemplate?: DeserializedClusterTemplate) =>
   clusterTemplate?.metadata?.annotations?.[TEMPLATE_LABELS.description];
-
-export const isHelmAppSpec = (source: ApplicationSource) => !!source.chart;
-
-export const getClusterDefinitionHelmChart = (clusterTemplate: ClusterTemplate) =>
-  clusterTemplate.spec.clusterDefinition.source.chart;
-
-export const isHelmClusterDefinition = (clusterTemplate: ClusterTemplate) =>
-  isHelmAppSpec(clusterTemplate.spec.clusterDefinition.source);

@@ -88,9 +88,9 @@ export const clusterRoleGVK: K8sGroupVersionKind = {
   version: 'v1',
 };
 
-export const argoCDGVK: K8sGroupVersionKind = {
+export const applicationSetGVK: K8sGroupVersionKind = {
   group: 'argoproj.io',
-  kind: 'ArgoCD',
+  kind: 'ApplicationSet',
   version: 'v1alpha1',
 };
 

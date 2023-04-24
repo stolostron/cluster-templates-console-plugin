@@ -1,13 +1,13 @@
 import { Flex, FlexItem, Stack, StackItem } from '@patternfly/react-core';
 import * as React from 'react';
-import { ClusterTemplate } from '../../types/resourceTypes';
+import { DeserializedClusterTemplate } from '../../types/resourceTypes';
 import DetailsCard from './DetailsCard';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
 import DescriptionCard from './DescriptionCard';
 
 const OverviewTab: React.FC<{
-  clusterTemplate: ClusterTemplate;
+  clusterTemplate: DeserializedClusterTemplate;
 }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
   return (

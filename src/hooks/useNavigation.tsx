@@ -1,7 +1,7 @@
 import { K8sGroupVersionKind, K8sResourceCommon } from '@openshift-console/dynamic-plugin-sdk';
 import { useHistory } from 'react-router';
 import { clusterTemplateGVK, clusterTemplateQuotaGVK } from '../constants';
-import { ClusterTemplate, Quota } from '../types/resourceTypes';
+import { DeserializedClusterTemplate, Quota, ClusterTemplate } from '../types/resourceTypes';
 import { getResourceUrl } from '../utils/k8s';
 
 export type ClusterTemplatePageTab = 'repositories' | 'quotas';
@@ -32,7 +32,7 @@ export const getClusterTemplatesPageUrl = (tab?: ClusterTemplatePageTab) => {
 
 export const getQuotasPageUrl = () => getClusterTemplatesPageUrl('quotas');
 
-export const getNewInstancePageUrl = (template: ClusterTemplate) =>
+export const getNewInstancePageUrl = (template: DeserializedClusterTemplate | ClusterTemplate) =>
   `${getResourceDetailsPageUrl(clusterTemplateGVK, template)}/~newinstance`;
 
 export const useNavigation = () => {
@@ -41,7 +41,7 @@ export const useNavigation = () => {
     goToClusterTemplatesPage: (tab?: ClusterTemplatePageTab) => {
       history.push(getClusterTemplatesPageUrl(tab));
     },
-    goToClusterTemplateEditPage: (clusterTemplate: ClusterTemplate) =>
+    goToClusterTemplateEditPage: (clusterTemplate: DeserializedClusterTemplate | ClusterTemplate) =>
       history.push(getResourceEditPageUrl(clusterTemplateGVK, clusterTemplate)),
     goToClusterTemplateCreatePage: () => history.push(getResourceCreatePageUrl(clusterTemplateGVK)),
     goToQuotaEditPage: (quota: Quota) =>
@@ -49,9 +49,11 @@ export const useNavigation = () => {
     goToQuotaCreatePage: () => history.push(getResourceCreatePageUrl(clusterTemplateQuotaGVK)),
     goToQuotaDetailsPage: (quota: Quota) =>
       history.push(getResourceDetailsPageUrl(clusterTemplateQuotaGVK, quota)),
-    goToClusterTemplateDetailsPage: (clusterTemplate: ClusterTemplate, tab?: string) =>
-      history.push(getResourceDetailsPageUrl(clusterTemplateGVK, clusterTemplate, tab)),
-    goToInstanceCreatePage: (template: ClusterTemplate) =>
+    goToClusterTemplateDetailsPage: (
+      clusterTemplate: DeserializedClusterTemplate | ClusterTemplate,
+      tab?: string,
+    ) => history.push(getResourceDetailsPageUrl(clusterTemplateGVK, clusterTemplate, tab)),
+    goToInstanceCreatePage: (template: DeserializedClusterTemplate | ClusterTemplate) =>
       history.push(getNewInstancePageUrl(template)),
   };
 };

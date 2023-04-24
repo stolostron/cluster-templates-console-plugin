@@ -1,4 +1,3 @@
-import { ArgoCDSpec } from './resourceTypes';
 import { JSONSchema7 } from 'json-schema';
 
 export enum SupportedJsonSchemaType {
@@ -40,14 +39,13 @@ export type InstanceParameter = {
 
 export type InstanceParametersFormValues = {
   name: string;
-  argoSpec: ArgoCDSpec;
   parameters: InstanceParameter[];
 };
 
 export type InstanceFormValues = {
   name: string;
   namespace: string;
-  installation: Omit<InstanceParametersFormValues, 'name'>;
+  installation: InstanceParametersFormValues;
   postInstallation: InstanceParametersFormValues[];
   hasUnsupportedParameters: boolean;
 };

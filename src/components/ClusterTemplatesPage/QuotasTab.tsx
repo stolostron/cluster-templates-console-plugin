@@ -40,8 +40,8 @@ const QuotasTab = () => {
         </>
       ) : (
         <EmptyPageState
-          title={t('No cluster created from this template yet')}
-          message={t('Create a cluster from this template')}
+          title={t('You have no quotas')}
+          message={t('Click Create a quota to add the first one')}
           action={<CreateQuotaButton />}
         />
       )}

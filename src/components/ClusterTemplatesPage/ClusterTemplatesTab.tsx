@@ -2,7 +2,7 @@ import { Button, Toolbar, ToolbarContent } from '@patternfly/react-core';
 import React from 'react';
 import EmptyPageState from '../../helpers/EmptyPageState';
 import TableLoader from '../../helpers/TableLoader';
-import { useClusterTemplates } from '../../hooks/useClusterTemplates';
+import { useDeserializedClusterTemplates } from '../../hooks/useClusterTemplates';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
 import ClusterTemplatesTable from './ClusterTemplatesTable';
@@ -31,7 +31,7 @@ const ClusterTemplatesToolbar = () => {
 
 const ClusterTemplatesTab = () => {
   const { t } = useTranslation();
-  const [clusterTemplates, loaded, error] = useClusterTemplates();
+  const [clusterTemplates, loaded, error] = useDeserializedClusterTemplates();
 
   return (
     <TableLoader

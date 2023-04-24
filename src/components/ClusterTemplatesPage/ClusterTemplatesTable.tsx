@@ -12,11 +12,12 @@ import {
   Tbody,
 } from '@patternfly/react-table';
 import { clusterTemplateGVK } from '../../constants';
-import { ClusterTemplate, RowProps, TableColumn } from '../../types/resourceTypes';
+import { DeserializedClusterTemplate, RowProps, TableColumn } from '../../types/resourceTypes';
 import { TFunction } from 'react-i18next';
 
 import {
   ClusterTemplateQuotasSummary,
+  ClusterTemplateStatus,
   ClusterTemplateUsage,
   ClusterTemplateVendorLabel,
 } from '../sharedDetailItems/clusterTemplateDetailItems';
@@ -63,13 +64,17 @@ function getTableColumns(t: TFunction): TableColumn[] {
       id: 'vendor',
     },
     {
+      title: t('Status'),
+      id: 'status',
+    },
+    {
       title: '',
       id: 'kebab-menu',
     },
   ];
 }
 
-export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj }) => {
+export const ClusterTemplateRow: React.FC<RowProps<DeserializedClusterTemplate>> = ({ obj }) => {
   const { t } = useTranslation();
   const [isDeleteOpen, setDeleteOpen] = React.useState(false);
   const actions = useClusterTemplateActions(obj, () => setDeleteOpen(true));
@@ -92,10 +97,13 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
       <Td data-testid={columns[2].id} dataLabel={columns[2].id}>
         <ClusterTemplateQuotasSummary clusterTemplate={obj} />
       </Td>
-      <Td data-testid={columns[3].id} dataLabel={columns[4].id}>
+      <Td data-testid={columns[3].id} dataLabel={columns[3].id}>
         <ClusterTemplateVendorLabel clusterTemplate={obj} />
       </Td>
-      <Td data-testid={columns[4].id} isActionCell>
+      <Td data-testid={columns[4].id} dataLabel={columns[4].id}>
+        <ClusterTemplateStatus clusterTemplate={obj} />
+      </Td>
+      <Td data-testid={columns[5].id} isActionCell>
         <ActionsColumn
           items={actions}
           actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
@@ -114,7 +122,11 @@ export const ClusterTemplateRow: React.FC<RowProps<ClusterTemplate>> = ({ obj })
   );
 };
 
-const ClusterTemplatesTable = ({ clusterTemplates }: { clusterTemplates: ClusterTemplate[] }) => {
+const ClusterTemplatesTable = ({
+  clusterTemplates,
+}: {
+  clusterTemplates: DeserializedClusterTemplate[];
+}) => {
   const { t } = useTranslation();
   return (
     <TableComposable
