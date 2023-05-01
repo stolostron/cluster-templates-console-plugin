@@ -23,7 +23,6 @@ export const getNewHelmSourceFormValues = (): HelmSourceFormikValues => ({
 });
 
 export const getNewGitOpsFormValues = (type: RepositoryType): PostInstallationFormikValues => ({
-  destinationNamespace: '',
   autoSync: true,
   pruneResources: false,
   createNamespace: false,
@@ -32,10 +31,9 @@ export const getNewGitOpsFormValues = (type: RepositoryType): PostInstallationFo
       ? getNewHelmSourceFormValues()
       : {
           url: '',
-          commit: '',
-          directory: '',
         },
   appSetName: '',
+  type,
 });
 
 export const getNewClusterTemplateFormValues = (): WizardFormikValues => {
@@ -63,8 +61,8 @@ const getHelmRepoSourceFormValues = (source: ApplicationSource): HelmSourceFormi
 
 const getGitRepoSourceFormValues = (source: ApplicationSource): GitRepoSourceFormikValues => ({
   url: source.repoURL,
-  commit: source.targetRevision || '',
-  directory: source.path || '',
+  commit: source.targetRevision,
+  directory: source.path,
 });
 
 const getPostInstallationFormValuesItem = (
@@ -81,6 +79,7 @@ const getPostInstallationFormValuesItem = (
     ? spec.syncPolicy?.syncOptions.includes(CREATE_NAMESPACE_SYNC_OPTION)
     : false,
   appSetName,
+  type: spec.source.chart ? 'helm' : 'git',
 });
 
 const getPostInstallationFormValues = (

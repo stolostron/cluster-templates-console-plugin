@@ -74,7 +74,7 @@ const PageNavigation = ({ clusterTemplate }: { clusterTemplate: DeserializedClus
           onClick={() => navigation.goToClusterTemplateDetailsPage(clusterTemplate, 'instances')}
           isActive={activeNavItem === 'instances'}
         >
-          {getNavLabelWithCount(t('Instances'), instancesCount)}
+          {getNavLabelWithCount(t('Clusters'), instancesCount)}
         </NavItem>
         <NavItem
           onClick={() => navigation.goToClusterTemplateDetailsPage(clusterTemplate, 'yaml')}
