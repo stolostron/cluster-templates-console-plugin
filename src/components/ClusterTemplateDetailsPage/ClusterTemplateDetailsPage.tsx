@@ -37,6 +37,8 @@ import DeleteDialog from '../sharedDialogs/DeleteDialog';
 import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
 import useClusterTemplateActions from '../../hooks/useClusterTemplateActions';
 import useClusterTemplateDeserializer from '../../hooks/useClusterTemplateDeserializer';
+import Alerts from '../../alerts/Alerts';
+import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
 
 const useActiveNavItem = (clusterTemplate: DeserializedClusterTemplate | undefined) => {
   const history = useHistory();
@@ -174,25 +176,30 @@ const ClusterTemplateDetailsPage = ({ match }: { match: { params: { name: string
     <ErrorBoundary>
       <AlertsContextProvider>
         <PageLoader loaded={loaded} error={error}>
-          {deserializedTemplate && (
-            <Page>
-              <PageHeader clusterTemplate={deserializedTemplate} />
-              {activeNavItem !== 'yaml' && (
-                <PageSection>
-                  {activeNavItem === 'overview' && (
-                    <OverviewTab clusterTemplate={deserializedTemplate} />
-                  )}
-                  {activeNavItem === 'quotas' && (
-                    <DetailsQuotasTab clusterTemplate={clusterTemplate} />
-                  )}
-                  {activeNavItem === 'instances' && (
-                    <InstancesTab clusterTemplate={clusterTemplate} />
-                  )}
-                </PageSection>
-              )}
-              {activeNavItem === 'yaml' && <ResourceYAMLEditor initialResource={clusterTemplate} />}
-            </Page>
-          )}
+          <WithClusterTemplateQuickStarts>
+            {deserializedTemplate && (
+              <Page>
+                <PageHeader clusterTemplate={deserializedTemplate} />
+                <Alerts />
+                {activeNavItem !== 'yaml' && (
+                  <PageSection>
+                    {activeNavItem === 'overview' && (
+                      <OverviewTab clusterTemplate={deserializedTemplate} />
+                    )}
+                    {activeNavItem === 'quotas' && (
+                      <DetailsQuotasTab clusterTemplate={clusterTemplate} />
+                    )}
+                    {activeNavItem === 'instances' && (
+                      <InstancesTab clusterTemplate={clusterTemplate} />
+                    )}
+                  </PageSection>
+                )}
+                {activeNavItem === 'yaml' && (
+                  <ResourceYAMLEditor initialResource={clusterTemplate} />
+                )}
+              </Page>
+            )}
+          </WithClusterTemplateQuickStarts>
         </PageLoader>
       </AlertsContextProvider>
     </ErrorBoundary>

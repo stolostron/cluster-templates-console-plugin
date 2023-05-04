@@ -5,20 +5,21 @@ import DetailsCard from './DetailsCard';
 import { Card, CardBody, CardHeader, CardTitle } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
 import DescriptionCard from './DescriptionCard';
+import ClusterTemplateDetailsGettingStarted from '../ClusterTemplatesGettingStarted/ClusterTemplateDetailsGettingStarted';
+import { useNavigation } from '../../hooks/useNavigation';
+import { isRedHatTemplate } from '../../utils/clusterTemplateDataUtils';
 
 const OverviewTab: React.FC<{
   clusterTemplate: DeserializedClusterTemplate;
 }> = ({ clusterTemplate }) => {
   const { t } = useTranslation();
+  const navigation = useNavigation();
   return (
     <Stack hasGutter>
-      <StackItem isFilled style={{ height: '300px' }}>
-        <Card className="pf-u-h-100 ">
-          <CardHeader>
-            <CardTitle>{t('Getting started')}</CardTitle>
-          </CardHeader>
-        </Card>
-      </StackItem>
+      <ClusterTemplateDetailsGettingStarted
+        onCreateCluster={() => navigation.goToInstanceCreatePage(clusterTemplate)}
+        isRedhatTemplate={isRedHatTemplate(clusterTemplate)}
+      />
       <StackItem isFilled>
         <Flex className="pf-u-h-100" grow={{ default: 'grow' }}>
           <FlexItem className="pf-u-h-100" flex={{ default: 'flex_1' }}>
