@@ -50,6 +50,7 @@ const useWizardValidationSchema = (
     source: helmValidationSchema,
     useInstanceNamespace: booleanSchema(),
     destinationNamespace: nameSchema(t, [], NameValidationType.RFC_1123_LABEL).optional(),
+    appSetName: stringSchema(),
   });
 
   const gitRepoValidationSchema = objectSchema().shape({
@@ -66,6 +67,7 @@ const useWizardValidationSchema = (
     source: lazySchema((values: GitRepoSourceFormikValues | HelmSourceFormikValues) =>
       isHelmSource(values) ? helmValidationSchema : gitRepoValidationSchema,
     ),
+    appSetName: stringSchema(),
   });
 
   const getWizardValidationSchema = React.useCallback(

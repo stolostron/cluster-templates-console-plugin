@@ -3,7 +3,7 @@ import { CREATE_NAMESPACE_SYNC_OPTION, INSTANCE_NAMESPACE_VAR } from '../constan
 import {
   ApplicationSource,
   ArgoCDSpec,
-  ClusterTemplate,
+  DeserializedClusterTemplate,
   RepositoryType,
 } from '../types/resourceTypes';
 import {
@@ -35,6 +35,7 @@ export const getNewGitOpsFormValues = (type: RepositoryType): PostInstallationFo
           commit: '',
           directory: '',
         },
+  appSetName: '',
 });
 
 export const getNewClusterTemplateFormValues = (): WizardFormikValues => {
@@ -47,6 +48,7 @@ export const getNewClusterTemplateFormValues = (): WizardFormikValues => {
       useInstanceNamespace: true,
       destinationNamespace: '',
       source: getNewHelmSourceFormValues(),
+      appSetName: '',
     },
     postInstallation: [],
     isCreateFlow: true,
@@ -65,7 +67,10 @@ const getGitRepoSourceFormValues = (source: ApplicationSource): GitRepoSourceFor
   directory: source.path || '',
 });
 
-const getPostInstallationFormValuesItem = (spec: ArgoCDSpec): PostInstallationFormikValues => ({
+const getPostInstallationFormValuesItem = (
+  appSetName: string,
+  spec: ArgoCDSpec,
+): PostInstallationFormikValues => ({
   source: spec.source.chart
     ? getHelmRepoSourceFormValues(spec.source)
     : getGitRepoSourceFormValues(spec.source),
@@ -75,21 +80,24 @@ const getPostInstallationFormValuesItem = (spec: ArgoCDSpec): PostInstallationFo
   createNamespace: spec.syncPolicy?.syncOptions
     ? spec.syncPolicy?.syncOptions.includes(CREATE_NAMESPACE_SYNC_OPTION)
     : false,
+  appSetName,
 });
 
 const getPostInstallationFormValues = (
-  clusterTemplate: ClusterTemplate,
+  clusterTemplate: DeserializedClusterTemplate,
 ): PostInstallationFormikValues[] => {
   if (clusterTemplate.spec.clusterSetup) {
     return clusterTemplate.spec.clusterSetup.map((setup) =>
-      getPostInstallationFormValuesItem(setup.spec),
+      getPostInstallationFormValuesItem(setup.name, setup.spec),
     );
   } else {
     return [];
   }
 };
 
-const getInstallationFormValues = (clusterTemplate: ClusterTemplate): InstallationFormikValues => {
+const getInstallationFormValues = (
+  clusterTemplate: DeserializedClusterTemplate,
+): InstallationFormikValues => {
   const installationSettings = clusterTemplate.spec.clusterDefinition;
   const useInstanceNamespace =
     installationSettings.destination.namespace === INSTANCE_NAMESPACE_VAR;
@@ -100,10 +108,11 @@ const getInstallationFormValues = (clusterTemplate: ClusterTemplate): Installati
     useInstanceNamespace,
     source: getHelmRepoSourceFormValues(installationSettings.source),
     destinationNamespace,
+    appSetName: clusterTemplate.spec.clusterDefinitionName,
   };
 };
 
-const getFormValues = (clusterTemplate: ClusterTemplate): WizardFormikValues => {
+const getFormValues = (clusterTemplate: DeserializedClusterTemplate): WizardFormikValues => {
   return {
     details: {
       name: clusterTemplate.metadata?.name || '',
@@ -116,7 +125,7 @@ const getFormValues = (clusterTemplate: ClusterTemplate): WizardFormikValues => 
 };
 
 export const useFormValues = (
-  clusterTemplate?: ClusterTemplate,
+  clusterTemplate?: DeserializedClusterTemplate,
 ): [WizardFormikValues | undefined, boolean] => {
   const [formValues, setFormValues] = React.useState<WizardFormikValues>();
 

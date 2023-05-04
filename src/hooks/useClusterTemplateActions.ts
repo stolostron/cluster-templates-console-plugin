@@ -1,12 +1,12 @@
 import { DropdownItemProps } from '@patternfly/react-core';
 
-import { ClusterTemplate } from '../types/resourceTypes';
+import { DeserializedClusterTemplate } from '../types/resourceTypes';
 import { isRedHatTemplate } from '../utils/clusterTemplateDataUtils';
 import { useNavigation } from './useNavigation';
 import { useTranslation } from './useTranslation';
 
 const useClusterTemplateActions = (
-  clusterTemplate: ClusterTemplate,
+  clusterTemplate: DeserializedClusterTemplate,
   onDelete: () => void,
 ): DropdownItemProps[] => {
   const navigation = useNavigation();
@@ -15,10 +15,12 @@ const useClusterTemplateActions = (
     {
       title: t('Create a cluster'),
       onClick: () => navigation.goToInstanceCreatePage(clusterTemplate),
+      isDisabled: !!clusterTemplate.status?.error,
+      description: clusterTemplate.status?.error ? t('Template processing failed') : undefined,
     },
     {
       title: t('Edit'),
-      disabled: isRedHatTemplate(clusterTemplate),
+      isDisabled: isRedHatTemplate(clusterTemplate),
       description: isRedHatTemplate(clusterTemplate)
         ? t('Red Hat templates cannot be modified')
         : undefined,
@@ -26,7 +28,7 @@ const useClusterTemplateActions = (
     },
     {
       title: t('Delete'),
-      disabled: isRedHatTemplate(clusterTemplate),
+      isDisabled: isRedHatTemplate(clusterTemplate),
       description: isRedHatTemplate(clusterTemplate)
         ? t('Red Hat templates cannot be deleted')
         : undefined,

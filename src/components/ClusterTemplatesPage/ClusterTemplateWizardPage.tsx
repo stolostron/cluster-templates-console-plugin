@@ -5,9 +5,9 @@ import ClusterTemplateWizard from '../ClusterTemplateWizard/ClusterTemplateWizar
 import { useTranslation } from '../../hooks/useTranslation';
 import { Breadcrumb } from '../../helpers/WithBreadcrumb';
 import { getClusterTemplatesPageUrl } from '../../hooks/useNavigation';
-import { ClusterTemplate } from '../../types/resourceTypes';
+import { DeserializedClusterTemplate } from '../../types/resourceTypes';
 
-const PageHeader = ({ clusterTemplate }: { clusterTemplate?: ClusterTemplate }) => {
+const PageHeader = ({ clusterTemplate }: { clusterTemplate?: DeserializedClusterTemplate }) => {
   const { t } = useTranslation();
   const createTitle = t('Create a new cluster template');
   const title = clusterTemplate ? t('Edit ClusterTemplate') : createTitle;
@@ -29,7 +29,11 @@ const PageHeader = ({ clusterTemplate }: { clusterTemplate?: ClusterTemplate }) 
   );
 };
 
-const ClusterTemplateWizardPage = ({ clusterTemplate }: { clusterTemplate?: ClusterTemplate }) => {
+const ClusterTemplateWizardPage = ({
+  clusterTemplate,
+}: {
+  clusterTemplate?: DeserializedClusterTemplate;
+}) => {
   return (
     <ErrorBoundary>
       <Page>

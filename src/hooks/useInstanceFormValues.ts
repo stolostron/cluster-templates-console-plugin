@@ -73,33 +73,19 @@ export const useInstanceFormValues = (
         : getParametersFromValues(values);
     };
 
-    const getPostInstallationItemFormValues = (
-      template: ClusterTemplate,
-      name: string,
-      values?: string,
-      schema?: string,
-    ) => {
-      const clusterSetupSpec = template.spec.clusterSetup?.find((setup) => setup.name === name);
-      if (!clusterSetupSpec) {
-        throw new Error(
-          `Post installation status contains invalid setup ${name}. This setup doesn't existing in the template spec.`,
-        );
-      }
+    const getPostInstallationItemFormValues = (name: string, values?: string, schema?: string) => {
       return {
         parameters: getParameters(values, schema),
-        argoSpec: clusterSetupSpec.spec,
         name: name,
       };
     };
 
     const getPostInstallationFormValues = (
-      template: ClusterTemplate,
       setupStatus: ClusterTemplateSetupStatus,
     ): InstanceParametersFormValues[] => {
       return setupStatus.reduce<InstanceParametersFormValues[]>(
         (prev: InstanceParametersFormValues[], setup) => {
           const formValues = getPostInstallationItemFormValues(
-            template,
             setup.name,
             setup.values,
             setup.schema,
@@ -121,10 +107,10 @@ export const useInstanceFormValues = (
                 template.status?.clusterDefinition?.schema,
               )
             : [],
-          argoSpec: template.spec.clusterDefinition,
+          name: template.spec.clusterDefinition,
         },
         postInstallation: template.status?.clusterSetup
-          ? getPostInstallationFormValues(template, template.status?.clusterSetup)
+          ? getPostInstallationFormValues(template.status?.clusterSetup)
           : [],
         hasUnsupportedParameters,
       };
@@ -134,7 +120,6 @@ export const useInstanceFormValues = (
         return;
       }
       const _formValues = toInstanceFormValues(template);
-      console.log(_formValues);
       setFormValues(_formValues);
     } catch (err) {
       setError(err);

@@ -21,7 +21,7 @@ import {
   useNavigation,
 } from '../../hooks/useNavigation';
 import { AlertsContextProvider } from '../../alerts/AlertsContext';
-import { ClusterTemplate, ClusterTemplateVendor } from '../../types/resourceTypes';
+import { DeserializedClusterTemplate, ClusterTemplateVendor } from '../../types/resourceTypes';
 import { clusterTemplateGVK } from '../../constants';
 import { getNavLabelWithCount } from '../../utils/utils';
 import { useHistory } from 'react-router';
@@ -36,8 +36,9 @@ import DetailsQuotasTab from './DetailsQuotasTab';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
 import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
 import useClusterTemplateActions from '../../hooks/useClusterTemplateActions';
+import useClusterTemplateDeserializer from '../../hooks/useClusterTemplateDeserializer';
 
-const useActiveNavItem = (clusterTemplate: ClusterTemplate | undefined) => {
+const useActiveNavItem = (clusterTemplate: DeserializedClusterTemplate | undefined) => {
   const history = useHistory();
   if (!clusterTemplate) {
     return 'overview';
@@ -45,13 +46,13 @@ const useActiveNavItem = (clusterTemplate: ClusterTemplate | undefined) => {
   const detailsPath = getResourceDetailsPageUrl(clusterTemplateGVK, clusterTemplate);
   return detailsPath === history.location.pathname
     ? 'overview'
-    : history.location.pathname.split('/').at(-1);
+    : history.location.pathname?.split('/').at(-1);
 };
 
-const PageNavigation = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => {
+const PageNavigation = ({ clusterTemplate }: { clusterTemplate: DeserializedClusterTemplate }) => {
   const activeNavItem = useActiveNavItem(clusterTemplate);
-  const quotasCount = useClusterTemplateQuotasCount(clusterTemplate);
-  const instancesCount = useClusterTemplateInstancesCount(clusterTemplate);
+  const quotasCount = useClusterTemplateQuotasCount(clusterTemplate.metadata?.name || '');
+  const instancesCount = useClusterTemplateInstancesCount(clusterTemplate.metadata?.name);
   const navigation = useNavigation();
   const { t } = useTranslation();
   return (
@@ -104,7 +105,7 @@ const RedhatTemplateAlert = () => {
   );
 };
 
-const PageHeader = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) => {
+const PageHeader = ({ clusterTemplate }: { clusterTemplate: DeserializedClusterTemplate }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
@@ -157,27 +158,41 @@ const PageHeader = ({ clusterTemplate }: { clusterTemplate: ClusterTemplate }) =
 
 const ClusterTemplateDetailsPage = ({ match }: { match: { params: { name: string } } }) => {
   const { name } = match.params;
-  const [clusterTemplate, loaded, loadError] = useClusterTemplate(name);
-  const activeNavItem = useActiveNavItem(clusterTemplate);
+  const [clusterTemplate, templateLoaded, templateError] = useClusterTemplate(name);
+  const [deserialize, deserializeLoaded, deserializeLoadedError] = useClusterTemplateDeserializer();
+  const loaded = templateLoaded && deserializeLoaded;
+  const error = templateError || deserializeLoadedError;
+  const deserializedTemplate = React.useMemo<DeserializedClusterTemplate | undefined>(() => {
+    if (!loaded || error) {
+      return undefined;
+    }
+    return deserialize(clusterTemplate);
+  }, [deserialize, error, loaded, clusterTemplate]);
+
+  const activeNavItem = useActiveNavItem(deserializedTemplate);
   return (
     <ErrorBoundary>
       <AlertsContextProvider>
-        <PageLoader loaded={loaded} error={loadError}>
-          <Page>
-            <PageHeader clusterTemplate={clusterTemplate} />
-            {activeNavItem !== 'yaml' && (
-              <PageSection>
-                {activeNavItem === 'overview' && <OverviewTab clusterTemplate={clusterTemplate} />}
-                {activeNavItem === 'quotas' && (
-                  <DetailsQuotasTab clusterTemplate={clusterTemplate} />
-                )}
-                {activeNavItem === 'instances' && (
-                  <InstancesTab clusterTemplate={clusterTemplate} />
-                )}
-              </PageSection>
-            )}
-            {activeNavItem === 'yaml' && <ResourceYAMLEditor initialResource={clusterTemplate} />}
-          </Page>
+        <PageLoader loaded={loaded} error={error}>
+          {deserializedTemplate && (
+            <Page>
+              <PageHeader clusterTemplate={deserializedTemplate} />
+              {activeNavItem !== 'yaml' && (
+                <PageSection>
+                  {activeNavItem === 'overview' && (
+                    <OverviewTab clusterTemplate={deserializedTemplate} />
+                  )}
+                  {activeNavItem === 'quotas' && (
+                    <DetailsQuotasTab clusterTemplate={clusterTemplate} />
+                  )}
+                  {activeNavItem === 'instances' && (
+                    <InstancesTab clusterTemplate={clusterTemplate} />
+                  )}
+                </PageSection>
+              )}
+              {activeNavItem === 'yaml' && <ResourceYAMLEditor initialResource={clusterTemplate} />}
+            </Page>
+          )}
         </PageLoader>
       </AlertsContextProvider>
     </ErrorBoundary>

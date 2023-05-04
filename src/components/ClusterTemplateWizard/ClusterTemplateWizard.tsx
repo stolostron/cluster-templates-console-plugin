@@ -28,11 +28,11 @@ import findIndex from 'lodash/findIndex';
 import useWizardValidationSchema from './wizardValidationSchema';
 import ConfirmCancelModal from './ConfirmCancelModal';
 import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
-import { ClusterTemplate } from '../../types/resourceTypes';
+import { DeserializedClusterTemplate } from '../../types/resourceTypes';
 import { StepId, WizardFormikValues } from '../../types/wizardFormTypes';
 
 export type ClusterTemplateWizardProps = {
-  clusterTemplate?: ClusterTemplate;
+  clusterTemplate?: DeserializedClusterTemplate;
 };
 
 const CustomFooter = () => {
@@ -130,7 +130,10 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
   const [activeStepIndex, setActiveStepIndex] = React.useState<number>(0);
   const [validationSchema, validationSchemaLoaded, validationSchemaError] =
     useWizardValidationSchema(!clusterTemplate);
-  const [saveClusterTemplate, saveClusterTemplateLoaded] = useSaveClusterTemplate(clusterTemplate);
+  const [saveClusterTemplate, saveClusterTemplateLoaded] = useSaveClusterTemplate(
+    initialValues,
+    clusterTemplate,
+  );
   const { t } = useTranslation();
 
   const steps: WizardStep[] = [

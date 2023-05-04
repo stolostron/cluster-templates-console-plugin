@@ -41,6 +41,7 @@ export const ActionsMenu = ({
       }
       isOpen={isOpen}
       dropdownItems={dropdownItems}
+      position="right"
     />
   );
 };

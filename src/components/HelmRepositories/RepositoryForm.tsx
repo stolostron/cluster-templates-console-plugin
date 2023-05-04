@@ -19,7 +19,7 @@ import {
   DecodedSecret,
   ArgoCDSecretData,
   RepositoryType,
-  ClusterTemplate,
+  DeserializedClusterTemplate,
 } from '../../types/resourceTypes';
 import { RepositoryFormValues } from './types';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -32,7 +32,7 @@ type RepositoryFormProps = FormikProps<RepositoryFormValues> & {
   closeDialog: () => void;
   submitError?: unknown;
   predefinedType?: RepositoryType;
-  templatesFromRepo?: ClusterTemplate[];
+  templatesFromRepo?: DeserializedClusterTemplate[];
 };
 
 const TypeField = () => {

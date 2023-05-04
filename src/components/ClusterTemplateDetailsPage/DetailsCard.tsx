@@ -11,6 +11,7 @@ import {
 } from '@patternfly/react-core';
 
 import {
+  ClusterTemplateStatus,
   ClusterTemplateVendorLabel,
   InstallationDetails,
   PostInstallationDetails,
@@ -22,7 +23,7 @@ import { PencilAltIcon } from '@patternfly/react-icons';
 import EditLabelsDialog from '../Labels/EditLabelsDialog';
 import { clusterTemplateGVK } from '../../constants';
 import { Labels } from '../Labels/Labels';
-import { ClusterTemplate } from '../../types/resourceTypes';
+import { DeserializedClusterTemplate } from '../../types/resourceTypes';
 export type ListItem = {
   label: string;
 
@@ -50,7 +51,9 @@ const List: React.FC<{ items: ListItem[] }> = ({ items }) => {
   );
 };
 
-const DetailsCard: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTemplate }) => {
+const DetailsCard: React.FC<{ clusterTemplate: DeserializedClusterTemplate }> = ({
+  clusterTemplate,
+}) => {
   const { t } = useTranslation();
   const name = clusterTemplate.metadata?.name;
   const [showEditLabels, setShowEditLabels] = React.useState<boolean>(false);
@@ -62,6 +65,10 @@ const DetailsCard: React.FC<{ clusterTemplate: ClusterTemplate }> = ({ clusterTe
     {
       label: t('Created'),
       value: <Timestamp timestamp={clusterTemplate.metadata?.creationTimestamp || ''} />,
+    },
+    {
+      label: t('Status'),
+      value: <ClusterTemplateStatus clusterTemplate={clusterTemplate} />,
     },
     {
       label: t('Installation settings'),

@@ -1,7 +1,7 @@
 import React from 'react';
 import { clusterTemplateQuotaGVK } from '../constants';
 
-import { ClusterTemplate, Quota } from '../types/resourceTypes';
+import { Quota } from '../types/resourceTypes';
 import { useK8sWatchResource } from './k8s';
 
 export const useAllQuotas = (): [Quota[], boolean, unknown] =>
@@ -42,11 +42,7 @@ export const useQuota = (name: string, namespace: string) =>
     namespace,
   });
 
-export const useClusterTemplateQuotasCount = (
-  clusterTemplate: ClusterTemplate,
-): number | undefined => {
-  const [quotas, loaded, loadError] = useClusterTemplateQuotas(
-    clusterTemplate.metadata?.name || '',
-  );
+export const useClusterTemplateQuotasCount = (clsterTemplateName: string): number | undefined => {
+  const [quotas, loaded, loadError] = useClusterTemplateQuotas(clsterTemplateName);
   return quotas && loaded && !loadError ? quotas.length : undefined;
 };
