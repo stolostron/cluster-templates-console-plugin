@@ -11,21 +11,15 @@ import {
   Skeleton,
   SimpleListItem,
 } from '@patternfly/react-core';
-import { Link } from 'react-router-dom';
 
 import './GettingStartedCard.scss';
 
 export interface GettingStartedLink {
   id: string;
   loading?: boolean;
-
   title?: string | React.ReactElement;
-
-  external?: boolean;
-  /** Default hyperlink location */
-  href?: string;
   /** OnClick callback for the SimpleList item */
-  onClick?: (event: React.MouseEvent | React.ChangeEvent) => void;
+  onClick: (event: React.MouseEvent | React.ChangeEvent) => void;
 }
 
 export interface GettingStartedCardProps {
@@ -78,21 +72,7 @@ const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
               ) : (
                 <SimpleListItem
                   key={link.id}
-                  component={'a'}
-                  componentProps={
-                    link.external
-                      ? {
-                          href: link.href,
-                          target: '_blank',
-                          rel: 'noopener noreferrer',
-                          'data-test': `item ${link.id}`,
-                        }
-                      : {
-                          to: link.href,
-                          'data-test': `item ${link.id}`,
-                        }
-                  }
-                  href={link.href}
+                  component={'button'}
                   onClick={(e) => {
                     link.onClick?.(e);
                   }}
@@ -107,34 +87,16 @@ const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
 
       {moreLink ? (
         <FlexItem>
-          {moreLink.onClick ? (
-            <Button
-              onClick={(e) => {
-                moreLink.onClick && moreLink.onClick(e);
-              }}
-              isInline
-              variant="link"
-              data-test={`item ${moreLink.id}`}
-            >
-              {moreLink.title}
-            </Button>
-          ) : moreLink.external ? (
-            <a
-              href={moreLink.href}
-              target="_blank"
-              className="co-external-link"
-              rel="noopener noreferrer"
-              data-test={`item ${moreLink.id}`}
-            >
-              {moreLink.title}
-            </a>
-          ) : (
-            moreLink.href && (
-              <Link to={moreLink.href} data-test={`item ${moreLink.id}`}>
-                {moreLink.title}
-              </Link>
-            )
-          )}
+          <Button
+            onClick={(e) => {
+              moreLink.onClick && moreLink.onClick(e);
+            }}
+            isInline
+            variant="link"
+            data-test={`item ${moreLink.id}`}
+          >
+            {moreLink.title}
+          </Button>
         </FlexItem>
       ) : null}
     </Flex>

@@ -28,6 +28,7 @@ export const WithQuickStarts = ({
     setAllQuickStartStates,
     language,
     loading: quickStartsLoading,
+    useQueryParams: false,
   };
 
   return (

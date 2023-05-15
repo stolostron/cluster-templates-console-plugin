@@ -24,9 +24,8 @@ const GettingStartedCardWrapper = () => {
 };
 
 const meta: Meta<typeof GettingStartedCardWrapper> = {
-  title: 'Example/GettingStarted',
+  title: 'GettingStarted',
   component: GettingStartedCardWrapper,
-  tags: ['autodocs'],
 };
 
 export default meta;

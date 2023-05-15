@@ -1,6 +1,15 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
-import { Nav, NavItem, NavList, Page, PageSection, Title } from '@patternfly/react-core';
+import {
+  Nav,
+  NavItem,
+  NavList,
+  Page,
+  PageSection,
+  Stack,
+  StackItem,
+  Title,
+} from '@patternfly/react-core';
 import { useClusterTemplatesCount } from '../../hooks/useClusterTemplates';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getNavLabelWithCount } from '../../utils/utils';
@@ -11,6 +20,11 @@ import ClusterTemplatesTab from './ClusterTemplatesTab';
 import QuotasTab from './QuotasTab';
 import RepositoriesTable from './RepositoriesTab';
 import './hack.css';
+import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
+import Alerts from '../../alerts/Alerts';
+import ErrorBoundary from '../../helpers/ErrorBoundary';
+import ClusterTemplatesListGettingStarted from '../ClusterTemplatesGettingStarted/ClusterTemplatesListGettingStarted';
 
 const PageNavigation = () => {
   const navigation = useNavigation();
@@ -75,14 +89,28 @@ const useActiveNavItem = () => {
 const ClusterTemplatesPage = () => {
   const activeTab = useActiveNavItem();
   return (
-    <Page>
-      <PageHeader />
-      <PageSection>
-        {activeTab === 'templates' && <ClusterTemplatesTab />}
-        {activeTab === 'repositories' && <RepositoriesTable />}
-        {activeTab === 'quotas' && <QuotasTab />}
-      </PageSection>
-    </Page>
+    <ErrorBoundary>
+      <AlertsContextProvider>
+        <WithClusterTemplateQuickStarts>
+          <Page>
+            <PageHeader />
+            <Alerts />
+            <Stack hasGutter>
+              <StackItem>
+                <ClusterTemplatesListGettingStarted />
+              </StackItem>
+              <StackItem>
+                <PageSection>
+                  {activeTab === 'templates' && <ClusterTemplatesTab />}
+                  {activeTab === 'repositories' && <RepositoriesTable />}
+                  {activeTab === 'quotas' && <QuotasTab />}
+                </PageSection>
+              </StackItem>
+            </Stack>
+          </Page>
+        </WithClusterTemplateQuickStarts>
+      </AlertsContextProvider>
+    </ErrorBoundary>
   );
 };
 

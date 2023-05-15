@@ -2,8 +2,6 @@ apiVersion: console.openshift.io/v1
 kind: ConsoleQuickStart
 metadata:
   name: create-cluster-template-qs
-  labels:
-    cluster-templates-quick-starts: ''
 spec:
   conclusion: |-
     You created your cluster template and can now share it.

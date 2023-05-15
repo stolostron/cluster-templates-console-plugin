@@ -6,8 +6,13 @@ import Loader from '../../helpers/Loader';
 import ClusterTemplateDetailsGettingStarted from './ClusterTemplateDetailsGettingStarted';
 import { Page } from '@patternfly/react-core';
 import WithQuickStarts from '../../helpers/GettingStarted/WithQuickStarts';
+import ClusterTemplatesListGettingStarted from './ClusterTemplatesListGettingStarted';
 
-const qsFiles = ['createTemplateQuickStart.yaml', 'shareTemplateQuickStart.yaml'];
+const qsFiles = [
+  'createTemplateQuickStart.yaml',
+  'shareTemplateQuickStart.yaml',
+  'createQuotaQuickStart.yaml',
+];
 
 const loadQuickStarts = async (): Promise<QuickStart[]> => {
   const quickStarts = [];
@@ -23,8 +28,10 @@ const loadQuickStarts = async (): Promise<QuickStart[]> => {
 };
 
 const ClusterTemplateDetailsGettingStartedWrapper = ({
+  isListPage,
   isRedhatTemplate,
 }: {
+  isListPage: boolean;
   isRedhatTemplate: boolean;
 }) => {
   const [quickStarts, setQuickStarts] = React.useState<QuickStart[]>();
@@ -48,10 +55,14 @@ const ClusterTemplateDetailsGettingStartedWrapper = ({
       {loaded && quickStarts && (
         <Page style={{ height: '100vh' }}>
           <WithQuickStarts quickStarts={quickStarts} quickStartsLoading={true}>
-            <ClusterTemplateDetailsGettingStarted
-              isRedhatTemplate={isRedhatTemplate}
-              onCreateCluster={() => console.log('on create cluster')}
-            />
+            {isListPage ? (
+              <ClusterTemplatesListGettingStarted />
+            ) : (
+              <ClusterTemplateDetailsGettingStarted
+                isRedhatTemplate={isRedhatTemplate}
+                onCreateCluster={() => console.log('on create cluster')}
+              />
+            )}
           </WithQuickStarts>
         </Page>
       )}
@@ -60,18 +71,21 @@ const ClusterTemplateDetailsGettingStartedWrapper = ({
 };
 
 const meta: Meta<typeof ClusterTemplateDetailsGettingStartedWrapper> = {
-  title: 'Example/ClusterTemplateDetailsGettingStarted',
+  title: 'ClusterTemplateDetailsGettingStarted',
   component: ClusterTemplateDetailsGettingStartedWrapper,
-  tags: ['autodocs'],
 };
 
 export default meta;
 type Story = StoryObj<typeof ClusterTemplateDetailsGettingStartedWrapper>;
 
-export const ClusterTemplateDetailsGettingStartedLoaded: Story = {
+export const GettingStartedDetailsPage: Story = {
   args: { isRedhatTemplate: false },
 };
 
-export const ClusterTemplateDetailsGettingStartedRedhatTemplate: Story = {
+export const GettingStartedDetailsPageRedhatTemplate: Story = {
   args: { isRedhatTemplate: true },
+};
+
+export const GettingStartedListPage: Story = {
+  args: { isListPage: true },
 };

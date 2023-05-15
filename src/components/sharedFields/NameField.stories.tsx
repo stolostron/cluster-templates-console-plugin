@@ -30,20 +30,15 @@ const NameFieldWrapper = ({ initialName }: { initialName: string }) => {
   );
 };
 
-// More on how to set up stories at: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 const meta: Meta<typeof NameFieldWrapper> = {
-  title: 'Example/NameField',
+  title: 'NameField',
   component: NameFieldWrapper,
-  // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/react/writing-docs/autodocs
-  tags: ['autodocs'],
 };
 
 export default meta;
 type Story = StoryObj<typeof NameFieldWrapper>;
 
-// More on component templates: https://storybook.js.org/docs/react/writing-stories/introduction#using-args
 export const ValidName: Story = {
-  // More on args: https://storybook.js.org/docs/react/writing-stories/args
   args: {
     initialName: 'valid-name',
   },
