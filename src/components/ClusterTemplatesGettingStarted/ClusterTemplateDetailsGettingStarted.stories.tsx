@@ -31,7 +31,6 @@ const ClusterTemplateDetailsGettingStartedWrapper = ({
   const [loaded, setLoaded] = React.useState(false);
   const [error, setError] = React.useState<unknown>();
   React.useEffect(() => {
-    console.log('reload');
     const load = async () => {
       try {
         const quickStarts = await loadQuickStarts();

@@ -25,7 +25,7 @@ spec:
     review:
       failedTaskHelp: This task isn’t verified yet. Try the task again.
       instructions: |-
-        Open https://${user}.github.io/cluster-templates-operator in your browser. Do you see the text “Redhat Helm templates”?
+        Open https://<github user name>.github.io/cluster-templates-operator in your browser. Do you see the text “Redhat Helm templates”?
     summary:
       failed: Try the steps again.
       success: Your helm github page is available
@@ -34,7 +34,7 @@ spec:
     description: |-
       1. Clone the repository from your terminal. 
       ```
-      git clone https://github.com/${user}/cluster-templates-operator.git
+      git clone https://github.com/<github user name>/cluster-templates-operator.git
       ```
       2. Install the [Helm CLI](https://access.redhat.com/documentation/en-us/openshift_container_platform/4.4/html/cli_tools/helm-cli) on your local machine.
       3. Edit the template you want to use.  For example, edit the files inside: hyphershift-template
@@ -61,7 +61,7 @@ spec:
       ```
       2. Update the helm repo index file.
       ```
-      helm repo index . --url https://${user}.github.io/cluster-templates-operator
+      helm repo index . --url https://<github user name>.github.io/cluster-templates-operator
       ```
       3 Push the changes.
       ```
@@ -72,7 +72,7 @@ spec:
       instructions: |-
         Verify the URL gives the helm index - it might take a few minutes until GitHub publishes the changes.
         ```
-        curl https://${user}.github.io/cluster-templates-operator/index.yaml
+        curl https://<github user name>.github.io/cluster-templates-operator/index.yaml
         ```
     summary:
       failed: Try the steps again.
