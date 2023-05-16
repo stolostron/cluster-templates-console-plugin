@@ -55,7 +55,7 @@ const PageNavigation = () => {
           isActive={activeNavItem === 'quotas'}
           aria-label={t('Quotas tab')}
         >
-          {getNavLabelWithCount('Quotas', quotasCount)}
+          {getNavLabelWithCount('Quota management', quotasCount)}
         </NavItem>
       </NavList>
     </Nav>

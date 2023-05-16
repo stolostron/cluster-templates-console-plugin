@@ -9,6 +9,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { QuickStartKey, quickStartsData } from './quickStartConstants';
 import { TFunction } from 'react-i18next';
 import PaperIcon from '../../icons/PaperIcon';
+import ClusterIcon from '../../icons/ClusterIcon';
 
 const getQuickStartLink = (
   qsCtx: QuickStartContextValues,
@@ -78,6 +79,7 @@ export const ShareTemplateCard = ({ title }: { title: string }) => {
       id={'share-template-card'}
       title={title}
       titleColor={'var(--pf-global--info-color--200)'}
+      icon={<ClusterIcon />}
       description={t(
         'To enable unprivileged developers to create clusters, you’ll need to provide them with a namespace configured with the required permissions.',
       )}

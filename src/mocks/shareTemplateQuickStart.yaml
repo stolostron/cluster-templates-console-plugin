@@ -1,7 +1,7 @@
 apiVersion: console.openshift.io/v1
 kind: ConsoleQuickStart
 metadata:
-  name: share-cluster-template-qs
+  name: share-cluster-template
 spec:
   conclusion: |-
     The ClusterTemplates can be used by the users with the configured permissions.
@@ -15,12 +15,12 @@ spec:
   - title: Configure the Namespace RoleBinding to [cluster-templates-user](k8s/cluster/clusterroles/cluster-templates-user) role.
     description: |-
       1. In the navigation menu, click [User Management]{{highlight qs-nav-usermanagement}} 
-      2. Navigate to the Roles page.
-      3. Choose cluster-templates-user role from the list.
-      4. Go to the RoleBindings tab.
-      5. Click Create RoleBinding.
+      2. Navigate to the **Roles** page.
+      3. Choose **cluster-templates-user** role from the list.
+      4. Go to the **RoleBindings** tab.
+      5. Click **Create RoleBinding**.
       6. Enter a name, select a namespace, and enter a subject (user, group, or service account).
-      7. Click Create.
+      7. Click **Create**.
       8. If needed, add more subjects using the YAML tab or the CLI.
     review:
       failedTaskHelp: This task isn’t verified yet. Try the task again.
@@ -28,28 +28,28 @@ spec:
         Is the new RoleBinding configured?
         1. In the navigation menu, click [User Management]{{highlight qs-nav-usermanagement}}.
         2. Navigate to the [RoleBindings]{{highlight qs-nav-role-bindings}} page.
-        3. Check that the new RoleBinding is in the list and the Role ref is cluster-templates-user.
+        3. Check that the new RoleBinding is in the list.
     summary:
       failed: Try the steps again.
       success: You successfuly configured the namespace RoleBinding.
-  - title: Configure the Cluster-wide RoleBinding to cluster-templates-user-ct role
+  - title: Configure the Cluster-wide RoleBinding to [cluster-templates-user-ct](k8s/cluster/clusterroles/cluster-templates-user-ct) role
     description: |-
       1. In the navigation menu, click [User Management]{{highlight qs-nav-usermanagement}}.
       2. Navigate to the [Roles]{{highlight qs-nav-roles}} page.
-      3. Choose cluster-templates-user-ct role from the list.
+      3. Choose **cluster-templates-user-ct** role from the list.
       4. Go to the RoleBindings tab.
-      5. Click Create RoleBinding.
-      6. Select the Binding type Cluster-wide role binding
-      7. Enter a name, select a namespace, and enter a subject (user, group, or service account).
-      8. Click Create.
+      5. Click **Create RoleBinding**.
+      6. Select the Binding type **Cluster-wide role binding**.
+      7. Enter a name and a subject (user, group, or service account).
+      8. Click **Create**.
       9. If needed, add more subjects using the YAML tab or the CLI.
     review:
       failedTaskHelp: This task isn’t verified yet. Try the task again.
       instructions: |-
         Is the new RoleBinding configured?
-        1. In the navigation menu, click [User Management]{{highlight qs-nav-user-management}}.
+        1. In the navigation menu, select [User Management]{{highlight qs-nav-user-management}}.
         2. Navigate to the [RoleBindings]{{highlight qs-nav-role-bindings}} page.
-        3. Check that the new RoleBinding is in the list and the Role ref is cluster-templates-user-ct.
+        3. Check that the new RoleBinding is in the list.
     summary:
       failed: Try the steps again.
       success: You successfully configured the Cluster-wide RoleBinding.

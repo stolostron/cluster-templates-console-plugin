@@ -13,13 +13,9 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
-// Import commands.js using ES2015 syntax:
-import './commands';
 Cypress.on('uncaught:exception', (err) => {
   /* returning false here prevents Cypress from failing the test */
   if (err.message.includes('ResizeObserver loop limit exceeded')) {
     return false;
   }
 });
-// Alternatively you can use CommonJS syntax:
-// require('./commands')

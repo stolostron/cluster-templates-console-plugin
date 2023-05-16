@@ -1,23 +1,11 @@
-const getIframeDocument = () =>
-  cy.get('#storybook-preview-iframe').its('0.contentDocument').should('exist');
-
-const getIframeBody = () =>
-  getIframeDocument()
-    .its('body')
-    .should('not.be.undefined')
-    .then((elm) => cy.wrap(elm));
+import { getStorybookIframeBody } from '../support/utils';
 
 context('Actions', () => {
   beforeEach(() => {
-    cy.visit(
-      'http://localhost:6006/?path=/story/example-namefield--valid-name&args=initialName:initial-name',
-    );
+    cy.visit('http://localhost:6006/?path=/story/namefield--valid-name');
   });
 
-  // https://on.cypress.io/interacting-with-elements
-
-  it('name field label should exist', () => {
-    // https://on.cypress.io/type
-    getIframeBody().find('.pf-c-form__label-text').should('contain.text', 'name');
+  it('Input field should contain text "valid-name"', () => {
+    getStorybookIframeBody().find('input[type="text"]').should('have.value', 'valid-name');
   });
 });

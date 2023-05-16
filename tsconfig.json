@@ -1,8 +1,19 @@
 {
-  "extends": "./tsconfig.base",
   "compilerOptions": {
-    "types": ["node"]
-  },
-  "include": ["src"],
-  "exclude": ["**/*.test.ts", "**/*.test.tsx", "src/testUtils", "src/mocks"]
+    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "esnext",
+    "jsx": "react",
+    "strict": true,
+    "noUnusedLocals": false,
+    "noImplicitAny": true,
+    "noImplicitReturns": false,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "types": ["node", "cypress"]
+  }
 }

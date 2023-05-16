@@ -12,13 +12,14 @@
     "start-console": "./start-console.sh",
     "i18n": "yarn i18next \"src/**/*.{js,jsx,ts,tsx}\" [-oc] -c i18next-parser.config.js",
     "ts-node": "ts-node -O '{\"module\":\"commonjs\"}'",
-    "lint": "eslint ./src && stylelint \"src/**/*.css\" --allow-empty-input",
-    "lint:fix": "eslint ./src --fix && stylelint \"src/**/*.css\" --allow-empty-input --fix",
+    "lint": "eslint src cypress && stylelint \"src/**/*.css\" --allow-empty-input",
+    "lint:fix": "eslint src cypress -fix && stylelint \"src/**/*.css\" --allow-empty-input --fix",
     "podman:build": "podman build --file Dockerfile --tag caas-ui .",
     "podman:push": "podman tag caas-ui quay.io/$USER/caas-ui:latest && podman push quay.io/$USER/caas-ui:latest",
     "podman:deploy": "yarn podman:build && yarn podman:push quay.io/$USER/caas-ui:latest && ./scripts/deploy/deploy.sh quay.io/$USER/caas-ui:latest",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "test": "yarn cypress run"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",

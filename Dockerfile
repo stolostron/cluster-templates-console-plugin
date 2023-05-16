@@ -1,8 +1,8 @@
-FROM registry.ci.openshift.org/stolostron/builder:nodejs14-linux AS build
+FROM registry.ci.openshift.org/stolostron/builder:nodejs16-linux AS build
 
 ADD . /usr/src/app
 WORKDIR /usr/src/app
-RUN yarn install && yarn build
+RUN yarn install --no-optional && yarn build
 
 FROM docker.io/library/nginx:stable
 

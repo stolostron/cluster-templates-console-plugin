@@ -10,7 +10,7 @@ const ClusterTemplatesListGettingStarted = () => {
       <ShareTemplateCard title={t('Share a template')} />
       <CreateTemplateCard
         description={t(
-          'If you want to customize the template to your needs, create a new template based on the community one. Community templates cannot be modified, but are a great starting point for your own.',
+          'The best way to get started is to use a community template and modify it per your needs.',
         )}
         key="create-template-card"
       />

@@ -20,6 +20,9 @@ const config: StorybookConfig = {
     name: '@storybook/react-webpack5',
     options: {},
   },
+  typescript: {
+    check: false,
+  },
   docs: {
     autodocs: 'tag',
   },
