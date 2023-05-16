@@ -6,7 +6,6 @@ import {
   Tbody,
   Td,
   ActionsColumn,
-  CustomActionsToggleProps,
   IAction,
 } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
@@ -15,7 +14,6 @@ import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateQuotaGVK, namespaceGVK } from '../../constants';
 
 import { useTranslation } from '../../hooks/useTranslation';
-import { KebabToggle } from '@patternfly/react-core';
 import { ClusterTemplate, Quota } from '../../types/resourceTypes';
 import NotAvailable from '../../helpers/NotAvailable';
 import { useNavigation } from '../../hooks/useNavigation';
@@ -135,10 +133,7 @@ const QuotaRow: React.FC<{
         </Td>
       ))}
       <Td isActionCell>
-        <ActionsColumn
-          items={getRowActions()}
-          actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
-        />
+        <ActionsColumn items={getRowActions()} />
       </Td>
       <DeleteDialog
         isOpen={deleteDlgOpen}

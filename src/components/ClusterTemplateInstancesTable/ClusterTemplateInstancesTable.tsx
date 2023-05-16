@@ -9,7 +9,6 @@ import {
   Td,
   IAction,
   ActionsColumn,
-  CustomActionsToggleProps,
 } from '@patternfly/react-table';
 import { clusterTemplateInstanceGVK, namespaceGVK } from '../../constants';
 import ClusterTemplateInstanceStatus from './ClusterTemplateInstanceStatus';
@@ -18,7 +17,6 @@ import React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from '../../hooks/useTranslation';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
-import { KebabToggle } from '@patternfly/react-core';
 
 type TableColumn = {
   title: string;
@@ -79,10 +77,7 @@ const InstanceRow: React.FC<{
         <ClusterTemplateInstanceStatus instance={instance} />
       </Td>
       <Td isActionCell>
-        <ActionsColumn
-          items={getRowActions()}
-          actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
-        />
+        <ActionsColumn items={getRowActions()} />
       </Td>
       <DeleteDialog
         isOpen={deleteDlgOpen}

@@ -1,16 +1,7 @@
 import * as React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
-import { KebabToggle, TextContent, Text, Button } from '@patternfly/react-core';
-import {
-  ActionsColumn,
-  Td,
-  Th,
-  Thead,
-  Tr,
-  CustomActionsToggleProps,
-  TableComposable,
-  Tbody,
-} from '@patternfly/react-table';
+import { TextContent, Text, Button } from '@patternfly/react-core';
+import { ActionsColumn, Td, Th, Thead, Tr, TableComposable, Tbody } from '@patternfly/react-table';
 import { clusterTemplateGVK } from '../../constants';
 import { DeserializedClusterTemplate, RowProps, TableColumn } from '../../types/resourceTypes';
 import { TFunction } from 'react-i18next';
@@ -104,10 +95,7 @@ export const ClusterTemplateRow: React.FC<RowProps<DeserializedClusterTemplate>>
         <ClusterTemplateStatus clusterTemplate={obj} />
       </Td>
       <Td data-testid={columns[5].id} isActionCell>
-        <ActionsColumn
-          items={actions}
-          actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
-        />
+        <ActionsColumn items={actions} />
       </Td>
       {isDeleteOpen && (
         <DeleteDialog

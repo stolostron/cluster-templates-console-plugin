@@ -1,10 +1,9 @@
 import * as React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
-import { Label, Truncate, Text, KebabToggle } from '@patternfly/react-core';
+import { Label, Truncate, Text } from '@patternfly/react-core';
 import { CheckCircleIcon } from '@patternfly/react-icons';
 import {
   ActionsColumn,
-  CustomActionsToggleProps,
   IAction,
   TableComposable,
   Tbody,
@@ -151,10 +150,7 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
       </Td>
       <Td isActionCell>
         <CellLoader loaded={templatesLoaded}>
-          <ActionsColumn
-            items={getRowActions()}
-            actionsToggle={(props: CustomActionsToggleProps) => <KebabToggle {...props} />}
-          />
+          <ActionsColumn items={getRowActions()} />
         </CellLoader>
       </Td>
       <DeleteDialog
