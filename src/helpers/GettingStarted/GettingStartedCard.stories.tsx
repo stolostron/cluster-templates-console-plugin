@@ -15,7 +15,7 @@ const GettingStartedCardWrapper = () => {
       links={[
         {
           title: 'Create a cluster from this template',
-          onClick: () => console.log('blablabla'),
+          onClick: () => console.log('on click link'),
           id: 'try-this-template',
         },
       ]}

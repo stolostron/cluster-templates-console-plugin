@@ -27,9 +27,15 @@
       }
     }
   }
-
+  .cluster-templates-getting-started-card__title-icon svg,
   a > svg,
   button > svg {
-    margin-left: var(--pf-global--spacer--sm);
+    margin-right: var(--pf-global--spacer--sm);
+    height: 1.5rem; 
+    width: 1.5rem; 
   }
+}
+.cluster-templates-getting-started-card__title-text {
+  vertical-align: top;
+  display: inline;
 }

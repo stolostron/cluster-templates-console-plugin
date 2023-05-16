@@ -50,9 +50,13 @@ const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
     >
       <Title headingLevel="h3" size={TitleSizes.md} style={{ color: titleColor }} data-test="title">
         {icon ? (
-          <span className="cluster-templates-getting-started-card__title-icon">{icon}</span>
-        ) : null}
-        {title}
+          <div className="cluster-templates-getting-started-card__title-icon">
+            <span>{icon}</span>
+            <div className="cluster-templates-getting-started-card__title-text">{title}</div>
+          </div>
+        ) : (
+          <>{title}</>
+        )}
       </Title>
 
       {description ? (

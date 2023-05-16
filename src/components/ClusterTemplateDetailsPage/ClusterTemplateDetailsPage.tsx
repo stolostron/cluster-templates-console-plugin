@@ -8,6 +8,8 @@ import {
   NavList,
   Page,
   PageSection,
+  Stack,
+  StackItem,
   Title,
 } from '@patternfly/react-core';
 import * as React from 'react';
@@ -180,18 +182,25 @@ const ClusterTemplateDetailsPage = ({ match }: { match: { params: { name: string
             {deserializedTemplate && (
               <Page>
                 <PageHeader clusterTemplate={deserializedTemplate} />
-                <Alerts />
+
                 {activeNavItem !== 'yaml' && (
                   <PageSection>
-                    {activeNavItem === 'overview' && (
-                      <OverviewTab clusterTemplate={deserializedTemplate} />
-                    )}
-                    {activeNavItem === 'quotas' && (
-                      <DetailsQuotasTab clusterTemplate={clusterTemplate} />
-                    )}
-                    {activeNavItem === 'instances' && (
-                      <InstancesTab clusterTemplate={clusterTemplate} />
-                    )}
+                    <Stack hasGutter>
+                      <StackItem>
+                        <Alerts />
+                      </StackItem>
+                      <StackItem>
+                        {activeNavItem === 'overview' && (
+                          <OverviewTab clusterTemplate={deserializedTemplate} />
+                        )}
+                        {activeNavItem === 'quotas' && (
+                          <DetailsQuotasTab clusterTemplate={clusterTemplate} />
+                        )}
+                        {activeNavItem === 'instances' && (
+                          <InstancesTab clusterTemplate={clusterTemplate} />
+                        )}
+                      </StackItem>
+                    </Stack>
                   </PageSection>
                 )}
                 {activeNavItem === 'yaml' && (

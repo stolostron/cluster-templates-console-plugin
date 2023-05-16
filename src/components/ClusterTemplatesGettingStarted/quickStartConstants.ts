@@ -1,8 +1,8 @@
 export const quickStartsData = {
   shareTemplate: {
-    name: 'share-template-qs',
+    name: 'share-cluster-template-qs',
     //t('Share this template')
-    title: 'Share this template',
+    title: 'Give access to a cluster template',
   },
   createTemplate: {
     name: 'create-cluster-template-qs',
@@ -10,7 +10,7 @@ export const quickStartsData = {
     title: 'Create a new cluster template',
   },
   createQuota: {
-    name: 'create-quota-qs',
+    name: 'create-cluster-template-quota-qs',
     //t('Limit cluster template access using quotas')
     title: 'Limit cluster template access using quotas',
   },

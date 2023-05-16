@@ -1,7 +1,7 @@
 apiVersion: console.openshift.io/v1
 kind: ConsoleQuickStart
 metadata:
-  name: share-template-qs
+  name: share-cluster-template-qs
 spec:
   conclusion: |-
     The ClusterTemplates can be used by the users with the configured permissions.

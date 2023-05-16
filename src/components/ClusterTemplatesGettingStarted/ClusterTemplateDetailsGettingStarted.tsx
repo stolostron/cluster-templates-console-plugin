@@ -14,7 +14,7 @@ const ClusterTemplateDetailsGettingStarted = ({
   return (
     <GettingStartedGrid>
       <TryThisTemplateCard onCreateCluster={onCreateCluster} key="try-this-template" />
-      <ShareTemplateCard />
+      <ShareTemplateCard title={t('Share this template')} />
       {isRedhatTemplate && (
         <CreateTemplateCard
           key="create-template-card"

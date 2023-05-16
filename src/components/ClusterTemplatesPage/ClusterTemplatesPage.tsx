@@ -94,19 +94,21 @@ const ClusterTemplatesPage = () => {
         <WithClusterTemplateQuickStarts>
           <Page>
             <PageHeader />
-            <Alerts />
-            <Stack hasGutter>
-              <StackItem>
-                <ClusterTemplatesListGettingStarted />
-              </StackItem>
-              <StackItem>
-                <PageSection>
+            <PageSection>
+              <Stack hasGutter>
+                <StackItem>
+                  <Alerts />
+                </StackItem>
+                <StackItem>
+                  <ClusterTemplatesListGettingStarted />
+                </StackItem>
+                <StackItem>
                   {activeTab === 'templates' && <ClusterTemplatesTab />}
                   {activeTab === 'repositories' && <RepositoriesTable />}
                   {activeTab === 'quotas' && <QuotasTab />}
-                </PageSection>
-              </StackItem>
-            </Stack>
+                </StackItem>
+              </Stack>
+            </PageSection>
           </Page>
         </WithClusterTemplateQuickStarts>
       </AlertsContextProvider>

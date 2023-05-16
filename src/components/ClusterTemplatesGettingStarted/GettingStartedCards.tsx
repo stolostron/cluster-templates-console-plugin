@@ -8,6 +8,7 @@ import { QuickStartContext, QuickStartContextValues } from '@patternfly/quicksta
 import { useTranslation } from '../../hooks/useTranslation';
 import { QuickStartKey, quickStartsData } from './quickStartConstants';
 import { TFunction } from 'react-i18next';
+import PaperIcon from '../../icons/PaperIcon';
 
 const getQuickStartLink = (
   qsCtx: QuickStartContextValues,
@@ -43,6 +44,7 @@ export const TryThisTemplateCard = ({ onCreateCluster }: { onCreateCluster: () =
 };
 
 export const CreateTemplateCard = ({ description }: { description: string }) => {
+  const color = 'var(--pf-global--warning-color--100)';
   const qsCtx = React.useContext(QuickStartContext);
   const { t } = useTranslation();
   if (!qsCtx || !qsCtx.setActiveQuickStart) {
@@ -50,18 +52,20 @@ export const CreateTemplateCard = ({ description }: { description: string }) => 
       <ErrorState error={'QuickStartContext should be used without QuickStartContextProvider'} />
     );
   }
+
   return (
     <GettingStartedCard
       id={'create-template-card'}
       title={t('Create your own template')}
-      titleColor={'var(--pf-global--info-color--200)'}
+      titleColor={color}
+      icon={<PaperIcon />}
       description={description}
       links={[getQuickStartLink(qsCtx, t, 'createTemplate')]}
     />
   );
 };
 
-export const ShareTemplateCard = () => {
+export const ShareTemplateCard = ({ title }: { title: string }) => {
   const qsCtx = React.useContext(QuickStartContext);
   const { t } = useTranslation();
   if (!qsCtx || !qsCtx.setActiveQuickStart) {
@@ -72,7 +76,7 @@ export const ShareTemplateCard = () => {
   return (
     <GettingStartedCard
       id={'share-template-card'}
-      title={t('Share this template')}
+      title={title}
       titleColor={'var(--pf-global--info-color--200)'}
       description={t(
         'To enable unprivileged developers to create clusters, you’ll need to provide them with a namespace configured with the required permissions.',
