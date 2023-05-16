@@ -16,13 +16,17 @@ type MarkdownEditorProps = {
 function MarkdownEditor({ code, onChange, height = 400 }: MarkdownEditorProps) {
   const { t } = useTranslation();
   const [markdownPreviewActive, setMarkdownPreviewActive] = React.useState(false);
-
+  const style = {
+    //force active color on bottons so they won't look disabled
+    color: 'var(--pf-c-button--m-control--active--Color)',
+  };
   const markdownButton = (
     <Button
       onClick={() => setMarkdownPreviewActive(false)}
       isActive={!markdownPreviewActive}
       variant="control"
       aria-label="Edit description in markdown"
+      style={style}
     >
       <CodeIcon /> {t('markdown').toUpperCase()}
     </Button>
@@ -33,7 +37,7 @@ function MarkdownEditor({ code, onChange, height = 400 }: MarkdownEditorProps) {
       isActive={markdownPreviewActive}
       variant="control"
       aria-label="Edit description in markdown"
-      isDisabled={!code}
+      style={style}
     >
       <EyeIcon /> {t('preview').toUpperCase()}
     </Button>

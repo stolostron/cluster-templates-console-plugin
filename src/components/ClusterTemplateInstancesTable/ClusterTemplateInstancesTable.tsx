@@ -1,12 +1,22 @@
 import { ClusterTemplateInstance } from '../../types/resourceTypes';
 
-import { TableComposable, Thead, Tr, Th, Tbody, Td } from '@patternfly/react-table';
+import {
+  TableComposable,
+  Thead,
+  Tr,
+  Th,
+  Tbody,
+  Td,
+  IAction,
+  ActionsColumn,
+} from '@patternfly/react-table';
 import { clusterTemplateInstanceGVK, namespaceGVK } from '../../constants';
 import ClusterTemplateInstanceStatus from './ClusterTemplateInstanceStatus';
 import { TFunction } from 'react-i18next';
 import React from 'react';
 import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
 import { useTranslation } from '../../hooks/useTranslation';
+import DeleteDialog from '../sharedDialogs/DeleteDialog';
 
 type TableColumn = {
   title: string;
@@ -33,6 +43,17 @@ const InstanceRow: React.FC<{
   columns: TableColumn[];
   index: number;
 }> = ({ instance, columns, index }) => {
+  const { t } = useTranslation();
+  const [deleteDlgOpen, setDeleteDlgOpen] = React.useState(false);
+  const getRowActions = (): IAction[] => {
+    return [
+      {
+        title: t('Delete'),
+        onClick: () => setDeleteDlgOpen(true),
+      },
+    ];
+  };
+
   return (
     <Tr data-index={index} data-testid="cluster-template-instance-row">
       <Td dataLabel={columns[0].title} data-testid="name">
@@ -55,6 +76,16 @@ const InstanceRow: React.FC<{
       <Td dataLabel={columns[2].title} data-testid="status">
         <ClusterTemplateInstanceStatus instance={instance} />
       </Td>
+      <Td isActionCell>
+        <ActionsColumn items={getRowActions()} />
+      </Td>
+      <DeleteDialog
+        isOpen={deleteDlgOpen}
+        onDelete={() => setDeleteDlgOpen(false)}
+        onCancel={() => setDeleteDlgOpen(false)}
+        gvk={clusterTemplateInstanceGVK}
+        resource={instance}
+      />
     </Tr>
   );
 };

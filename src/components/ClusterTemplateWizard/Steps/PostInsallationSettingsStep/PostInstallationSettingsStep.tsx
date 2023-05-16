@@ -138,7 +138,7 @@ const Description = () => {
   return (
     <Text>
       {t(
-        'Select the helm charts to install on clusters created by this template. The cluster will only be available after they are installed.',
+        'Recommended for defining the settings that will be installed on clusters created using the template (such as operators). Add the Helm chart or the Git repository to be installed. The cluster will only be available after they are installed and will be synced automatically.',
       )}
     </Text>
   );

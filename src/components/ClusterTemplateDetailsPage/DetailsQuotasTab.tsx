@@ -17,7 +17,7 @@ const QuotasEmptyState: React.FC = () => {
       title={t('No quotas set for this template')}
       message={t('You can limit the use of this template using quotas')}
       action={
-        <Button variant="link" onClick={() => navigation.goToClusterTemplatesPage('quotas')}>
+        <Button variant="primary" onClick={() => navigation.goToClusterTemplatesPage('quotas')}>
           {t('Manage quotas')}
         </Button>
       }
