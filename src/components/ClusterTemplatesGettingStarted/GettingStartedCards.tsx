@@ -17,6 +17,7 @@ const getQuickStartLink = (
   quickStartKey: QuickStartKey,
 ): GettingStartedLink => ({
   title: t(quickStartsData[quickStartKey].title),
+  loading: qsCtx.loading,
   onClick: () =>
     qsCtx.setActiveQuickStart && qsCtx.setActiveQuickStart(quickStartsData[quickStartKey].name),
   id: quickStartsData[quickStartKey].name,
@@ -87,6 +88,10 @@ export const ShareTemplateCard = ({ title }: { title: string }) => {
         getQuickStartLink(qsCtx, t, 'shareTemplate'),
         getQuickStartLink(qsCtx, t, 'createQuota'),
       ]}
+      moreLink={{
+        title: t('View all quick starts'),
+        href: 'quickstart',
+      }}
     />
   );
 };

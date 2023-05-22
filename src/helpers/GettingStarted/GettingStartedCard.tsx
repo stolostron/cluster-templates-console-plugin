@@ -6,13 +6,13 @@ import {
   TextVariants,
   Title,
   TitleSizes,
-  Button,
   SimpleList,
   Skeleton,
   SimpleListItem,
 } from '@patternfly/react-core';
 
 import './GettingStartedCard.scss';
+import ExternalLink from '../ExternalLink';
 
 export interface GettingStartedLink {
   id: string;
@@ -29,7 +29,7 @@ export interface GettingStartedCardProps {
   titleColor?: string;
   description?: string;
   links: GettingStartedLink[];
-  moreLink?: GettingStartedLink;
+  moreLink?: { title: string; href: string };
 }
 
 const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
@@ -91,16 +91,9 @@ const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
 
       {moreLink ? (
         <FlexItem>
-          <Button
-            onClick={(e) => {
-              moreLink.onClick && moreLink.onClick(e);
-            }}
-            isInline
-            variant="link"
-            data-test={`item ${moreLink.id}`}
-          >
+          <ExternalLink href={moreLink.href} showIcon={false}>
             {moreLink.title}
-          </Button>
+          </ExternalLink>
         </FlexItem>
       ) : null}
     </Flex>

@@ -54,7 +54,7 @@ const ClusterTemplateDetailsGettingStartedWrapper = ({
     <Loader loaded={loaded} error={error}>
       {loaded && quickStarts && (
         <Page style={{ height: '100vh' }}>
-          <WithQuickStarts quickStarts={quickStarts} quickStartsLoading={true}>
+          <WithQuickStarts quickStarts={quickStarts} quickStartsLoading={false}>
             {isListPage ? (
               <ClusterTemplatesListGettingStarted />
             ) : (
