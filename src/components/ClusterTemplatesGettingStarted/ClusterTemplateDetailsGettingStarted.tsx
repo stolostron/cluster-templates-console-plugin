@@ -13,11 +13,10 @@ const ClusterTemplateDetailsGettingStarted = ({
   const { t } = useTranslation();
   return (
     <GettingStartedGrid>
-      <TryThisTemplateCard onCreateCluster={onCreateCluster} key="try-this-template" />
+      <TryThisTemplateCard onCreateCluster={onCreateCluster} />
       <ShareTemplateCard title={t('Share this template')} />
       {isRedhatTemplate && (
         <CreateTemplateCard
-          key="create-template-card"
           description={t(
             'If you want to customize the template to your needs, create a new template based on the community one. Community templates cannot be modified, but are a great starting point for your own.',
           )}

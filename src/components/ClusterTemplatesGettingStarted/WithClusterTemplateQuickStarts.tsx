@@ -21,7 +21,7 @@ const WithClusterTemplateQuickStarts = ({ children }: { children: React.ReactNod
       return;
     }
 
-    const unfoundQuickStarts = (Object.keys(quickStartsData) as QuickStartKey[]).reduce<string[]>(
+    const missingQuickStarts = (Object.keys(quickStartsData) as QuickStartKey[]).reduce<string[]>(
       (prev, quickStartKey) => {
         if (
           !quickStarts.find(
@@ -35,10 +35,10 @@ const WithClusterTemplateQuickStarts = ({ children }: { children: React.ReactNod
       [],
     );
 
-    if (unfoundQuickStarts.length > 0) {
+    if (missingQuickStarts.length > 0) {
       addAlert({
         title: quickStartLoadErrMessage,
-        message: `Quick starts: ${unfoundQuickStarts.join(', ')} do not exist`,
+        message: `Quick starts: ${missingQuickStarts.join(', ')} do not exist`,
       });
     }
   }, [quickStarts, quickStartsLoaded, quickStartsError, addAlert]);
