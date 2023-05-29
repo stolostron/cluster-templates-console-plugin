@@ -9,6 +9,7 @@ module.exports = {
     'plugin:@typescript-eslint/recommended-requiring-type-checking',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
+    'plugin:storybook/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -18,7 +19,7 @@ module.exports = {
     ecmaVersion: '2020',
     sourceType: 'module',
     tsconfigRootDir: __dirname,
-    project: ['./tsconfig.json', './tsconfig.tests.json'],
+    project: ['./tsconfig.json'],
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'import'],
   rules: {
@@ -84,7 +85,12 @@ module.exports = {
     '@typescript-eslint/restrict-template-expressions': 'warn',
     'react-hooks/rules-of-hooks': 'error',
     'react/self-closing-comp': 'error',
-    'react/no-unescaped-entities': ['error', { forbid: ['>', '}'] }],
+    'react/no-unescaped-entities': [
+      'error',
+      {
+        forbid: ['>', '}'],
+      },
+    ],
     'react-hooks/exhaustive-deps': 'warn',
     'react/prop-types': 'off',
   },
@@ -93,14 +99,5 @@ module.exports = {
       version: 'detect',
     },
   },
-  ignorePatterns: [
-    '.eslintrc.js',
-    'src/components/ClusterTemplatesPage/HelmRepositoriesTab.test.tsx',
-    'src/components/ClusterTemplatesPage/ClusterTemplatesTab.test.tsx',
-    'src/components/ClusterTemplatesPage/ClusterTemplatesPage.test.tsx',
-    'src/components/ClusterTemplateWizard/Steps/ManageQuotasStep/ManageQuotasStep.test.tsx',
-    'src/components/ClusterTemplateDetailsPage/UsageSection.test.tsx',
-    'src/components/ClusterTemplateDetailsPage/QuotasSection.test.tsx',
-    'src/components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.test.tsx',
-  ],
+  ignorePatterns: ['.eslintrc.js'],
 };

@@ -3,3 +3,5 @@ dist/
 .devcontainer/dev.env
 .vscode
 ocp-console/
+cypress/videos
+cypress/screenshots

@@ -8,6 +8,8 @@ import {
   NavList,
   Page,
   PageSection,
+  Stack,
+  StackItem,
   Title,
 } from '@patternfly/react-core';
 import * as React from 'react';
@@ -37,6 +39,8 @@ import DeleteDialog from '../sharedDialogs/DeleteDialog';
 import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
 import useClusterTemplateActions from '../../hooks/useClusterTemplateActions';
 import useClusterTemplateDeserializer from '../../hooks/useClusterTemplateDeserializer';
+import Alerts from '../../alerts/Alerts';
+import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
 
 const useActiveNavItem = (clusterTemplate: DeserializedClusterTemplate | undefined) => {
   const history = useHistory();
@@ -174,25 +178,37 @@ const ClusterTemplateDetailsPage = ({ match }: { match: { params: { name: string
     <ErrorBoundary>
       <AlertsContextProvider>
         <PageLoader loaded={loaded} error={error}>
-          {deserializedTemplate && (
-            <Page>
-              <PageHeader clusterTemplate={deserializedTemplate} />
-              {activeNavItem !== 'yaml' && (
-                <PageSection>
-                  {activeNavItem === 'overview' && (
-                    <OverviewTab clusterTemplate={deserializedTemplate} />
-                  )}
-                  {activeNavItem === 'quotas' && (
-                    <DetailsQuotasTab clusterTemplate={clusterTemplate} />
-                  )}
-                  {activeNavItem === 'instances' && (
-                    <InstancesTab clusterTemplate={clusterTemplate} />
-                  )}
-                </PageSection>
-              )}
-              {activeNavItem === 'yaml' && <ResourceYAMLEditor initialResource={clusterTemplate} />}
-            </Page>
-          )}
+          <WithClusterTemplateQuickStarts>
+            {deserializedTemplate && (
+              <Page>
+                <PageHeader clusterTemplate={deserializedTemplate} />
+
+                {activeNavItem !== 'yaml' && (
+                  <PageSection>
+                    <Stack hasGutter>
+                      <StackItem>
+                        <Alerts />
+                      </StackItem>
+                      <StackItem>
+                        {activeNavItem === 'overview' && (
+                          <OverviewTab clusterTemplate={deserializedTemplate} />
+                        )}
+                        {activeNavItem === 'quotas' && (
+                          <DetailsQuotasTab clusterTemplate={clusterTemplate} />
+                        )}
+                        {activeNavItem === 'instances' && (
+                          <InstancesTab clusterTemplate={clusterTemplate} />
+                        )}
+                      </StackItem>
+                    </Stack>
+                  </PageSection>
+                )}
+                {activeNavItem === 'yaml' && (
+                  <ResourceYAMLEditor initialResource={clusterTemplate} />
+                )}
+              </Page>
+            )}
+          </WithClusterTemplateQuickStarts>
         </PageLoader>
       </AlertsContextProvider>
     </ErrorBoundary>

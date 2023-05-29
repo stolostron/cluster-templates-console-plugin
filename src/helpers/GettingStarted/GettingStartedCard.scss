@@ -1,0 +1,41 @@
+.cluster-templates-getting-started-card {
+
+  &__title-icon {
+    margin-right: var(--pf-global--spacer--sm);
+  }
+
+  small {
+    color: var(--pf-global--Color--200);
+  }
+
+  &__list {
+    // Remove default list styles which are globally resetted in the PatternFly samples
+    // but not in the SimpleList. https://www.patternfly.org/v4/components/simple-list
+    > ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+
+      > li {
+        // Add spacing to the skeleton similar to the SimpleListItem
+        .pf-c-skeleton {
+          margin: var(--pf-c-simple-list__item-link--PaddingTop)
+            var(--pf-c-simple-list__item-link--PaddingRight)
+            var(--pf-c-simple-list__item-link--PaddingBottom)
+            var(--pf-c-simple-list__item-link--PaddingLeft);
+        }
+      }
+    }
+  }
+  .cluster-templates-getting-started-card__title-icon svg,
+  a > svg,
+  button > svg {
+    margin-right: var(--pf-global--spacer--sm);
+    height: 1.5rem; 
+    width: 1.5rem; 
+  }
+}
+.cluster-templates-getting-started-card__title-text {
+  vertical-align: top;
+  display: inline;
+}

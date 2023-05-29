@@ -94,4 +94,10 @@ export const applicationSetGVK: K8sGroupVersionKind = {
   version: 'v1alpha1',
 };
 
+export const quickStartGVK: K8sGroupVersionKind = {
+  group: 'console.openshift.io',
+  version: 'v1',
+  kind: 'ConsoleQuickStart',
+};
+
 export const CREATE_NAMESPACE_SYNC_OPTION = 'CreateNamespace=true';

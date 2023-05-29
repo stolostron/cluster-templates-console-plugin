@@ -1,8 +1,11 @@
-FROM registry.ci.openshift.org/stolostron/builder:nodejs14-linux AS build
+FROM registry.access.redhat.com/ubi8/nodejs-18:latest AS build
+USER root
 
+RUN npm install -g corepack
+RUN corepack enable yarn
 ADD . /usr/src/app
 WORKDIR /usr/src/app
-RUN yarn install && yarn build
+RUN yarn install --frozen-lockfile && yarn build
 
 FROM docker.io/library/nginx:stable
 

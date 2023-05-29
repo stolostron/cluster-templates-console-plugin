@@ -1,6 +1,15 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
-import { Nav, NavItem, NavList, Page, PageSection, Title } from '@patternfly/react-core';
+import {
+  Nav,
+  NavItem,
+  NavList,
+  Page,
+  PageSection,
+  Stack,
+  StackItem,
+  Title,
+} from '@patternfly/react-core';
 import { useClusterTemplatesCount } from '../../hooks/useClusterTemplates';
 import { useTranslation } from '../../hooks/useTranslation';
 import { getNavLabelWithCount } from '../../utils/utils';
@@ -11,6 +20,11 @@ import ClusterTemplatesTab from './ClusterTemplatesTab';
 import QuotasTab from './QuotasTab';
 import RepositoriesTable from './RepositoriesTab';
 import './hack.css';
+import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
+import Alerts from '../../alerts/Alerts';
+import ErrorBoundary from '../../helpers/ErrorBoundary';
+import ClusterTemplatesListGettingStarted from '../ClusterTemplatesGettingStarted/ClusterTemplatesListGettingStarted';
 
 const PageNavigation = () => {
   const navigation = useNavigation();
@@ -41,7 +55,7 @@ const PageNavigation = () => {
           isActive={activeNavItem === 'quotas'}
           aria-label={t('Quotas tab')}
         >
-          {getNavLabelWithCount('Quotas', quotasCount)}
+          {getNavLabelWithCount('Quota management', quotasCount)}
         </NavItem>
       </NavList>
     </Nav>
@@ -75,14 +89,30 @@ const useActiveNavItem = () => {
 const ClusterTemplatesPage = () => {
   const activeTab = useActiveNavItem();
   return (
-    <Page>
-      <PageHeader />
-      <PageSection>
-        {activeTab === 'templates' && <ClusterTemplatesTab />}
-        {activeTab === 'repositories' && <RepositoriesTable />}
-        {activeTab === 'quotas' && <QuotasTab />}
-      </PageSection>
-    </Page>
+    <ErrorBoundary>
+      <AlertsContextProvider>
+        <WithClusterTemplateQuickStarts>
+          <Page>
+            <PageHeader />
+            <PageSection>
+              <Stack hasGutter>
+                <StackItem>
+                  <Alerts />
+                </StackItem>
+                <StackItem>
+                  <ClusterTemplatesListGettingStarted />
+                </StackItem>
+                <StackItem>
+                  {activeTab === 'templates' && <ClusterTemplatesTab />}
+                  {activeTab === 'repositories' && <RepositoriesTable />}
+                  {activeTab === 'quotas' && <QuotasTab />}
+                </StackItem>
+              </Stack>
+            </PageSection>
+          </Page>
+        </WithClusterTemplateQuickStarts>
+      </AlertsContextProvider>
+    </ErrorBoundary>
   );
 };
 

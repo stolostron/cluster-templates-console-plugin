@@ -9,7 +9,6 @@ objects:
       name: claas-config
       namespace: cluster-aas-operator
     data:  
-      argocd-ns: argocd
       enable-ui: 'true'
       ui-image: ${IMAGE}
 parameters:
