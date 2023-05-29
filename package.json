@@ -16,7 +16,7 @@
     "lint:fix": "eslint src cypress -fix && stylelint \"src/**/*.css\" --allow-empty-input --fix",
     "podman:build": "podman build --file Dockerfile --tag caas-ui .",
     "podman:push": "podman tag caas-ui quay.io/$USER/caas-ui:latest && podman push quay.io/$USER/caas-ui:latest",
-    "podman:deploy": "yarn podman:build && yarn podman:push quay.io/$USER/caas-ui:latest && ./scripts/deploy/deploy.sh quay.io/$USER/caas-ui:latest",
+    "podman:deploy": "yarn podman:build && yarn podman:push quay.io/$USER/caas-ui:latest && ./scripts/deploy.sh quay.io/$USER/caas-ui:latest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "yarn cypress run"
