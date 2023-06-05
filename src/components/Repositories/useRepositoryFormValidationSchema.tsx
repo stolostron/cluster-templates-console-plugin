@@ -23,7 +23,7 @@ const useRepositoryFormValidationSchema = (
       name: isCreateFlow
         ? nameSchema(t, usedSecretNames as string[]).required(requiredMsg)
         : stringSchema(),
-      url: stringSchema().url().required(requiredMsg),
+      url: stringSchema().required(requiredMsg), //yup url validation is too limiting, leaving this validation to the backend
       useCredentials: booleanSchema(),
       username: stringSchema().when('useCredentials', {
         is: true,
@@ -34,6 +34,8 @@ const useRepositoryFormValidationSchema = (
         then: (schema) => schema.required(requiredMsg),
       }),
       type: stringSchema().required(),
+      allowSelfSignedCa: booleanSchema().required(),
+      certificateAuthority: stringSchema().optional(),
     });
   }, [isCreateFlow, secrets, t]);
   return [validationSchema as SchemaOf<RepositoryFormValues>, loaded, error];

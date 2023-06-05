@@ -1,21 +1,18 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
-import { ArgoCDSecretData, RepositoryType, Secret } from '../../types/resourceTypes';
-import { k8sCreate, useK8sModels } from '@openshift-console/dynamic-plugin-sdk';
-import { ARGOCD_SECRET_LABELS, secretGVK } from '../../constants';
+import { RepositoryType } from '../../types/resourceTypes';
 import { Formik } from 'formik';
 import { useTranslation } from '../../hooks/useTranslation';
 import ModalDialogLoader from '../../helpers/ModalDialogLoader';
 import { RepositoryFormValues } from './types';
 import RepositoryForm from './RepositoryForm';
-import { getDecodedSecretData } from '../../utils/secrets';
-import useArgocdNamespace from '../../hooks/useArgocdNamespace';
 import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
 import useRepositoryFormValidationSchema from './useRepositoryFormValidationSchema';
+import { useCreateRepository } from '../../hooks/useSaveRepository';
 
 type NewRepositoryDialogProps = {
   closeDialog: () => void;
-  afterCreate?: (secretData: ArgoCDSecretData) => void;
+  afterCreate?: (name: string, url: string) => void;
   predefinedType?: RepositoryType;
 };
 
@@ -27,6 +24,8 @@ export function getInitialValues(type: RepositoryType): RepositoryFormValues {
     type,
     username: '',
     password: '',
+    certificateAuthority: '',
+    allowSelfSignedCa: false,
   };
 }
 
@@ -37,46 +36,20 @@ const NewRepositoryDialog = ({
 }: NewRepositoryDialogProps) => {
   const { t } = useTranslation();
   const [submitError, setSubmitError] = React.useState<unknown>();
-  const [namespace, namespaceLoaded, error] = useArgocdNamespace();
+  const [createRepo, createRepoLoaded, createRepoError] = useCreateRepository();
   const [validationSchema, validationSchemaLoaded, validationSchemaError] =
     useRepositoryFormValidationSchema(true);
-  const [{ Secret: secretModel }] = useK8sModels();
   const { refetch } = useHelmChartRepositories();
-  const handleSubmit = async (formValues: RepositoryFormValues) => {
-    const { name, url, type, useCredentials, username, password } = formValues;
 
+  const handleSubmit = async (formValues: RepositoryFormValues) => {
     setSubmitError(undefined);
 
-    const baseSecretData = { name, url, type };
-    const authenticatedSecretData = {
-      username,
-      password,
-    };
-
-    const createArgoCDSecret = k8sCreate<Secret>({
-      model: secretModel,
-      data: {
-        apiVersion: secretGVK.version,
-        kind: secretGVK.kind,
-        metadata: {
-          name,
-          namespace,
-          labels: ARGOCD_SECRET_LABELS,
-        },
-        stringData: useCredentials
-          ? { ...baseSecretData, ...authenticatedSecretData }
-          : baseSecretData,
-        type: 'Opaque',
-      },
-    });
-
     try {
-      const secret = await createArgoCDSecret;
+      await createRepo(formValues);
       if (formValues.type === 'helm') {
         await refetch();
       }
-      const decodedSecretData = getDecodedSecretData<ArgoCDSecretData>(secret.data);
-      !!afterCreate && afterCreate(decodedSecretData);
+      !!afterCreate && afterCreate(formValues.name, formValues.url);
       closeDialog();
     } catch (e) {
       setSubmitError(e);
@@ -94,8 +67,8 @@ const NewRepositoryDialog = ({
       hasNoBodyWrapper
     >
       <ModalDialogLoader
-        loaded={namespaceLoaded && validationSchemaLoaded}
-        error={error || validationSchemaError}
+        loaded={createRepoLoaded && validationSchemaLoaded}
+        error={createRepoError || validationSchemaError}
       >
         <Formik<RepositoryFormValues>
           initialValues={getInitialValues(predefinedType || 'git')}

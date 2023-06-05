@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Modal, ModalVariant } from '@patternfly/react-core';
 import { ArgoCDSecretData, DecodedSecret } from '../../types/resourceTypes';
-import { k8sPatch, useK8sModel } from '@openshift-console/dynamic-plugin-sdk';
 import ModalDialogLoader from '../../helpers/ModalDialogLoader';
 import { Formik } from 'formik';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -9,7 +8,7 @@ import { RepositoryFormValues } from './types';
 import RepositoryForm from './RepositoryForm';
 import useRepositoryFormValidationSchema from './useRepositoryFormValidationSchema';
 import { useClusterTemplatesFromRepo } from '../../hooks/useClusterTemplates';
-import { secretGVK } from '../../constants';
+import { useUpdateRepository } from '../../hooks/useSaveRepository';
 
 type EditRepositoryDialogProps = {
   argoCDSecret: DecodedSecret<ArgoCDSecretData>;
@@ -19,21 +18,24 @@ type EditRepositoryDialogProps = {
 export function getInitialValues(
   argoCDSecret: DecodedSecret<ArgoCDSecretData>,
 ): RepositoryFormValues {
+  const url = argoCDSecret.data?.url || '';
+
   return {
     name: argoCDSecret.metadata?.name || '',
-    url: argoCDSecret.data?.url || '',
+    url: url,
     useCredentials: !!argoCDSecret.data?.username,
-    type: argoCDSecret.data?.type || 'helm',
+    type: argoCDSecret.data?.type || 'git',
     username: argoCDSecret.data?.username || '',
     password: argoCDSecret.data?.password || '',
+    allowSelfSignedCa: argoCDSecret.data.insecure === 'true',
+    certificateAuthority: '',
   };
 }
 
-const EditHelmRepositoryDialog = ({ argoCDSecret, closeDialog }: EditRepositoryDialogProps) => {
+const EditRepositoryDialog = ({ argoCDSecret, closeDialog }: EditRepositoryDialogProps) => {
   const { t } = useTranslation();
   const [submitError, setSubmitError] = React.useState<unknown>();
-
-  const [secretModel, secretModelLoading] = useK8sModel(secretGVK);
+  const [updateRepo, saveRepoLoaded, saveRepoError] = useUpdateRepository(argoCDSecret);
   const [validationSchema, validationSchemaLoaded, validationSchemaError] =
     useRepositoryFormValidationSchema(false);
 
@@ -41,32 +43,10 @@ const EditHelmRepositoryDialog = ({ argoCDSecret, closeDialog }: EditRepositoryD
     argoCDSecret.data.url,
   );
   const handleSubmit = async (formValues: RepositoryFormValues) => {
-    const { name, url, type, useCredentials, username, password } = formValues;
-
     setSubmitError(undefined);
 
-    const baseSecretData = { name, url, type };
-    const authenticatedSecretData = {
-      username,
-      password,
-    };
-
-    const updateArgoCDSecret = k8sPatch<DecodedSecret<ArgoCDSecretData>>({
-      model: secretModel,
-      resource: argoCDSecret,
-      data: [
-        {
-          op: 'replace',
-          path: '/stringData',
-          value: useCredentials
-            ? { ...baseSecretData, ...authenticatedSecretData }
-            : baseSecretData,
-        },
-      ],
-    });
-
     try {
-      await updateArgoCDSecret;
+      await updateRepo(formValues);
       closeDialog();
     } catch (e) {
       setSubmitError(e);
@@ -84,8 +64,8 @@ const EditHelmRepositoryDialog = ({ argoCDSecret, closeDialog }: EditRepositoryD
       hasNoBodyWrapper
     >
       <ModalDialogLoader
-        loaded={validationSchemaLoaded && templatesLoaded && !secretModelLoading}
-        error={validationSchemaError || templatesLoadError}
+        loaded={validationSchemaLoaded && templatesLoaded && saveRepoLoaded}
+        error={validationSchemaError || templatesLoadError || saveRepoError}
       >
         <Formik<RepositoryFormValues>
           initialValues={getInitialValues(argoCDSecret)}
@@ -106,4 +86,4 @@ const EditHelmRepositoryDialog = ({ argoCDSecret, closeDialog }: EditRepositoryD
   );
 };
 
-export default EditHelmRepositoryDialog;
+export default EditRepositoryDialog;

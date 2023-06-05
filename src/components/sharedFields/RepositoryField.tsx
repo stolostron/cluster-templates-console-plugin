@@ -12,9 +12,9 @@ import { useField } from 'formik';
 import { useAlerts } from '../../alerts/AlertsContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import { PlusIcon } from '@patternfly/react-icons';
-import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
+import NewRepositoryDialog from '../Repositories/NewRepositoryDialog';
 import CellLoader from '../../helpers/CellLoader';
-import { ArgoCDSecretData, RepositoryType } from '../../types/resourceTypes';
+import { RepositoryType } from '../../types/resourceTypes';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
 import { humanizeUrl } from '../../utils/humanizing';
@@ -71,9 +71,9 @@ const RepositoryField = ({
     }
   }, [addAlert, loaded, selectedRepoName, setValue, url, setSelectedRepoName, repos]);
 
-  const onNewRepoCreated = (argoCDSecretData: ArgoCDSecretData) => {
-    setSelectedRepoName(argoCDSecretData.name || '');
-    setValue(argoCDSecretData.url || '', true);
+  const onNewRepoCreated = (name: string, url: string) => {
+    setSelectedRepoName(name);
+    setValue(url, true);
   };
 
   const onSelect: SelectProps['onSelect'] = (_, value) => {

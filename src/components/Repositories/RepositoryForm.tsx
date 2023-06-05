@@ -26,6 +26,9 @@ import { useTranslation } from '../../hooks/useTranslation';
 import { getErrorMessage } from '../../utils/utils';
 import { nameValidationMessages } from '../../utils/commonValidationSchemas';
 import RichInputField from '../../helpers/RichInputField';
+import CertificateAuthorityField from './CertificateAuthorityField/CertificateAuthorityField';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
+import Alerts from '../../alerts/Alerts';
 
 type RepositoryFormProps = FormikProps<RepositoryFormValues> & {
   argoCDSecret?: DecodedSecret<ArgoCDSecretData>;
@@ -80,7 +83,7 @@ const RepositoryForm = ({
   const urlInputRef = React.useRef<HTMLInputElement>(null);
   const hasTemplates = !!templatesFromRepo?.length;
   return (
-    <>
+    <AlertsContextProvider>
       <ModalBoxBody>
         <Form data-testid="repository-form" onSubmit={handleSubmit}>
           {!predefinedType && <TypeField />}
@@ -122,6 +125,7 @@ const RepositoryForm = ({
                 : undefined
             }
           />
+          <CertificateAuthorityField />
           <CheckboxField
             fieldId="useCredentials"
             name="useCredentials"
@@ -148,7 +152,7 @@ const RepositoryForm = ({
               />
             </>
           )}
-
+          <Alerts />
           {submitError && (
             <Alert variant={AlertVariant.danger} title={t('Failed to save repository')} isInline>
               {getErrorMessage(submitError)}
@@ -163,13 +167,13 @@ const RepositoryForm = ({
           isDisabled={isSubmitting}
           isLoading={isSubmitting}
         >
-          {t('Submit')}
+          {argoCDSecret ? t('Save') : t('Add')}
         </Button>
         <Button onClick={() => closeDialog()} variant={ButtonVariant.link}>
           {t('Cancel')}
         </Button>
       </ModalBoxFooter>
-    </>
+    </AlertsContextProvider>
   );
 };
 

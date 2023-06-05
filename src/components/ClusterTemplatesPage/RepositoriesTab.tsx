@@ -13,8 +13,8 @@ import TableLoader from '../../helpers/TableLoader';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
 import { useTranslation } from '../../hooks/useTranslation';
-import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
-import RepositoriesTable from '../HelmRepositories/RepositoriesTable';
+import NewRepositoryDialog from '../Repositories/NewRepositoryDialog';
+import RepositoriesTable from '../Repositories/RepositoriesTable';
 
 const CreateRepositoryButton = () => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
