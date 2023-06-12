@@ -5,3 +5,4 @@ dist/
 ocp-console/
 cypress/videos
 cypress/screenshots
+cache/

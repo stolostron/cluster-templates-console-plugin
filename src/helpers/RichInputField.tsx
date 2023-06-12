@@ -137,6 +137,7 @@ const RichInputField = React.forwardRef(
               onBlur={() => setPopoverOpen(false)}
               autoComplete="off"
               isDisabled={isDisabled}
+              id={props.name}
             />
 
             <Popover

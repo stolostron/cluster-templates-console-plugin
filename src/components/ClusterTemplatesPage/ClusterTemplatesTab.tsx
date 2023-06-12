@@ -1,21 +1,20 @@
-import { Button, Toolbar, ToolbarContent } from '@patternfly/react-core';
+import { Button, Stack, StackItem, Toolbar, ToolbarContent } from '@patternfly/react-core';
 import React from 'react';
 import EmptyPageState from '../../helpers/EmptyPageState';
 import TableLoader from '../../helpers/TableLoader';
 import { useDeserializedClusterTemplates } from '../../hooks/useClusterTemplates';
 import { useNavigation } from '../../hooks/useNavigation';
 import { useTranslation } from '../../hooks/useTranslation';
+import ClusterTemplatesListGettingStarted from '../ClusterTemplatesGettingStarted/ClusterTemplatesListGettingStarted';
 import ClusterTemplatesTable from './ClusterTemplatesTable';
 
 const CreateClusterTemplateButton = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
   return (
-    <>
-      <Button variant="primary" onClick={() => navigation.goToClusterTemplateCreatePage()}>
-        {t('Create a template')}
-      </Button>
-    </>
+    <Button variant="primary" onClick={() => navigation.goToClusterTemplateCreatePage()}>
+      {t('Create a template')}
+    </Button>
   );
 };
 
@@ -40,10 +39,15 @@ const ClusterTemplatesTab = () => {
       errorTitle={t('The Cluster Templates could not be loaded.')}
     >
       {clusterTemplates.length > 0 ? (
-        <>
-          <ClusterTemplatesToolbar />
-          <ClusterTemplatesTable clusterTemplates={clusterTemplates} />
-        </>
+        <Stack hasGutter>
+          <StackItem>
+            <ClusterTemplatesListGettingStarted />
+          </StackItem>
+          <StackItem>
+            <ClusterTemplatesToolbar />
+            <ClusterTemplatesTable clusterTemplates={clusterTemplates} />
+          </StackItem>
+        </Stack>
       ) : (
         <EmptyPageState
           title={t('You have no cluster templates')}

@@ -9,7 +9,7 @@ import { DeserializedClusterTemplate } from '../../types/resourceTypes';
 
 const PageHeader = ({ clusterTemplate }: { clusterTemplate?: DeserializedClusterTemplate }) => {
   const { t } = useTranslation();
-  const createTitle = t('Create a new cluster template');
+  const createTitle = t('Create a cluster template');
   const title = clusterTemplate ? t('Edit ClusterTemplate') : createTitle;
   const activeItemText = clusterTemplate ? clusterTemplate?.metadata?.name || '' : createTitle;
   return (

@@ -26,6 +26,9 @@ export const getResourceUrl = (
   groupVersionKind: K8sGroupVersionKind,
   name?: string,
   namespace?: string,
+  labels?: {
+    [key: string]: string;
+  },
 ) => {
   let url = '/k8s/';
 
@@ -41,6 +44,14 @@ export const getResourceUrl = (
     // Some resources have a name that needs to be encoded. For instance,
     // Users can have special characters in the name like `#`.
     url += `/${encodeURIComponent(name)}`;
+  }
+  if (labels) {
+    const labelsStr = Object.entries(labels)
+      .map(([key, value]) => `${key}=${value}`)
+      .join(',');
+    const searchParams = new URLSearchParams();
+    searchParams.set('labels', labelsStr);
+    url += `?${searchParams.toString()}`;
   }
 
   return url;

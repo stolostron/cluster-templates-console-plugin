@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
-import { TextContent, Text, Button } from '@patternfly/react-core';
-import { ActionsColumn, Td, Th, Thead, Tr, TableComposable, Tbody } from '@patternfly/react-table';
+import { ResourceLink, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
+import { Text, Button, Stack, StackItem } from '@patternfly/react-core';
+import { ActionsColumn, Td, Th, Thead, Tr, Tbody } from '@patternfly/react-table';
 import { clusterTemplateGVK } from '../../constants';
 import { DeserializedClusterTemplate, RowProps, TableColumn } from '../../types/resourceTypes';
 import { TFunction } from 'react-i18next';
@@ -10,28 +10,51 @@ import {
   ClusterTemplateQuotasSummary,
   ClusterTemplateStatus,
   ClusterTemplateUsage,
-  ClusterTemplateVendorLabel,
 } from '../sharedDetailItems/clusterTemplateDetailItems';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useNavigation } from '../../hooks/useNavigation';
 import { WithHelpIcon } from '../../helpers/PopoverHelpIcon';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
 import useClusterTemplateActions from '../../hooks/useClusterTemplateActions';
+import ActionsTd from '../../helpers/ActionsTd';
+import { TableComposableEqualColumnSize } from '../../helpers/PatternflyOverrides';
+import { QuickStartContext } from '@patternfly/quickstarts';
+import { quickStartsData } from '../ClusterTemplatesGettingStarted/quickStartConstants';
+import VendorLabel from '../sharedDetailItems/VendorLabel';
 
 const QuotasColumnTitle = () => {
   const { t } = useTranslation();
   const navigation = useNavigation();
+  const qsCtx = React.useContext(QuickStartContext);
   const helpText = (
-    <TextContent>
-      <Text>{t('You can limit the use of templates with quotas by adding templates to them')}</Text>
-      <Button
-        variant="link"
-        onClick={() => navigation.goToClusterTemplatesPage('quotas')}
-        style={{ paddingLeft: 'unset' }}
-      >
-        {t('Manage quotas')}
-      </Button>
-    </TextContent>
+    <Stack>
+      <StackItem>
+        <Text>
+          {t('You can limit the use of templates with quotas by adding templates to them.')}
+        </Text>
+      </StackItem>
+      <StackItem>
+        <Button
+          variant="link"
+          onClick={() => navigation.goToClusterTemplatesPage('quotas')}
+          style={{ paddingLeft: 'unset' }}
+        >
+          {t('Manage quotas')}
+        </Button>
+      </StackItem>
+      <StackItem>
+        <Button
+          variant="link"
+          onClick={() =>
+            qsCtx?.setActiveQuickStart &&
+            qsCtx.setActiveQuickStart(quickStartsData.createQuota.name)
+          }
+          style={{ paddingLeft: 'unset', paddingTop: 'unset' }}
+        >
+          {t('Learn more')}
+        </Button>
+      </StackItem>
+    </Stack>
   );
   return <WithHelpIcon helpText={helpText}>{t('Quotas')}</WithHelpIcon>;
 };
@@ -43,8 +66,8 @@ function getTableColumns(t: TFunction): TableColumn[] {
       id: 'name',
     },
     {
-      title: t('Instances'),
-      id: 'instances',
+      title: t('Clusters'),
+      id: 'clusters',
     },
     {
       title: <QuotasColumnTitle />,
@@ -57,6 +80,10 @@ function getTableColumns(t: TFunction): TableColumn[] {
     {
       title: t('Status'),
       id: 'status',
+    },
+    {
+      title: t('Created'),
+      id: 'created',
     },
     {
       title: '',
@@ -74,7 +101,7 @@ export const ClusterTemplateRow: React.FC<RowProps<DeserializedClusterTemplate>>
 
   return (
     <Tr>
-      <Td data-testid={columns[0].id} dataLabel={columns[0].id}>
+      <Td dataLabel={columns[0].id} modifier="wrap">
         <ResourceLink
           groupVersionKind={clusterTemplateGVK}
           name={obj.metadata?.name}
@@ -82,21 +109,24 @@ export const ClusterTemplateRow: React.FC<RowProps<DeserializedClusterTemplate>>
           hideIcon
         />
       </Td>
-      <Td data-testid={columns[1].id} dataLabel={columns[1].id}>
+      <Td dataLabel={columns[1].id}>
         <ClusterTemplateUsage clusterTemplate={obj} />
       </Td>
-      <Td data-testid={columns[2].id} dataLabel={columns[2].id}>
+      <Td dataLabel={columns[2].id}>
         <ClusterTemplateQuotasSummary clusterTemplate={obj} />
       </Td>
-      <Td data-testid={columns[3].id} dataLabel={columns[3].id}>
-        <ClusterTemplateVendorLabel clusterTemplate={obj} />
+      <Td dataLabel={columns[3].id}>
+        <VendorLabel resource={obj} />
       </Td>
-      <Td data-testid={columns[4].id} dataLabel={columns[4].id}>
+      <Td dataLabel={columns[4].id}>
         <ClusterTemplateStatus clusterTemplate={obj} />
       </Td>
-      <Td data-testid={columns[5].id} isActionCell>
-        <ActionsColumn items={actions} />
+      <Td dataLabel={columns[5].id}>
+        <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       </Td>
+      <ActionsTd>
+        <ActionsColumn items={actions} />
+      </ActionsTd>
       {isDeleteOpen && (
         <DeleteDialog
           isOpen={isDeleteOpen}
@@ -117,12 +147,12 @@ const ClusterTemplatesTable = ({
 }) => {
   const { t } = useTranslation();
   return (
-    <TableComposable
+    <TableComposableEqualColumnSize
       aria-label="Cluster templates table"
       data-testid="cluster-templates-table"
       variant="compact"
     >
-      <Thead>
+      <Thead noWrap>
         <Tr>
           {getTableColumns(t).map((column) => (
             <Th key={column.id}>{column.title}</Th>
@@ -134,7 +164,7 @@ const ClusterTemplatesTable = ({
           <ClusterTemplateRow key={template.metadata?.name} obj={template} />
         ))}
       </Tbody>
-    </TableComposable>
+    </TableComposableEqualColumnSize>
   );
 };
 

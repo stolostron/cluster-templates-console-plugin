@@ -1,7 +1,5 @@
 import * as React from 'react';
-import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
-import { Label, Truncate, Text } from '@patternfly/react-core';
-import { CheckCircleIcon } from '@patternfly/react-icons';
+import { ResourceLink, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import {
   ActionsColumn,
   IAction,
@@ -16,7 +14,7 @@ import { TFunction } from 'react-i18next';
 import { secretGVK } from '../../constants';
 import { ArgoCDSecretData, DecodedSecret, RowProps, TableColumn } from '../../types/resourceTypes';
 import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
-
+import { Truncate, Text } from '@patternfly/react-core';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
 import EditRepositoryDialog from './EditRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
@@ -28,35 +26,53 @@ import {
 import RepositoryErrorPopover from './RepositoryErrorPopover';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
 import { useClusterTemplatesFromRepo } from '../../hooks/useClusterTemplates';
+import ActionsTd from '../../helpers/ActionsTd';
+import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
+import Humanize from 'humanize-plus';
+import VendorLabel from '../sharedDetailItems/VendorLabel';
 
-const getTableColumns = (t: TFunction): TableColumn[] => [
+const COLUMN_WIDTH = 11.6;
+
+const getTableColumns = (t: TFunction): (TableColumn & { widthPercent: number })[] => [
   {
-    title: t('Name'),
-    id: 'name',
+    title: t('Type'),
+    id: 'type',
+    widthPercent: COLUMN_WIDTH,
   },
   {
-    title: t('URL'),
-    id: 'url',
+    title: t('Repository name and URL'),
+    id: 'name',
+    widthPercent: 30,
   },
   {
     title: t('Credentials'),
     id: 'credentials',
+    widthPercent: COLUMN_WIDTH,
   },
   {
-    title: t('Last updated'),
+    title: t('Secret Created'),
+    id: 'created',
+    widthPercent: COLUMN_WIDTH,
+  },
+  {
+    title: t('Repository updated'),
     id: 'updated-at',
+    widthPercent: COLUMN_WIDTH,
   },
   {
     title: t('Helm charts'),
     id: 'charts',
+    widthPercent: COLUMN_WIDTH,
   },
   {
-    title: t('Templates published'),
-    id: 'templates',
+    title: t('Vendor'),
+    id: 'vendor',
+    widthPercent: COLUMN_WIDTH,
   },
   {
     title: '',
     id: 'kebab-menu',
+    widthPercent: 1,
   },
 ];
 
@@ -75,10 +91,12 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
   const { repos, loaded, error } = helmChartRepositoriesResult;
+
   const [templatesFromRepo, templatesLoaded, templatesLoadError] = useClusterTemplatesFromRepo(
     obj.data.url,
   );
-
+  // t('Failed to find repository templates')
+  useAddAlertOnError(templatesLoadError, 'Failed to find repository templates');
   let repoChartsCount: string | number = '-';
   let repoChartsUpdatedAt = '-';
   let repository;
@@ -111,15 +129,14 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
 
   return (
     <Tr>
-      <Td dataLabel={columns[0].id}>
+      <Td dataLabel={columns[0].id}>{Humanize.titleCase(obj.data?.type || '')}</Td>
+      <Td dataLabel={columns[1].id}>
         <ResourceLink
           groupVersionKind={secretGVK}
           name={obj.metadata?.name}
           namespace={obj.metadata?.namespace}
           hideIcon
         />
-      </Td>
-      <Td dataLabel={columns[1].id}>
         <Text component="a" href={obj.data?.url} target="_blank" rel="noopener noreferrer">
           <Truncate content={obj.data?.url || ''} position={'middle'} trailingNumChars={10} />
         </Text>
@@ -128,11 +145,14 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
         {obj.data?.username ? t('Authenticated') : t('Not required')}
       </Td>
       <Td dataLabel={columns[3].id}>
+        <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
+      </Td>
+      <Td dataLabel={columns[4].id}>
         <CellLoader loaded={loaded} error={error}>
           {repoChartsUpdatedAt}
         </CellLoader>
       </Td>
-      <Td dataLabel={columns[4].id}>
+      <Td dataLabel={columns[5].id}>
         <CellLoader loaded={loaded} error={error}>
           {repository?.error ? (
             <RepositoryErrorPopover error={repository.error} />
@@ -142,17 +162,13 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
         </CellLoader>
       </Td>
       <Td dataLabel={columns[5].id}>
-        <CellLoader loaded={templatesLoaded} error={templatesLoadError}>
-          <Label color="green" icon={<CheckCircleIcon />}>
-            {templatesFromRepo.length}
-          </Label>
-        </CellLoader>
+        <VendorLabel resource={obj} />
       </Td>
-      <Td isActionCell>
+      <ActionsTd>
         <CellLoader loaded={templatesLoaded}>
           <ActionsColumn items={getRowActions()} />
         </CellLoader>
-      </Td>
+      </ActionsTd>
       <DeleteDialog
         isOpen={isDialogOpen('deleteDialog')}
         onCancel={() => closeDialog('deleteDialog')}
@@ -172,6 +188,11 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
 
 const RepositoriesTable = ({ secrets }: { secrets: DecodedSecret<ArgoCDSecretData>[] }) => {
   const helmChartRepositoriesResult = useHelmChartRepositories();
+  // t('Failed to load Helm repositories information')
+  useAddAlertOnError(
+    helmChartRepositoriesResult.error,
+    'Failed to load Helm repositories information',
+  );
   const { t } = useTranslation();
 
   return (
@@ -183,7 +204,9 @@ const RepositoriesTable = ({ secrets }: { secrets: DecodedSecret<ArgoCDSecretDat
       <Thead>
         <Tr>
           {getTableColumns(t).map((column) => (
-            <Th key={column.id}>{column.title}</Th>
+            <Th key={column.id} style={{ width: `${column.widthPercent}%` }}>
+              {column.title}
+            </Th>
           ))}
         </Tr>
       </Thead>

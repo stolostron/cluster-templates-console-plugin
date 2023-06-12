@@ -13,8 +13,14 @@ const HelpText = () => (
       this maximum.
     </Text>
     <Text className="pf-u-font-weight-bold">
-      As an example, create a quota that allows 10, add a template, and limit consumption to 2. As a
-      result, it will be possible to create up to 5 clusters.
+      As an example, use it to define small and big clusters and limit the consumption of them, such
+      as:
+      <br />
+      Consumption limit = 100
+      <br />
+      Template 1 consumption = 20
+      <br />
+      Template 2 consumption = 40
     </Text>
   </Trans>
 );

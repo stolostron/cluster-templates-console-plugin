@@ -1,16 +1,7 @@
-import {
-  TableComposable,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-  ActionsColumn,
-  IAction,
-} from '@patternfly/react-table';
+import { Thead, Tr, Th, Tbody, Td, ActionsColumn, IAction } from '@patternfly/react-table';
 import { TFunction } from 'i18next';
 import React from 'react';
-import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
+import { ResourceLink, Timestamp } from '@openshift-console/dynamic-plugin-sdk';
 import { clusterTemplateQuotaGVK, namespaceGVK } from '../../constants';
 
 import { useTranslation } from '../../hooks/useTranslation';
@@ -18,6 +9,8 @@ import { ClusterTemplate, Quota } from '../../types/resourceTypes';
 import NotAvailable from '../../helpers/NotAvailable';
 import { useNavigation } from '../../hooks/useNavigation';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
+import ActionsTd from '../../helpers/ActionsTd';
+import { TableComposableEqualColumnSize } from '../../helpers/PatternflyOverrides';
 
 export const BudgetStatus = ({ quota }: { quota: Quota }) => {
   const costAllowed = quota.spec?.budget;
@@ -101,7 +94,12 @@ const getTableColumns = (t: TFunction, clusterTemplate?: ClusterTemplate): Table
   const lastColumn = clusterTemplate
     ? getClusterTemplateInstancesStatusColumn(t, clusterTemplate)
     : getTemplatesColumn(t);
-  return [...columns, lastColumn];
+  const timestampColumn: TableColumn = {
+    title: t('Created'),
+    id: 'created',
+    getContent: (quota: Quota) => <Timestamp timestamp={quota.metadata?.creationTimestamp || ''} />,
+  };
+  return [...columns, lastColumn, timestampColumn];
 };
 
 const QuotaRow: React.FC<{
@@ -132,9 +130,9 @@ const QuotaRow: React.FC<{
           {column.getContent(quota)}
         </Td>
       ))}
-      <Td isActionCell>
+      <ActionsTd>
         <ActionsColumn items={getRowActions()} />
-      </Td>
+      </ActionsTd>
       <DeleteDialog
         isOpen={deleteDlgOpen}
         onDelete={() => setDeleteDlgOpen(false)}
@@ -153,7 +151,7 @@ const QuotasTable: React.FC<{
   const { t } = useTranslation();
   const columns = getTableColumns(t, clusterTemplate);
   return (
-    <TableComposable variant="compact" data-testid="quotas-table">
+    <TableComposableEqualColumnSize variant="compact" data-testid="quotas-table">
       <Thead>
         <Tr>
           {columns.map((column) => (
@@ -167,7 +165,7 @@ const QuotasTable: React.FC<{
           <QuotaRow quota={quota} columns={columns} index={index} key={quota.metadata?.uid || ''} />
         ))}
       </Tbody>
-    </TableComposable>
+    </TableComposableEqualColumnSize>
   );
 };
 

@@ -2,14 +2,14 @@ import { Popover, Button, Text, TextContent } from '@patternfly/react-core';
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
-  RunningIcon,
+  InProgressIcon,
   UnknownIcon,
 } from '@patternfly/react-icons';
 import React from 'react';
 
 export enum Status {
   Ready = 'Ready',
-  Running = 'running',
+  Running = 'Running',
   Failed = 'Failed',
 }
 
@@ -24,9 +24,7 @@ const getStatusIcon = (status: string) => {
       );
     }
     case Status.Running: {
-      return (
-        <RunningIcon color="var(--pf-global--success-color--100)" data-testid="running-icon" />
-      );
+      return <InProgressIcon data-testid="running-icon" color="var(--pf-global--Color--100)" />;
     }
     case Status.Ready: {
       return (
@@ -55,7 +53,7 @@ const StatusWithPopover = ({
   errorInstructions,
 }: ResourceStatusProps & { icon: React.ReactNode }) => {
   const popoverContent = (
-    <TextContent>
+    <TextContent style={{ maxHeight: '300px', overflowY: 'auto' }}>
       <Text>{message}</Text>
       {errorInstructions && (
         <Text>

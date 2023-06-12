@@ -1,6 +1,4 @@
 import {
-  Alert,
-  AlertActionLink,
   Flex,
   FlexItem,
   Nav,
@@ -36,7 +34,7 @@ import InstancesTab from './InstancesTab';
 import { ResourceYAMLEditor } from '@openshift-console/dynamic-plugin-sdk';
 import DetailsQuotasTab from './DetailsQuotasTab';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
-import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
+import { getResourceVendor } from '../../utils/clusterTemplateDataUtils';
 import useClusterTemplateActions from '../../hooks/useClusterTemplateActions';
 import useClusterTemplateDeserializer from '../../hooks/useClusterTemplateDeserializer';
 import Alerts from '../../alerts/Alerts';
@@ -91,30 +89,11 @@ const PageNavigation = ({ clusterTemplate }: { clusterTemplate: DeserializedClus
   );
 };
 
-const RedhatTemplateAlert = () => {
-  const { t } = useTranslation();
-  return (
-    <Alert
-      isInline
-      variant="info"
-      title="Create your own template"
-      actionLinks={
-        <AlertActionLink onClick={() => console.log('link')}>
-          {t('Learn more about creating your own cluster template')}
-        </AlertActionLink>
-      }
-    >
-      {t('Templates provided by Red Hat cannot be modified. To customize, make your own template.')}
-    </Alert>
-  );
-};
-
 const PageHeader = ({ clusterTemplate }: { clusterTemplate: DeserializedClusterTemplate }) => {
   const navigation = useNavigation();
   const { t } = useTranslation();
   const [deleteDialogOpen, setDeleteDialogOpen] = React.useState(false);
-  const isRedhatTemplate =
-    getClusterTemplateVendor(clusterTemplate) === ClusterTemplateVendor.REDHAT;
+  const isRedhatTemplate = getResourceVendor(clusterTemplate) === ClusterTemplateVendor.COMMUNITY;
   const actions = useClusterTemplateActions(clusterTemplate, () => setDeleteDialogOpen(true));
   return (
     <>
@@ -138,11 +117,7 @@ const PageHeader = ({ clusterTemplate }: { clusterTemplate: DeserializedClusterT
           )}
         </Flex>
       </PageSection>
-      {isRedhatTemplate && (
-        <PageSection variant="light">
-          <RedhatTemplateAlert />
-        </PageSection>
-      )}
+
       <PageSection type="nav" style={{ paddingTop: 'unset' }}>
         <PageNavigation clusterTemplate={clusterTemplate} />
       </PageSection>

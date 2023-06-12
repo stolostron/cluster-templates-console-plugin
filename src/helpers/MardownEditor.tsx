@@ -11,9 +11,10 @@ type MarkdownEditorProps = {
   code: string;
   onChange: (code: string) => void;
   height?: number;
+  emptyState: React.ReactNode;
 };
 
-function MarkdownEditor({ code, onChange, height = 400 }: MarkdownEditorProps) {
+function MarkdownEditor({ code, onChange, height = 400, emptyState }: MarkdownEditorProps) {
   const { t } = useTranslation();
   const [markdownPreviewActive, setMarkdownPreviewActive] = React.useState(false);
   const style = {
@@ -42,7 +43,7 @@ function MarkdownEditor({ code, onChange, height = 400 }: MarkdownEditorProps) {
       <EyeIcon /> {t('preview').toUpperCase()}
     </Button>
   );
-  const markdownPreviewClassName = '';
+
   return (
     <>
       <CodeEditor
@@ -54,9 +55,10 @@ function MarkdownEditor({ code, onChange, height = 400 }: MarkdownEditorProps) {
         isLineNumbersVisible={false}
         customControls={[markdownButton, previewButton]}
         showEditor={!markdownPreviewActive}
+        emptyState={markdownPreviewActive || code !== undefined ? undefined : emptyState}
       />
       {markdownPreviewActive && (
-        <div className={css(styles.codeEditor, markdownPreviewClassName)}>
+        <div className={css(styles.codeEditor)}>
           <div className={css(styles.codeEditorMain)} style={{ borderTop: 0 }}>
             <div className={css(styles.codeEditorCode)}>
               <div style={{ height, overflow: 'scroll' }}>

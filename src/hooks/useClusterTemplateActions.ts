@@ -22,7 +22,7 @@ const useClusterTemplateActions = (
       title: t('Edit'),
       isDisabled: isRedHatTemplate(clusterTemplate),
       description: isRedHatTemplate(clusterTemplate)
-        ? t('Red Hat templates cannot be modified')
+        ? t('Community templates cannot be modified')
         : undefined,
       onClick: () => navigation.goToClusterTemplateEditPage(clusterTemplate),
     },
@@ -30,7 +30,7 @@ const useClusterTemplateActions = (
       title: t('Delete'),
       isDisabled: isRedHatTemplate(clusterTemplate),
       description: isRedHatTemplate(clusterTemplate)
-        ? t('Red Hat templates cannot be deleted')
+        ? t('Community templates cannot be deleted')
         : undefined,
       onClick: onDelete,
     },

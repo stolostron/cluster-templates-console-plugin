@@ -1,34 +1,50 @@
-import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
-import { Divider } from '@patternfly/react-core';
+import { QuickStartContext } from '@patternfly/quickstarts';
+import { Button, Divider, Stack, StackItem } from '@patternfly/react-core';
 import React from 'react';
 import { Trans } from 'react-i18next';
 import { useAddAlertOnError } from '../../../alerts/useAddAlertOnError';
-import { CLUSTER_TEMPLATES_ROLE, clusterRoleGVK } from '../../../constants';
-import FormSection from '../../../helpers/FormSection';
-import { SkeletonLoader } from '../../../helpers/SkeletonLoader';
+import CellLoader from '../../../helpers/CellLoader';
+import { FormSection } from '../../../helpers/PatternflyOverrides';
 import { useAllQuotas } from '../../../hooks/useQuotas';
 import { useTranslation } from '../../../hooks/useTranslation';
 import { Quota } from '../../../types/resourceTypes';
+import { quickStartsData } from '../../ClusterTemplatesGettingStarted/quickStartConstants';
 import NameField from '../../sharedFields/NameField';
 import NamespaceField from '../../sharedFields/NamespaceField';
 import BudgetField from './BudgetField';
 import QuotaAllowedTemplatesArray from './QuotaAllowedTemplatesArray';
 
-const ClusterTemplatesUserRoleLink = () => (
-  <ResourceLink
-    hideIcon={true}
-    inline
-    groupVersionKind={clusterRoleGVK}
-    name={CLUSTER_TEMPLATES_ROLE}
-  />
-);
-
-const QuotaNamespaceHelpText = () => (
-  <Trans ns="plugin__clustertemplates-plugin">
-    Select a namespace that has the permissions for creating ClusterTemplateIntances. See &nbsp;
-    <ClusterTemplatesUserRoleLink /> &nbsp;for reference. Each namespace can only have one quota.
-  </Trans>
-);
+const QuotaNamespaceHelpText = () => {
+  const qsCtx = React.useContext(QuickStartContext);
+  const { t } = useTranslation();
+  return (
+    <Stack>
+      <StackItem>
+        <Trans ns="plugin__clustertemplates-plugin">
+          The limits specified in this quota will be applied only within the scope of the selected
+          namespace.
+          <br />
+          Ensure that the namespace has the necessary permissions for creating
+          ClusterTemplateInstances.
+          <br />
+          Note that each namespace can only have one quota.
+        </Trans>
+      </StackItem>
+      <StackItem>
+        <Button
+          variant="link"
+          onClick={() =>
+            qsCtx?.setActiveQuickStart &&
+            qsCtx.setActiveQuickStart(quickStartsData.shareTemplate.name)
+          }
+          style={{ paddingLeft: 'unset', paddingTop: 'unset' }}
+        >
+          {t('Learn more about sharing a template')}
+        </Button>
+      </StackItem>
+    </Stack>
+  );
+};
 
 const QuotaFormFields = ({ originalQuota }: { originalQuota: Quota | undefined }) => {
   const { t } = useTranslation();
@@ -36,24 +52,26 @@ const QuotaFormFields = ({ originalQuota }: { originalQuota: Quota | undefined }
   // t('Failed to load namespace options');
   useAddAlertOnError(error, 'Failed to load namespace options');
   return (
-    <SkeletonLoader loaded={loaded}>
+    <>
       <NameField label={t('Name')} name="name" isDisabled={!!originalQuota} />
-      <NamespaceField
-        name="namespace"
-        label={t('Namespace')}
-        isRequired
-        helpText={<QuotaNamespaceHelpText />}
-        isDisabled={!!originalQuota}
-        namespaceFilter={(namespace) =>
-          !quotas.find((quota) => quota.metadata?.namespace === namespace)
-        }
-      />
+      <CellLoader loaded={loaded}>
+        <NamespaceField
+          name="namespace"
+          label={t('Namespace')}
+          isRequired
+          helpText={<QuotaNamespaceHelpText />}
+          isDisabled={!!originalQuota}
+          namespaceFilter={(namespace) =>
+            !quotas.find((quota) => quota.metadata?.namespace === namespace)
+          }
+        />
+      </CellLoader>
       <BudgetField />
       <Divider />
       <FormSection title={t('Allowed templates')}>
         <QuotaAllowedTemplatesArray />
       </FormSection>
-    </SkeletonLoader>
+    </>
   );
 };
 

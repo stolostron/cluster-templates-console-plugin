@@ -49,7 +49,18 @@ const getChartFirstVersion = (
   return chartToVersions[chart][0];
 };
 
-const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: boolean }) => {
+const ChartLabelIcon = ({ day2 }: { day2: boolean }) => {
+  const { t } = useTranslation();
+  return !day2 ? (
+    <PopoverHelpIcon
+      helpText={t(
+        'Select a chart that contains a ClusterDeployment, a HostedCluster or a ClusterClaim.',
+      )}
+    />
+  ) : null;
+};
+
+const HelmFields = ({ fieldName, day2 }: { fieldName: string; day2: boolean }) => {
   const { t } = useTranslation();
   const { addAlert } = useAlerts();
   const { values, setValues } = useFormikContext<WizardFormikValues>();
@@ -117,6 +128,7 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
       key={chartFieldName}
       placeholder={t('Enter the chart')}
       fieldId={''}
+      labelIcon={<ChartLabelIcon day2={day2} />}
     />
   ) : (
     <SelectField
@@ -134,6 +146,7 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
       onSelectValue={(chart: string | SelectOptionObject) => {
         updateChart(chart as string);
       }}
+      labelIcon={<ChartLabelIcon day2={day2} />}
       loaded={loaded}
     />
   );
@@ -168,13 +181,13 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
       key={`${fieldName}.url`}
       label={t('Helm chart repository')}
       labelIcon={
-        !horizontal ? (
+        day2 ? undefined : (
           <PopoverHelpIcon
             helpText={t(
               'Select the Helm chart repository that contains the Helm Chart you would like to use for this cluster template.',
             )}
           />
-        ) : undefined
+        )
       }
       type="helm"
       error={getRepoErrorMsg()}
@@ -182,7 +195,7 @@ const HelmFields = ({ fieldName, horizontal }: { fieldName: string; horizontal: 
     chartField,
     versionField,
   ];
-  return horizontal ? <WithFlex flexItems={fields} /> : <>{fields}</>;
+  return day2 ? <WithFlex flexItems={fields} /> : <>{fields}</>;
 };
 
 export default HelmFields;
