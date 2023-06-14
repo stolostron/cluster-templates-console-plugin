@@ -67,6 +67,12 @@ export const configMapGVK: K8sGroupVersionKind = {
   kind: 'ConfigMap',
 };
 
+export const configGVK: K8sGroupVersionKind = {
+  version: 'v1alpha1',
+  group: 'clustertemplate.openshift.io',
+  kind: 'Config',
+};
+
 export const groupGVK: K8sGroupVersionKind = {
   kind: 'Group',
   version: 'v1',

@@ -37,7 +37,13 @@ const SyncFields = ({ fieldName }: { fieldName: string }) => {
         isDisabled={!autoSync}
       />
       <CheckboxField
-        label={t('Automatically create the destination namespace if it does not exist')}
+        label={
+          <WithHelpIcon
+            helpText={t('Automatically create the destination namespace if it does not exist')}
+          >
+            {t('Create destination namespace')}
+          </WithHelpIcon>
+        }
         name={`${fieldName}.createNamespace`}
         fieldId={`${fieldName}.createNamespace`}
       />

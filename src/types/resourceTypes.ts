@@ -233,3 +233,9 @@ export type ClusterTemplate = K8sResourceCommon & {
   };
   status?: ClusterTemplateStatus;
 };
+
+export type ClaasConfig = K8sResourceCommon & {
+  spec?: {
+    argoCDNamespace: string;
+  };
+};
