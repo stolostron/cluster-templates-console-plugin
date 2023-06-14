@@ -25,7 +25,7 @@ export const getNewHelmSourceFormValues = (): HelmSourceFormikValues => ({
 export const getNewGitOpsFormValues = (type: RepositoryType): PostInstallationFormikValues => ({
   autoSync: true,
   pruneResources: false,
-  createNamespace: false,
+  createNamespace: true,
   source:
     type === 'helm'
       ? getNewHelmSourceFormValues()

@@ -1,21 +1,26 @@
-import { configMapGVK } from '../constants';
-import { ConfigMap } from '../types/resourceTypes';
+import { configGVK } from '../constants';
+import { isApiError } from '../types/errorTypes';
+import { ClaasConfig } from '../types/resourceTypes';
 import { useK8sWatchResource } from './k8s';
 
 const OPERATOR_NAMESPACE = 'cluster-aas-operator';
+
+const isNotFoundError = (error: unknown) => error && isApiError(error) && error.code === 404;
+
 const useArgocdNamespace = (): [string, boolean, unknown] => {
-  const [configMap, loaded, error] = useK8sWatchResource<ConfigMap>({
-    groupVersionKind: configMapGVK,
-    name: 'claas-config',
-    namespace: OPERATOR_NAMESPACE,
+  const [config, loaded, error] = useK8sWatchResource<ClaasConfig>({
+    groupVersionKind: configGVK,
+    name: 'config',
   });
-  if (!loaded || error) {
-    return ['', loaded, error];
+  if (!loaded) {
+    return ['', false, null];
+  } else if (error && !isNotFoundError(error)) {
+    return ['', true, error];
+  } else if (config && config.spec && config.spec.argoCDNamespace) {
+    return [config.spec.argoCDNamespace, true, null];
+  } else {
+    return [OPERATOR_NAMESPACE, true, null];
   }
-  if (!configMap.data || !configMap.data['argocd-ns']) {
-    return [OPERATOR_NAMESPACE, true, ''];
-  }
-  return [configMap.data['argocd-ns'], true, ''];
 };
 
 export default useArgocdNamespace;
