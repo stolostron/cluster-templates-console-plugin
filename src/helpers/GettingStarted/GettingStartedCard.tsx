@@ -12,7 +12,6 @@ import {
 } from '@patternfly/react-core';
 
 import './GettingStartedCard.scss';
-import ExternalLink from '../ExternalLink';
 
 export interface GettingStartedLink {
   id: string;
@@ -91,9 +90,7 @@ const GettingStartedCard: React.FC<GettingStartedCardProps> = ({
 
       {moreLink ? (
         <FlexItem>
-          <ExternalLink href={moreLink.href} showIcon={false}>
-            {moreLink.title}
-          </ExternalLink>
+          <a href={moreLink.href}>{moreLink.title}</a>
         </FlexItem>
       ) : null}
     </Flex>

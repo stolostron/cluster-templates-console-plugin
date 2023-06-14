@@ -5,7 +5,6 @@ import { ArgoCDSpec } from '../../types/resourceTypes';
 import { Text } from '@patternfly/react-core';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useArgoCDSecretByRepoUrl } from '../../hooks/useArgoCDSecrets';
-import ExternalLink from '../../helpers/ExternalLink';
 
 const ArgoCDSpecDetails = ({ argocdSpec }: { argocdSpec: ArgoCDSpec }) => {
   const { t } = useTranslation();
@@ -29,7 +28,7 @@ const ArgoCDSpecDetails = ({ argocdSpec }: { argocdSpec: ArgoCDSpec }) => {
     <CellLoader loaded={loaded} error={error}>
       {secret && secret.metadata?.name ? (
         <Text>
-          <ExternalLink href={href}>{secret.metadata?.name}</ExternalLink>
+          <a href={href}>{secret.metadata?.name}</a>
           {argocdSpec.source.chart && <span> / {argocdSpec.source.chart}</span>}
           {argocdSpec.source.targetRevision && <span> / {argocdSpec.source.targetRevision}</span>}
         </Text>

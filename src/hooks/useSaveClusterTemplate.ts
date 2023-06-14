@@ -18,11 +18,15 @@ import find from 'lodash/find';
 
 export const getAnnotations = (
   values: WizardFormikValues,
+  originalClusterTemplate?: ClusterTemplate,
 ): ObjectMetadata['annotations'] | undefined => {
   if (values.details.description) {
-    return { [TEMPLATE_LABELS.description]: values.details.description };
+    return {
+      ...originalClusterTemplate?.metadata?.annotations,
+      [TEMPLATE_LABELS.description]: values.details.description,
+    };
   }
-  return undefined;
+  return originalClusterTemplate?.metadata?.annotations;
 };
 
 const toClusterTemplate = (

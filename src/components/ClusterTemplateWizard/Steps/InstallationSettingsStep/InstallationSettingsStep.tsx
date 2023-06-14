@@ -17,7 +17,7 @@ const InstallationSettingsStep = () => {
         </StackItem>
         <StackItem>
           <Form>
-            <HelmFields fieldName={'installation.source'} horizontal={false} />
+            <HelmFields fieldName={'installation.source'} day2={false} />
             <DestinationNamespaceField />
           </Form>
         </StackItem>

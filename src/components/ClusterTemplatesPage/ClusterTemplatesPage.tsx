@@ -24,7 +24,6 @@ import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/Wi
 import { AlertsContextProvider } from '../../alerts/AlertsContext';
 import Alerts from '../../alerts/Alerts';
 import ErrorBoundary from '../../helpers/ErrorBoundary';
-import ClusterTemplatesListGettingStarted from '../ClusterTemplatesGettingStarted/ClusterTemplatesListGettingStarted';
 
 const PageNavigation = () => {
   const navigation = useNavigation();
@@ -98,9 +97,6 @@ const ClusterTemplatesPage = () => {
               <Stack hasGutter>
                 <StackItem>
                   <Alerts />
-                </StackItem>
-                <StackItem>
-                  <ClusterTemplatesListGettingStarted />
                 </StackItem>
                 <StackItem>
                   {activeTab === 'templates' && <ClusterTemplatesTab />}

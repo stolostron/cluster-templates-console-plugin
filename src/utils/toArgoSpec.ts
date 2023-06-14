@@ -9,7 +9,7 @@ import { CREATE_NAMESPACE_SYNC_OPTION, INSTANCE_NAMESPACE_VAR } from '../constan
 import { ApplicationSource, ArgoCDSpec } from '../types/resourceTypes';
 
 const HUB_CLUSTER_SERVER = 'https://kubernetes.default.svc';
-const NEW_CLUSTER_SERVER = '${new_cluster}';
+const NEW_CLUSTER_SERVER = '{{ url }}';
 const DEFAULT_PROJECT = 'default';
 
 const getArgoHelmSource = (values: HelmSourceFormikValues): ApplicationSource => ({

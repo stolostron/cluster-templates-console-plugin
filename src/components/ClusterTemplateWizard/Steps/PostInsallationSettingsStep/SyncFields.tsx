@@ -15,7 +15,7 @@ const SyncFields = ({ fieldName }: { fieldName: string }) => {
           <WithHelpIcon
             helpText={t('Automated will keep an application synced to the target revision.')}
           >
-            {t('Auto-sync')}
+            {t('Automated')}
           </WithHelpIcon>
         }
         name={`${fieldName}.autoSync`}
@@ -29,7 +29,7 @@ const SyncFields = ({ fieldName }: { fieldName: string }) => {
               'Prune specifies whether to delete resources from the cluster that are not found in the sources anymore as part of the automated sync.',
             )}
           >
-            {t('Prune resources')}
+            {t('Prune')}
           </WithHelpIcon>
         }
         name={`${fieldName}.pruneResources`}

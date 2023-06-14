@@ -65,7 +65,7 @@ const QuotaForm = ({ quota }: { quota?: Quota }) => {
   return (
     <AlertsContextProvider>
       <SkeletonLoader
-        numRows={8}
+        numRows={12}
         loaded={saveLoaded && initialValuesLoaded}
         error={initialValuesError}
       >

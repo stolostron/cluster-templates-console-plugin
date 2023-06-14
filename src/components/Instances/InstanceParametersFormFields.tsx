@@ -2,7 +2,7 @@ import { Flex, FlexItem, TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
 import { CheckboxField, InputField, NumberSpinnerField } from 'formik-pf';
 import React from 'react';
-import FormSection from '../../helpers/FormSection';
+import { FormSection } from '../../helpers/PatternflyOverrides';
 import { InstanceParameter, InstanceParametersFormValues } from '../../types/instanceFormTypes';
 
 import { FieldProps } from '../../helpers/types';

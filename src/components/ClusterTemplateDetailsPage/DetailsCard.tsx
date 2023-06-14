@@ -12,7 +12,6 @@ import {
 
 import {
   ClusterTemplateStatus,
-  ClusterTemplateVendorLabel,
   InstallationDetails,
   PostInstallationDetails,
 } from '../sharedDetailItems/clusterTemplateDetailItems';
@@ -24,6 +23,7 @@ import EditLabelsDialog from '../Labels/EditLabelsDialog';
 import { clusterTemplateGVK } from '../../constants';
 import { Labels } from '../Labels/Labels';
 import { DeserializedClusterTemplate } from '../../types/resourceTypes';
+import VendorLabel from '../sharedDetailItems/VendorLabel';
 export type ListItem = {
   label: string;
 
@@ -80,7 +80,7 @@ const DetailsCard: React.FC<{ clusterTemplate: DeserializedClusterTemplate }> = 
     },
     {
       label: t('Vendor'),
-      value: <ClusterTemplateVendorLabel clusterTemplate={clusterTemplate} />,
+      value: <VendorLabel resource={clusterTemplate} />,
     },
     {
       label: t('Labels'),

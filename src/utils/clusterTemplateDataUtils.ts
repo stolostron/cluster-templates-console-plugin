@@ -11,20 +11,20 @@ export const TEMPLATE_LABELS = {
 const getLabelValue = (resource: K8sResourceCommon, labelName: string) =>
   resource.metadata?.labels?.[labelName];
 
-export const getClusterTemplateVendor = (
-  clusterTemplate: DeserializedClusterTemplate,
+export const getResourceVendor = (
+  resource: K8sResourceCommon,
 ): ClusterTemplateVendor | undefined => {
-  const labelValue = getLabelValue(clusterTemplate, TEMPLATE_LABELS.vendor);
+  const labelValue = getLabelValue(resource, TEMPLATE_LABELS.vendor);
   if (!labelValue) {
     return ClusterTemplateVendor.CUSTOM;
   }
-  return labelValue === ClusterTemplateVendor.REDHAT
-    ? ClusterTemplateVendor.REDHAT
+  return labelValue === ClusterTemplateVendor.COMMUNITY
+    ? ClusterTemplateVendor.COMMUNITY
     : ClusterTemplateVendor.CUSTOM;
 };
 
 export const isRedHatTemplate = (clusterTemplate: DeserializedClusterTemplate) =>
-  getClusterTemplateVendor(clusterTemplate) === ClusterTemplateVendor.REDHAT;
+  getResourceVendor(clusterTemplate) === ClusterTemplateVendor.COMMUNITY;
 
 export const getClusterTemplateDescription = (clusterTemplate?: DeserializedClusterTemplate) =>
   clusterTemplate?.metadata?.annotations?.[TEMPLATE_LABELS.description];

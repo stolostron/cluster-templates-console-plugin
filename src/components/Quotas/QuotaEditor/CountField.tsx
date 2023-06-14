@@ -17,7 +17,7 @@ const ConsumptionField = ({ fieldNamePrefix }: { fieldNamePrefix: string }) => {
         <FlexItem spacer={{ default: 'spacerSm' }}>
           <InputField name={countFieldName} fieldId={countFieldName} type={TextInputTypes.number} />
         </FlexItem>
-        <FlexItem>{t('Instances')}</FlexItem>
+        <FlexItem>{t('Clusters')}</FlexItem>
       </Flex>
     </WithCheckboxField>
   );

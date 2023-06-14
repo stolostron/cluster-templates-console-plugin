@@ -2,9 +2,11 @@ import { K8sGroupVersionKind } from '@openshift-console/dynamic-plugin-sdk';
 
 export const TEMPLATES_HELM_REPO_LABEL = 'clustertemplates.openshift.io/helm-repo';
 
+export const CLUSTER_TEMPLATE_INSTANCE_LABEL_PREFIX = 'clustertemplateinstance.openshift.io';
+
 export const clusterTemplateVersion = 'v1alpha1';
 export const clusterTemplateGroup = 'clustertemplate.openshift.io';
-export const INSTANCE_NAMESPACE_VAR = '${instance_ns}';
+export const INSTANCE_NAMESPACE_VAR = '{{ instance_ns }}';
 export const ARGOCD_SECRET_LABELS = {
   'argocd.argoproj.io/secret-type': 'repository',
 };
@@ -98,6 +100,18 @@ export const quickStartGVK: K8sGroupVersionKind = {
   group: 'console.openshift.io',
   version: 'v1',
   kind: 'ConsoleQuickStart',
+};
+
+export const managedClusterGVK: K8sGroupVersionKind = {
+  group: 'cluster.open-cluster-management.io',
+  version: 'v1',
+  kind: 'ManagedCluster',
+};
+
+export const applicationGVK: K8sGroupVersionKind = {
+  group: 'argoproj.io',
+  kind: 'Application',
+  version: 'v1alpha1',
 };
 
 export const CREATE_NAMESPACE_SYNC_OPTION = 'CreateNamespace=true';

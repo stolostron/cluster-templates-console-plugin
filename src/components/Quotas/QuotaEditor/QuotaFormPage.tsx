@@ -7,6 +7,9 @@ import ErrorBoundary from '../../../helpers/ErrorBoundary';
 import WithBreadcrumb from '../../../helpers/WithBreadcrumb';
 import { getClusterTemplatesPageUrl } from '../../../hooks/useNavigation';
 import { useTranslation } from '../../../hooks/useTranslation';
+import { AlertsContextProvider } from '../../../alerts/AlertsContext';
+import Alerts from '../../../alerts/Alerts';
+import WithClusterTemplateQuickStarts from '../../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
 
 const PageHeader = ({ quota }: { quota?: Quota }) => {
   const { t } = useTranslation();
@@ -33,13 +36,18 @@ const PageHeader = ({ quota }: { quota?: Quota }) => {
 const QuotaFormPage = ({ quota }: { quota?: Quota }) => {
   return (
     <ErrorBoundary>
-      <Page>
-        <PageHeader quota={quota} />
-        <Divider />
-        <PageSection variant={PageSectionVariants.light}>
-          <QuotaForm quota={quota} />
-        </PageSection>
-      </Page>
+      <AlertsContextProvider>
+        <WithClusterTemplateQuickStarts>
+          <Page>
+            <PageHeader quota={quota} />
+            <Divider />
+            <Alerts />
+            <PageSection variant={PageSectionVariants.light}>
+              <QuotaForm quota={quota} />
+            </PageSection>
+          </Page>
+        </WithClusterTemplateQuickStarts>
+      </AlertsContextProvider>
     </ErrorBoundary>
   );
 };

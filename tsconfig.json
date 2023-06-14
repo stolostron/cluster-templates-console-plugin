@@ -14,6 +14,6 @@
     "suppressImplicitAnyIndexErrors": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "types": ["node", "cypress"]
+    "types": ["node", "cypress", "@testing-library/cypress"]
   }
 }

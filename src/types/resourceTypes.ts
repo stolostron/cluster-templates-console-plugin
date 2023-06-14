@@ -3,7 +3,7 @@ import React from 'react';
 
 export enum ClusterTemplateVendor {
   CUSTOM = 'Custom',
-  REDHAT = 'RedHat',
+  COMMUNITY = 'community',
 }
 
 export type ClusterTemplateProperty = {
@@ -122,6 +122,10 @@ export type ClusterTemplateInstance = K8sResourceCommon & {
   status?: {
     phase?: ClusterTemplateInstanceStatusPhase;
     message?: string;
+    apiServerURL?: string;
+    adminPassword?: {
+      name: string;
+    };
   };
 };
 
@@ -204,6 +208,7 @@ export type TableColumn = {
   title: React.ReactNode;
   id: string;
 };
+
 export type RowProps<D> = {
   obj: D;
 };

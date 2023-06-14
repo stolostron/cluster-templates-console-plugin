@@ -1,4 +1,4 @@
-import { Flex, FlexItem, TextInputTypes } from '@patternfly/react-core';
+import { Flex, FlexItem, TextInputTypes, Text } from '@patternfly/react-core';
 import { useFormikContext } from 'formik';
 import React from 'react';
 import { Trans } from 'react-i18next';
@@ -24,9 +24,15 @@ const ConsumptionField = ({ fieldNamePrefix }: { fieldNamePrefix: string }) => {
     <WithCheckboxField
       checkboxFieldName={checkboxFieldName}
       label={t('Consumption')}
-      popoverHelpText={t(
-        'The consumption of the template is in relation to the total consumption limit',
-      )}
+      popoverHelpText={
+        <Trans ns="plugin__clustertemplates-plugin">
+          <Text>
+            The consumtion of a template is in relation to the total consumtion limit. The
+            consumption applies <b>per template across all quotas</b>. Any change will apply to all
+            the quotas containing this template.`
+          </Text>
+        </Trans>
+      }
       isDisabled={!budget}
     >
       <Flex>

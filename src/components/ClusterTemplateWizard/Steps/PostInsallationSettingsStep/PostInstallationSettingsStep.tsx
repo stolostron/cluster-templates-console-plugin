@@ -43,7 +43,7 @@ const PostInstallationSettings = ({
       <Stack hasGutter>
         <StackItem>
           {isHelmSource(value.source) ? (
-            <HelmFields fieldName={`${fieldName}.source`} horizontal={true} />
+            <HelmFields fieldName={`${fieldName}.source`} day2={true} />
           ) : (
             <GitRepoField fieldName={`${fieldName}.source`} />
           )}
@@ -106,7 +106,7 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
             icon={<PlusIcon />}
             isInline
           >
-            {t('Add Git repository')}
+            {t('Add Git')}
           </Button>
           <Button
             variant="link"
@@ -114,7 +114,7 @@ const PostInstallationArrayFields = ({ push, remove }: FieldArrayRenderProps) =>
             icon={<PlusIcon />}
             isInline
           >
-            {t('Add Helm chart')}
+            {t('Add Helm')}
           </Button>
         </Flex>
       </StackItem>
@@ -137,9 +137,10 @@ const Description = () => {
   const { t } = useTranslation();
   return (
     <Text>
-      {t(
-        'Recommended for defining the settings that will be installed on clusters created using the template (such as operators). Add the Helm chart or the Git repository to be installed. The cluster will only be available after they are installed and will be synced automatically.',
-      )}
+      {t(`Define the Argo applications that will be applied to clusters created from this template.
+This is recommended for setting up all the necessary components for running your software. 
+For instance, you can install identity providers, operators, or validation webhook configurations. 
+The clusters will only be available after they are installed successfully.`)}
     </Text>
   );
 };
@@ -151,7 +152,7 @@ const PostInstallationStep = () => {
       <Stack hasGutter>
         <StackItem>
           <TextContent>
-            <Text component="h2">{t('GitOps')}</Text>
+            <Text component="h2">{t('Post installation')}</Text>
           </TextContent>
         </StackItem>
         <StackItem>

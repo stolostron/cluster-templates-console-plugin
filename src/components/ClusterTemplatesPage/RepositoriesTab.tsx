@@ -1,8 +1,17 @@
-import { Button, Card, Toolbar, ToolbarContent } from '@patternfly/react-core';
+import {
+  Button,
+  Card,
+  Popover,
+  Toolbar,
+  ToolbarContent,
+  ToolbarItem,
+} from '@patternfly/react-core';
+import { SyncAltIcon } from '@patternfly/react-icons';
 import React from 'react';
 import EmptyPageState from '../../helpers/EmptyPageState';
 import TableLoader from '../../helpers/TableLoader';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
+import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
 import { useTranslation } from '../../hooks/useTranslation';
 import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
 import RepositoriesTable from '../HelmRepositories/RepositoriesTable';
@@ -20,11 +29,28 @@ const CreateRepositoryButton = () => {
   );
 };
 
+const RefreshRepositoriesButton = () => {
+  const { t } = useTranslation();
+  const { refetch } = useHelmChartRepositories();
+  return (
+    <Popover bodyContent={t('Refresh repositories information')}>
+      <Button variant="link" onClick={() => void refetch()} icon={<SyncAltIcon />}>
+        {t('Refresh')}
+      </Button>
+    </Popover>
+  );
+};
+
 const RepositoriesToolbar = () => {
   return (
     <Toolbar>
       <ToolbarContent>
-        <CreateRepositoryButton />
+        <ToolbarItem>
+          <CreateRepositoryButton />
+        </ToolbarItem>
+        <ToolbarItem alignment={{ default: 'alignRight' }}>
+          <RefreshRepositoriesButton />
+        </ToolbarItem>
       </ToolbarContent>
     </Toolbar>
   );

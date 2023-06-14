@@ -1,8 +1,6 @@
-import { Label } from '@patternfly/react-core';
 import * as React from 'react';
-import { applicationSetGVK } from '../../constants';
+import { Flex, FlexItem, Text } from '@patternfly/react-core';
 import CellLoader from '../../helpers/CellLoader';
-import ExternalLink from '../../helpers/ExternalLink';
 import NotAvailable from '../../helpers/NotAvailable';
 import useArgocdNamespace from '../../hooks/useArgocdNamespace';
 
@@ -10,57 +8,45 @@ import { useClusterTemplateInstances } from '../../hooks/useClusterTemplateInsta
 import { useClusterTemplateQuotas } from '../../hooks/useQuotas';
 
 import { useTranslation } from '../../hooks/useTranslation';
-import {
-  ClusterSetup,
-  DeserializedClusterTemplate,
-  ClusterTemplateVendor,
-} from '../../types/resourceTypes';
-import { getClusterTemplateVendor } from '../../utils/clusterTemplateDataUtils';
-import { getResourceUrl } from '../../utils/k8s';
+import { ClusterSetup, DeserializedClusterTemplate } from '../../types/resourceTypes';
 import ResourceStatus, { Status } from './ResourceStatus';
+import { ResourceLink } from '@openshift-console/dynamic-plugin-sdk';
+import { applicationSetGVK } from '../../constants';
 
 export const ClusterTemplateUsage = ({
   clusterTemplate,
 }: {
   clusterTemplate: DeserializedClusterTemplate;
 }) => {
-  const { t } = useTranslation();
   const [instances, loaded, loadError] = useClusterTemplateInstances(
     clusterTemplate.metadata?.name,
   );
   return (
     <CellLoader loaded={loaded} error={loadError}>
-      {t('{{count}} cluster', {
-        count: instances.length,
-      })}
+      {instances.length}
     </CellLoader>
   );
 };
 
-export const ClusterTemplateVendorLabel = ({
-  clusterTemplate,
-}: {
-  clusterTemplate: DeserializedClusterTemplate;
-}) => {
-  const { t } = useTranslation();
-  const vendor = getClusterTemplateVendor(clusterTemplate);
-  if (!vendor) {
-    return <NotAvailable />;
-  }
-  const color = vendor === ClusterTemplateVendor.REDHAT ? 'green' : 'purple';
-  const labelText = vendor === ClusterTemplateVendor.REDHAT ? t('Red Hat') : t('Custom');
-  return <Label color={color}>{labelText}</Label>;
-};
-
 export const ApplicationSetLink = ({ appSetName }: { appSetName: string }) => {
   const [namespace, loaded, error] = useArgocdNamespace();
-
+  const { t } = useTranslation();
   return (
     <>
       <CellLoader loaded={loaded} error={error}>
-        <ExternalLink href={`${getResourceUrl(applicationSetGVK, appSetName, namespace)}/yaml`}>
-          {appSetName}
-        </ExternalLink>
+        <Flex>
+          <FlexItem spacer={{ default: 'spacerXs' }}>
+            <Text style={{ display: 'inline' }}>{t('ApplicationSet')}</Text>
+          </FlexItem>
+          <FlexItem>
+            <ResourceLink
+              groupVersionKind={applicationSetGVK}
+              name={appSetName}
+              namespace={namespace}
+              hideIcon={true}
+            />
+          </FlexItem>
+        </Flex>
       </CellLoader>
     </>
   );
