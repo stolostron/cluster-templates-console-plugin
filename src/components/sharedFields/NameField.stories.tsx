@@ -4,7 +4,6 @@ import React from 'react';
 import { TFunction } from 'react-i18next';
 import { SchemaOf } from 'yup';
 import { nameSchema } from '../../utils/commonValidationSchemas';
-import { getRichTextValidation } from '../../utils/validationSchemaUtils';
 import * as yup from 'yup';
 import NameField from './NameField';
 import { Form } from '@patternfly/react-core';
@@ -21,7 +20,7 @@ const NameFieldWrapper = ({ initialName }: { initialName: string }) => {
       initialValues={{ name: initialName }}
       onSubmit={(values) => console.log(values)}
       validateOnMount
-      validate={getRichTextValidation<{ name: string }>(validationSchema)}
+      validationSchema={validationSchema}
       initialTouched={{ name: true }}
     >
       <Form>
@@ -39,8 +38,20 @@ const meta: Meta<typeof NameFieldWrapper> = {
 export default meta;
 type Story = StoryObj<typeof NameFieldWrapper>;
 
-export const NameFieldStory: Story = {
+export const ValidName: Story = {
   args: {
-    initialName: '',
+    initialName: 'valid-name',
+  },
+};
+
+export const InvalidFirstChar: Story = {
+  args: {
+    initialName: 'Invalid-first-chart',
+  },
+};
+
+export const InvalidCharacters: Story = {
+  args: {
+    initialName: 'blabla',
   },
 };

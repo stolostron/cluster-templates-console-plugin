@@ -30,7 +30,7 @@ import ConfirmCancelModal from './ConfirmCancelModal';
 import { useSaveClusterTemplate } from '../../hooks/useSaveClusterTemplate';
 import { DeserializedClusterTemplate } from '../../types/resourceTypes';
 import { StepId, WizardFormikValues } from '../../types/wizardFormTypes';
-import { getRichTextValidation } from '../../utils/validationSchemaUtils';
+
 export type ClusterTemplateWizardProps = {
   clusterTemplate?: DeserializedClusterTemplate;
 };
@@ -183,8 +183,8 @@ const _ClusterTemplateWizard = ({ clusterTemplate }: ClusterTemplateWizardProps)
         <Formik<WizardFormikValues>
           initialValues={initialValues}
           onSubmit={onSubmit}
+          validationSchema={validationSchema}
           validateOnMount
-          validate={getRichTextValidation<WizardFormikValues>(validationSchema)}
         >
           <Wizard
             steps={steps}
