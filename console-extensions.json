@@ -28,6 +28,7 @@
       "section": "mce-infrastructure",
       "id": "clustertemplates",
       "name": "%plugin__clustertemplates-plugin~Cluster templates%",
+      "insertAfter": "mce-host-inventory",
       "model": {
         "group": "clustertemplate.openshift.io",
         "version": "v1alpha1",
@@ -53,7 +54,8 @@
       }
     },
     "flags": {
-      "required": ["CLUSTER_TEMPLATES_FLAG"]
+      "required": ["CLUSTER_TEMPLATES_FLAG"],
+      "disallowed": ["MCE_FLAG"]
     }
   },
   {
