@@ -1,12 +1,13 @@
 import { Flex, FlexItem, TextInputTypes } from '@patternfly/react-core';
 import { useField } from 'formik';
-import { CheckboxField, InputField, NumberSpinnerField } from 'formik-pf';
+import { CheckboxField, InputField } from 'formik-pf';
 import React from 'react';
 import { FormSection } from '../../helpers/PatternflyOverrides';
 import { InstanceParameter, InstanceParametersFormValues } from '../../types/instanceFormTypes';
 
 import { FieldProps } from '../../helpers/types';
 import { ApplicationSetLink } from '../sharedDetailItems/clusterTemplateDetailItems';
+import NumberSpinnerField from '../sharedFields/NumberSpinnerField';
 
 const SectionTitle = ({ title, appSetName }: { title: string; appSetName: string }) => (
   <Flex>
