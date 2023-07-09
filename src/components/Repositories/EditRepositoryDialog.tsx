@@ -27,7 +27,7 @@ export function getInitialValues(
     type: argoCDSecret.data?.type || 'git',
     username: argoCDSecret.data?.username || '',
     password: argoCDSecret.data?.password || '',
-    allowSelfSignedCa: argoCDSecret.data.insecure === 'true',
+    insecure: argoCDSecret.data.insecure === 'true',
     certificateAuthority: '',
   };
 }

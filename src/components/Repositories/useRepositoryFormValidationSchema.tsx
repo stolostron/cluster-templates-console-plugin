@@ -34,7 +34,7 @@ const useRepositoryFormValidationSchema = (
         then: (schema) => schema.required(requiredMsg),
       }),
       type: stringSchema().required(),
-      allowSelfSignedCa: booleanSchema().required(),
+      insecure: booleanSchema().required(),
       certificateAuthority: stringSchema().optional(),
     });
   }, [isCreateFlow, secrets, t]);

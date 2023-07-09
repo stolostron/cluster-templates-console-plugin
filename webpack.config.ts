@@ -27,7 +27,7 @@ const config: Configuration = {
     rules: [
       {
         test: /\.(jsx?|tsx?)$/,
-        exclude: [/node_modules/, /\.stories\.(ts|tsx)$/],
+        exclude: [/node_modules/, /\.stories\.(ts|tsx)$/, /\.cy\.(ts)$/, /mocks/],
         use: [
           {
             loader: 'ts-loader',

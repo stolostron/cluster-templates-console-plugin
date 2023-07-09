@@ -54,8 +54,7 @@
       }
     },
     "flags": {
-      "required": ["CLUSTER_TEMPLATES_FLAG"],
-      "disallowed": ["MCE_FLAG"]
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
     }
   },
   {
@@ -145,8 +144,18 @@
   {
     "type": "console.context-provider",
     "properties": {
-      "provider": { "$codeRef": "repositoriesContext.repositoriesContextProvider" },
-      "useValueHook": { "$codeRef": "repositoriesContext.useHelmRepositoriesState" }
+      "provider": { "$codeRef": "helmRepositoriesContext.helmRepositoriesContextProvider" },
+      "useValueHook": { "$codeRef": "helmRepositoriesContext.useHelmRepositoriesState" }
+    },
+    "flags": {
+      "required": ["CLUSTER_TEMPLATES_FLAG"]
+    }
+  },
+  {
+    "type": "console.context-provider",
+    "properties": {
+      "provider": { "$codeRef": "gitRepositoriesContext.gitRepositoriesContextProvider" },
+      "useValueHook": { "$codeRef": "gitRepositoriesContext.useGitRepositoriesState" }
     },
     "flags": {
       "required": ["CLUSTER_TEMPLATES_FLAG"]

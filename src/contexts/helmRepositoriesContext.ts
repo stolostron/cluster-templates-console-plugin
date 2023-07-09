@@ -1,18 +1,24 @@
 import React, { Dispatch, SetStateAction } from 'react';
-import { HelmChartRepositoryListResult } from '../hooks/useHelmChartRepositories';
+import { HelmRepository } from '../types/resourceTypes';
 
-export type RepositoriesContextType = [
+export type HelmChartRepositoryListResult = {
+  repos: HelmRepository[];
+  loaded: boolean;
+  error: unknown;
+};
+
+export type HelmRepositoriesContextType = [
   HelmChartRepositoryListResult | undefined,
   Dispatch<SetStateAction<HelmChartRepositoryListResult | undefined>>,
 ];
 
-export const RepositoriesContext = React.createContext<RepositoriesContextType>([
+export const HelmRepositoriesContext = React.createContext<HelmRepositoriesContextType>([
   undefined,
   () => undefined,
 ]);
 
-export const repositoriesContextProvider = RepositoriesContext.Provider;
+export const helmRepositoriesContextProvider = HelmRepositoriesContext.Provider;
 
-export const useHelmRepositoriesState = (): RepositoriesContextType => {
+export const useHelmRepositoriesState = (): HelmRepositoriesContextType => {
   return React.useState<HelmChartRepositoryListResult>();
 };

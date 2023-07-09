@@ -25,7 +25,7 @@ export function getInitialValues(type: RepositoryType): RepositoryFormValues {
     username: '',
     password: '',
     certificateAuthority: '',
-    allowSelfSignedCa: false,
+    insecure: false,
   };
 }
 

@@ -9,11 +9,11 @@ import { secretGVK, ARGOCD_SECRET_LABELS } from '../constants';
 import { ArgoCDSecretData, ConfigMap, DecodedSecret, Secret } from '../types/resourceTypes';
 import useArgocdNamespace from './useArgocdNamespace';
 import { useArgoCDCertificateAuthorityCM } from './useArgoCDSecrets';
-import { useHelmChartRepositories } from './useHelmChartRepositories';
 import URLParse from 'url-parse';
 import { RepositoryFormValues } from '../components/Repositories/types';
+import useRepositories from './useRepositories';
 const getRepoSecretStringData = (formValues: RepositoryFormValues): { [key: string]: string } => {
-  const { name, url, type, useCredentials, username, password, allowSelfSignedCa } = formValues;
+  const { name, url, type, useCredentials, username, password, insecure } = formValues;
 
   const baseSecretData: { [key: string]: string } = {
     name,
@@ -21,7 +21,7 @@ const getRepoSecretStringData = (formValues: RepositoryFormValues): { [key: stri
     type,
   };
 
-  baseSecretData.insecure = allowSelfSignedCa ? 'true' : 'false';
+  baseSecretData.insecure = insecure ? 'true' : 'false';
 
   const authenticatedSecretData = {
     username,
@@ -73,11 +73,11 @@ export const useUpdateRepository = (
 ): [(formValues: RepositoryFormValues) => Promise<void>, boolean, unknown] => {
   const [{ Secret: secretModel }, modelsLoading] = useK8sModels();
   const [saveCa, saveCaLoaded, saveCaError] = useSaveCertificateAuthority();
-  const { refetch } = useHelmChartRepositories();
+  const { refetch } = useRepositories();
   const save = React.useCallback(
     async (formValues: RepositoryFormValues): Promise<void> => {
-      const { url, certificateAuthority, allowSelfSignedCa, type } = formValues;
-      if (!allowSelfSignedCa) {
+      const { url, certificateAuthority, insecure } = formValues;
+      if (!insecure) {
         await saveCa(url, certificateAuthority);
       }
       const stringData = getRepoSecretStringData(formValues);
@@ -93,9 +93,7 @@ export const useUpdateRepository = (
           },
         ],
       });
-      if (type === 'helm') {
-        void refetch();
-      }
+      void refetch();
     },
     [refetch, repo, saveCa, secretModel],
   );
@@ -110,11 +108,11 @@ export const useCreateRepository = (): [
   const [namespace, namespaceLoaded, namespaceError] = useArgocdNamespace();
   const [{ Secret: secretModel }, modelsLoading] = useK8sModels();
   const [saveCa, saveCaLoaded, saveCaError] = useSaveCertificateAuthority();
-  const { refetch } = useHelmChartRepositories();
+  const { refetch } = useRepositories();
   const save = React.useCallback(
     async (formValues: RepositoryFormValues): Promise<void> => {
-      const { name, url, certificateAuthority, allowSelfSignedCa, type } = formValues;
-      if (!allowSelfSignedCa && certificateAuthority) {
+      const { name, url, certificateAuthority, insecure } = formValues;
+      if (!insecure && certificateAuthority) {
         await saveCa(url, certificateAuthority);
       }
       const stringData = getRepoSecretStringData(formValues);
@@ -132,9 +130,7 @@ export const useCreateRepository = (): [
           type: 'Opaque',
         },
       });
-      if (type === 'helm') {
-        void refetch();
-      }
+      void refetch();
     },
     [namespace, refetch, saveCa, secretModel],
   );

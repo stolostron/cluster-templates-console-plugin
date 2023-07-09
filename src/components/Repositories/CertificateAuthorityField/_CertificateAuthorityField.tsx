@@ -32,7 +32,7 @@ const CaInOtherReposAlert = ({
   const hostname = new URLParse(values.url).hostname;
   if (
     !hostname ||
-    values.allowSelfSignedCa ||
+    values.insecure ||
     //don't show info if certificate is empty but it's not being deleted (isn't currently defined in configmap)
     (!values.certificateAuthority && !caMap[hostname])
   ) {
@@ -48,7 +48,7 @@ const CaInOtherReposAlert = ({
     return null;
   }
   const title = t(
-    `This certificate authority is utilized by all repositories with the hostname {{hostname}}`,
+    `This certificate authority is utilized by all repositories with the host {{hostname}}.`,
     {
       hostname,
       count: otherRepos.length,
@@ -95,20 +95,20 @@ const _CertificateAuthorityField = ({
   const { t } = useTranslation();
 
   React.useEffect(() => {
-    if (values.url !== prevUrl.current && !values.allowSelfSignedCa) {
+    if (values.url !== prevUrl.current && !values.insecure) {
       const ca = getUrlCertificateAuthority(values.url, caMap);
       if (ca) {
         setFieldValue('certificateAuthority', ca);
       }
       prevUrl.current = values.url;
     }
-  }, [caMap, setFieldValue, values.allowSelfSignedCa, values.url]);
+  }, [caMap, setFieldValue, values.insecure, values.url]);
 
   React.useEffect(() => {
-    if (values.allowSelfSignedCa && values.certificateAuthority !== '') {
+    if (values.insecure && values.certificateAuthority !== '') {
       setFieldValue('certificateAuthority', '');
     }
-  }, [setFieldValue, values.allowSelfSignedCa, values.certificateAuthority]);
+  }, [setFieldValue, values.insecure, values.certificateAuthority]);
 
   // t('Failed to get the available Certificate Authorities');
   useAddAlertOnError(caMapError, 'Failed to get the available Certificate Authorities');
@@ -117,17 +117,17 @@ const _CertificateAuthorityField = ({
   return (
     <Stack hasGutter>
       <CheckboxField
-        name="allowSelfSignedCa"
-        fieldId="allowSelfSignedCa"
-        label={t('Allow self-signed certificates')}
+        name="insecure"
+        fieldId="insecure"
+        label={t('Skip certificate verification')}
       />
       <UploadField
         isLoading={!caMapLoaded || !allSecretsLoaded}
         name="certificateAuthority"
-        isDisabled={values.allowSelfSignedCa}
-        label={t('Certificate authority')}
-        aria-label={t('Certificate authority')}
-        spinnerAriaValueText={t('Certificate authority field loading')}
+        isDisabled={values.insecure}
+        label={t('Custom certificate authority')}
+        aria-label={t('Custom certificate authority')}
+        spinnerAriaValueText={t('Custom certificate authority field loading')}
       />
       <CaInOtherReposAlert secrets={allSecrets} caMap={caMap} />
     </Stack>

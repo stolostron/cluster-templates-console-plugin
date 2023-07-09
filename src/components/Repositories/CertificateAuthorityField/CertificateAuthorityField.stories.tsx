@@ -14,16 +14,16 @@ const CertificateAuthorityFieldWrapper = ({
   url,
   useArgoCdSecretsResult,
   useCaMapResult,
-  allowSelfSignedCa,
+  insecure,
 }: {
-  allowSelfSignedCa: boolean;
+  insecure: boolean;
   name: string;
   url: string;
 } & CertificateAuthorityFieldProps) => {
   return (
     <AlertsContextProvider>
       <Formik
-        initialValues={{ url: url, allowSelfSignedCa: allowSelfSignedCa, name: name }}
+        initialValues={{ url: url, insecure: insecure, name: name }}
         onSubmit={(values) => console.log(values)}
         validateOnMount
         enableReinitialize
@@ -119,6 +119,6 @@ export const AllowSelfSigned: Story = {
     url: 'http://aaa.com/repo1',
     useArgoCdSecretsResult: [[], true, null],
     useCaMapResult: [mockCaMap, true, null],
-    allowSelfSignedCa: true,
+    insecure: true,
   },
 };

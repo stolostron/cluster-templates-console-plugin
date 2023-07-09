@@ -7,6 +7,6 @@ export type RepositoryFormValues = {
   type: RepositoryType;
   username: string;
   password: string;
-  allowSelfSignedCa: boolean;
+  insecure: boolean;
   certificateAuthority: string;
 };

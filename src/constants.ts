@@ -121,3 +121,5 @@ export const applicationGVK: K8sGroupVersionKind = {
 };
 
 export const CREATE_NAMESPACE_SYNC_OPTION = 'CreateNamespace=true';
+
+export const REPOSITORIES_URL = '/api/proxy/plugin/clustertemplates-plugin/repositories/api';

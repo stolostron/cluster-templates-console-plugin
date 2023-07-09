@@ -160,12 +160,13 @@ export type HelmRepoIndexChartEntry = {
   annotations?: { [key in string]: string };
   created: string;
   apiVersion: string;
-  appVersion: string;
+  appVersion?: string;
   description?: string;
   digest: string;
   type: string;
   urls: string[];
   version: string;
+  name?: string;
 };
 
 export type HelmRepositoryChartEntries = { [key: string]: HelmRepoIndexChartEntry[] };
@@ -182,6 +183,27 @@ export type HelmRepository = {
   index?: HelmRepoIndex;
   error?: string;
 };
+
+export type GitRepositoryEntries = {
+  blablabla: string[];
+};
+
+export type GitRepoIndex = {
+  apiVersion: string;
+  entries: HelmRepositoryChartEntries;
+  generated: string;
+};
+
+export type GitRepository = {
+  url: string;
+  branches?: string[];
+  tags?: string[];
+  error?: string;
+};
+
+export const isHelmRepository = (
+  repository: GitRepository | HelmRepository,
+): repository is HelmRepository => !!(repository as HelmRepository).index;
 
 export type QuotaAllowedTemplate = {
   name: string;

@@ -101,7 +101,8 @@
       "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx",
       "createQuota": "./components/Quotas/QuotaEditor/QuotaFormPage.tsx",
       "editQuota": "./components/Quotas/QuotaEditor/QuotaEditPage.tsx",
-      "repositoriesContext": "./contexts/helmRepositoriesContext.ts",
+      "helmRepositoriesContext": "./contexts/helmRepositoriesContext.ts",
+      "gitRepositoriesContext": "./contexts/gitRepositoriesContext.ts",
       "createInstance": "./components/Instances/InstanceCreatePage.tsx"
     },
     "dependencies": {
