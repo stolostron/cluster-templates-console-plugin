@@ -33,9 +33,7 @@ const useRepositories = (): RepositoriesListResult & {
   return {
     loaded: gitReposLoaded && helmReposLoaded,
     error: gitReposError || helmReposError,
-    repos: [...gitRepos, ...helmRepos].sort(
-      (repo1, repo2) => repo1.url?.localeCompare(repo2.url) || 0,
-    ),
+    repos: [...gitRepos, ...helmRepos],
     refetch: fetch,
   };
 };

@@ -1,6 +1,7 @@
 import { Page, Title, PageSection, PageSectionVariants, Divider } from '@patternfly/react-core';
 import * as React from 'react';
 import { useParams } from 'react-router';
+import { AlertsContextProvider } from '../../alerts/AlertsContext';
 import { clusterTemplateGVK } from '../../constants';
 import ErrorBoundary from '../../helpers/ErrorBoundary';
 import { Breadcrumb } from '../../helpers/WithBreadcrumb';
@@ -42,13 +43,15 @@ const InstanceCreatePage = () => {
   const templateLoadResult = useClusterTemplate(templateName);
   return (
     <ErrorBoundary>
-      <Page>
-        <PageHeader template={templateName} />
-        <Divider />
-        <PageSection variant={PageSectionVariants.light}>
-          <InstanceForm templateLoadResult={templateLoadResult} templateName={templateName} />
-        </PageSection>
-      </Page>
+      <AlertsContextProvider>
+        <Page>
+          <PageHeader template={templateName} />
+          <Divider />
+          <PageSection variant={PageSectionVariants.light}>
+            <InstanceForm templateLoadResult={templateLoadResult} templateName={templateName} />
+          </PageSection>
+        </Page>
+      </AlertsContextProvider>
     </ErrorBoundary>
   );
 };
