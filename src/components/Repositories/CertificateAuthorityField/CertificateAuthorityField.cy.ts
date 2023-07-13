@@ -1,4 +1,4 @@
-import CertificateAuthorityFieldView from './CertificateAuthorityField.view';
+import CertificateAuthorityFieldView from './CertificateAuthorityField.view.cy';
 
 const story = 'cafield';
 

@@ -23,12 +23,12 @@ const useClusterTemplateActions = (
       description: clusterTemplate.status?.error ? t('Template processing failed') : undefined,
     },
     {
-      title: t('Download example instance YAML'),
+      title: t('Download instance YAML'),
       onClick: () => {
         try {
           downloadExampleYaml(clusterTemplate);
         } catch (err) {
-          addAlert({ title: t('Failed to download exmplae YAML'), message: getErrorMessage(err) });
+          addAlert({ title: t('Failed to download instance YAML'), message: getErrorMessage(err) });
         }
       },
     },

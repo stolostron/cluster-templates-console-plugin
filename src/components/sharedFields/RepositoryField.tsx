@@ -93,10 +93,9 @@ const RepositoryField = ({
   };
 
   const validated = touched && errorMsg ? ValidatedOptions.error : ValidatedOptions.default;
-  const repoNames = repos
+  const sortedRepos = repos
     .filter((repo) => repo.data.type === type)
-    .map((repo) => repo.data.name)
-    .sort((name1, name2) => name1?.localeCompare(name2 || '') || 0);
+    .sort((repo1, repo2) => repo1.data?.name?.localeCompare(repo2.data?.name || '') || 0);
 
   return (
     <FormGroup
@@ -133,8 +132,17 @@ const RepositoryField = ({
             </Button>
           }
         >
-          {repoNames.map((name) => {
-            return <SelectOption value={name} isDisabled={false} key={name} name={name} />;
+          {sortedRepos.map((repo) => {
+            const name = repo.data?.name || '';
+            return (
+              <SelectOption
+                value={name}
+                isDisabled={false}
+                key={name}
+                name={name}
+                description={repo.data?.url}
+              />
+            );
           })}
         </Select>
       </CellLoader>
