@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { secretGVK } from '../constants';
-import { ArgoCDSecretData, DecodedSecret, Secret } from '../types/resourceTypes';
+import { configMapGVK, secretGVK } from '../constants';
+import { ArgoCDSecretData, ConfigMap, DecodedSecret, Secret } from '../types/resourceTypes';
 import { getDecodedSecretData } from '../utils/secrets';
 import { useK8sWatchResource } from './k8s';
 import useArgocdNamespace from './useArgocdNamespace';
@@ -43,4 +43,28 @@ export const useArgoCDSecretByRepoUrl = (
     [secrets, repoUrl],
   );
   return [secret, loaded, loadError];
+};
+
+export const useArgoCDCertificateAuthorityCM = (): [ConfigMap, boolean, unknown] => {
+  const [namespace, namespaceLoaded, namespaceError] = useArgocdNamespace();
+  return useK8sWatchResource<ConfigMap>(
+    namespaceLoaded && !namespaceError
+      ? {
+          namespace: namespace,
+          groupVersionKind: configMapGVK,
+          name: 'argocd-tls-certs-cm',
+        }
+      : null,
+  );
+};
+
+export const useCertificatesAutorityMap = (): [Record<string, string>, boolean, unknown] => {
+  const [cm, cmLoaded, cmError] = useArgoCDCertificateAuthorityCM();
+
+  if (!cmLoaded || cmError) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    return [{}, cmLoaded, cmError];
+  }
+
+  return [cm.data || {}, true, null];
 };

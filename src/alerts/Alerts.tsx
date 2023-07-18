@@ -9,7 +9,14 @@ const Alerts = () => {
   return (
     <>
       {alerts.map((alert, idx) => (
-        <Alert variant="danger" isInline title={t(alert.title)} key={idx}>
+        <Alert
+          variant="danger"
+          isInline
+          title={t(alert.title)}
+          key={idx}
+          aria-label={alert.title}
+          role="alert"
+        >
           {alert.message}
         </Alert>
       ))}

@@ -9,14 +9,10 @@ import { getApiVersion } from '../utils/k8s';
 import React from 'react';
 import { InstanceFormValues, InstanceParameter } from '../types/instanceFormTypes';
 import { useCreateNamespace } from './useCreateNamespace';
+import { toInstanceParameters } from '../utils/instanceUtils';
 
-const toInstanceParameters = (
-  formParameters: InstanceParameter[],
-  clusterSetup?: string,
-): ClusterTemplateInstanceParameter[] =>
-  formParameters
-    .filter((param) => param.default !== param.value)
-    .map((param) => ({ name: param.name, value: param.value?.toString(), clusterSetup }));
+const filterParametersWithOverrides = (parameters: InstanceParameter[]) =>
+  parameters.filter((param) => param.value !== param.default);
 
 const getInstanceParameters = (
   instanceFormValues: InstanceFormValues,
@@ -24,13 +20,16 @@ const getInstanceParameters = (
   return instanceFormValues.postInstallation.reduce<ClusterTemplateInstanceParameter[]>(
     (prevVal, postInstallationItem): ClusterTemplateInstanceParameter[] => [
       ...prevVal,
-      ...toInstanceParameters(postInstallationItem.parameters, postInstallationItem.name),
+      ...toInstanceParameters(
+        filterParametersWithOverrides(postInstallationItem.parameters),
+        postInstallationItem.name,
+      ),
     ],
-    toInstanceParameters(instanceFormValues.installation.parameters),
+    toInstanceParameters(filterParametersWithOverrides(instanceFormValues.installation.parameters)),
   );
 };
 
-const toInstance = (
+export const toInstance = (
   instanceFormValues: InstanceFormValues,
   template: ClusterTemplate,
 ): ClusterTemplateInstance => ({

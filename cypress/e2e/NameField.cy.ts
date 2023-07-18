@@ -1,6 +1,6 @@
 context('NameField', () => {
   beforeEach(() => {
-    cy.visit('http://localhost:6006/iframe.html?args=&id=namefield--valid-name&viewMode=story');
+    cy.goToStory('namefield', 'valid-name');
   });
 
   it('Input field should contain text "valid-name"', () => {

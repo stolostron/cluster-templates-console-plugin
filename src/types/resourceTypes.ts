@@ -1,5 +1,32 @@
-import { K8sResourceCommon, ObjectMetadata } from '@openshift-console/dynamic-plugin-sdk';
 import React from 'react';
+
+//duplicate this type from sdk to enable creating a story of a component using this type without bundlign the SDK
+export type ObjectMetadata = {
+  annotations?: {
+    [key: string]: string;
+  };
+  clusterName?: string;
+  creationTimestamp?: string;
+  deletionGracePeriodSeconds?: number;
+  deletionTimestamp?: string;
+  finalizers?: string[];
+  generateName?: string;
+  generation?: number;
+  labels?: {
+    [key: string]: string;
+  };
+  managedFields?: unknown[];
+  name?: string;
+  namespace?: string;
+  resourceVersion?: string;
+  uid?: string;
+};
+
+export type K8sResourceCommon = {
+  apiVersion?: string;
+  kind?: string;
+  metadata?: ObjectMetadata;
+};
 
 export enum ClusterTemplateVendor {
   CUSTOM = 'Custom',
@@ -133,12 +160,13 @@ export type HelmRepoIndexChartEntry = {
   annotations?: { [key in string]: string };
   created: string;
   apiVersion: string;
-  appVersion: string;
+  appVersion?: string;
   description?: string;
   digest: string;
   type: string;
   urls: string[];
   version: string;
+  name?: string;
 };
 
 export type HelmRepositoryChartEntries = { [key: string]: HelmRepoIndexChartEntry[] };
@@ -155,6 +183,27 @@ export type HelmRepository = {
   index?: HelmRepoIndex;
   error?: string;
 };
+
+export type GitRepositoryEntries = {
+  blablabla: string[];
+};
+
+export type GitRepoIndex = {
+  apiVersion: string;
+  entries: HelmRepositoryChartEntries;
+  generated: string;
+};
+
+export type GitRepository = {
+  url: string;
+  branches?: string[];
+  tags?: string[];
+  error?: string;
+};
+
+export const isHelmRepository = (
+  repository: GitRepository | HelmRepository,
+): repository is HelmRepository => !!(repository as HelmRepository).index;
 
 export type QuotaAllowedTemplate = {
   name: string;
@@ -194,10 +243,8 @@ export type ArgoCDSecretData = {
   username?: string;
   password?: string;
   project?: string;
-  tlsClientCertData?: string;
-  tlsClientCertKey?: string;
   type?: RepositoryType;
-  insecure?: boolean;
+  insecure?: string;
 };
 
 export type ConfigMap = {

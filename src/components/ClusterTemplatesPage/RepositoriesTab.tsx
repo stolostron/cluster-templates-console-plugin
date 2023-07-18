@@ -11,10 +11,10 @@ import React from 'react';
 import EmptyPageState from '../../helpers/EmptyPageState';
 import TableLoader from '../../helpers/TableLoader';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
-import { useHelmChartRepositories } from '../../hooks/useHelmChartRepositories';
+import useRepositories from '../../hooks/useRepositories';
 import { useTranslation } from '../../hooks/useTranslation';
-import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
-import RepositoriesTable from '../HelmRepositories/RepositoriesTable';
+import NewRepositoryDialog from '../Repositories/NewRepositoryDialog';
+import RepositoriesTable from '../Repositories/RepositoriesTable';
 
 const CreateRepositoryButton = () => {
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
@@ -31,7 +31,7 @@ const CreateRepositoryButton = () => {
 
 const RefreshRepositoriesButton = () => {
   const { t } = useTranslation();
-  const { refetch } = useHelmChartRepositories();
+  const { refetch } = useRepositories();
   return (
     <Popover bodyContent={t('Refresh repositories information')}>
       <Button variant="link" onClick={() => void refetch()} icon={<SyncAltIcon />}>

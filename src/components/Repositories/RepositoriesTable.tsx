@@ -13,23 +13,19 @@ import {
 import { TFunction } from 'react-i18next';
 import { secretGVK } from '../../constants';
 import { ArgoCDSecretData, DecodedSecret, RowProps, TableColumn } from '../../types/resourceTypes';
-import { getNumRepoCharts } from '../../hooks/useHelmChartRepositories';
 import { Truncate, Text } from '@patternfly/react-core';
 import useDialogsReducer from '../../hooks/useDialogsReducer';
 import EditRepositoryDialog from './EditRepositoryDialog';
 import { useTranslation } from '../../hooks/useTranslation';
 import CellLoader from '../../helpers/CellLoader';
-import {
-  HelmChartRepositoryListResult,
-  useHelmChartRepositories,
-} from '../../hooks/useHelmChartRepositories';
-import RepositoryErrorPopover from './RepositoryErrorPopover';
 import DeleteDialog from '../sharedDialogs/DeleteDialog';
 import { useClusterTemplatesFromRepo } from '../../hooks/useClusterTemplates';
 import ActionsTd from '../../helpers/ActionsTd';
 import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
 import Humanize from 'humanize-plus';
 import VendorLabel from '../sharedDetailItems/VendorLabel';
+import useRepositories, { RepositoriesListResult } from '../../hooks/useRepositories';
+import RepositoryStatus from './RepositoryStatus';
 
 const COLUMN_WIDTH = 11.6;
 
@@ -50,18 +46,13 @@ const getTableColumns = (t: TFunction): (TableColumn & { widthPercent: number })
     widthPercent: COLUMN_WIDTH,
   },
   {
-    title: t('Secret Created'),
+    title: t('Created'),
     id: 'created',
     widthPercent: COLUMN_WIDTH,
   },
   {
-    title: t('Repository updated'),
-    id: 'updated-at',
-    widthPercent: COLUMN_WIDTH,
-  },
-  {
-    title: t('Helm charts'),
-    id: 'charts',
+    title: t('Status'),
+    id: 'status',
     widthPercent: COLUMN_WIDTH,
   },
   {
@@ -83,29 +74,21 @@ const RepositoryActionDialogIds: RepositoryActionDialogIds[] = [
 ];
 
 type RepositoryRowProps = RowProps<DecodedSecret<ArgoCDSecretData>> & {
-  helmChartRepositoriesResult: HelmChartRepositoryListResult;
+  reposListResult: RepositoriesListResult;
 };
 
-export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRowProps) => {
+export const RepositoryRow = ({ obj, reposListResult }: RepositoryRowProps) => {
   const { t } = useTranslation();
 
   const { openDialog, closeDialog, isDialogOpen } = useDialogsReducer(RepositoryActionDialogIds);
-  const { repos, loaded, error } = helmChartRepositoriesResult;
+
+  //const { repos, loaded, error } = reposListResult;
 
   const [templatesFromRepo, templatesLoaded, templatesLoadError] = useClusterTemplatesFromRepo(
     obj.data.url,
   );
-  // t('Failed to find repository templates')
+
   useAddAlertOnError(templatesLoadError, 'Failed to find repository templates');
-  let repoChartsCount: string | number = '-';
-  let repoChartsUpdatedAt = '-';
-  let repository;
-  if (obj.data.type === 'helm') {
-    repository = repos.find((r) => r.url === obj.data?.url);
-    repoChartsCount = (repository && getNumRepoCharts(repository)) || '-';
-    repoChartsUpdatedAt =
-      (repository?.index && new Date(repository.index.generated).toLocaleString()) || '-';
-  }
 
   const getRowActions = (): IAction[] => {
     return [
@@ -148,18 +131,7 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
         <Timestamp timestamp={obj.metadata?.creationTimestamp || ''} />
       </Td>
       <Td dataLabel={columns[4].id}>
-        <CellLoader loaded={loaded} error={error}>
-          {repoChartsUpdatedAt}
-        </CellLoader>
-      </Td>
-      <Td dataLabel={columns[5].id}>
-        <CellLoader loaded={loaded} error={error}>
-          {repository?.error ? (
-            <RepositoryErrorPopover error={repository.error} />
-          ) : (
-            repoChartsCount
-          )}
-        </CellLoader>
+        <RepositoryStatus secret={obj} reposListResult={reposListResult} />
       </Td>
       <Td dataLabel={columns[5].id}>
         <VendorLabel resource={obj} />
@@ -187,12 +159,9 @@ export const RepositoryRow = ({ obj, helmChartRepositoriesResult }: RepositoryRo
 };
 
 const RepositoriesTable = ({ secrets }: { secrets: DecodedSecret<ArgoCDSecretData>[] }) => {
-  const helmChartRepositoriesResult = useHelmChartRepositories();
-  // t('Failed to load Helm repositories information')
-  useAddAlertOnError(
-    helmChartRepositoriesResult.error,
-    'Failed to load Helm repositories information',
-  );
+  const reposResult = useRepositories();
+  // t('Failed to load repositories information')
+  useAddAlertOnError(reposResult.error, 'Failed to load repositories information');
   const { t } = useTranslation();
 
   return (
@@ -212,11 +181,7 @@ const RepositoriesTable = ({ secrets }: { secrets: DecodedSecret<ArgoCDSecretDat
       </Thead>
       <Tbody>
         {secrets.map((secret) => (
-          <RepositoryRow
-            key={secret.data?.name}
-            obj={secret}
-            helmChartRepositoriesResult={helmChartRepositoriesResult}
-          />
+          <RepositoryRow key={secret.data?.name} obj={secret} reposListResult={reposResult} />
         ))}
       </Tbody>
     </TableComposable>

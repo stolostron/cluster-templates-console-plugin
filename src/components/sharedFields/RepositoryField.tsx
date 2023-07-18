@@ -12,9 +12,9 @@ import { useField } from 'formik';
 import { useAlerts } from '../../alerts/AlertsContext';
 import { useTranslation } from '../../hooks/useTranslation';
 import { PlusIcon } from '@patternfly/react-icons';
-import NewRepositoryDialog from '../HelmRepositories/NewRepositoryDialog';
+import NewRepositoryDialog from '../Repositories/NewRepositoryDialog';
 import CellLoader from '../../helpers/CellLoader';
-import { ArgoCDSecretData, RepositoryType } from '../../types/resourceTypes';
+import { RepositoryType } from '../../types/resourceTypes';
 import { useArgoCDSecrets } from '../../hooks/useArgoCDSecrets';
 import { useAddAlertOnError } from '../../alerts/useAddAlertOnError';
 import { humanizeUrl } from '../../utils/humanizing';
@@ -71,9 +71,9 @@ const RepositoryField = ({
     }
   }, [addAlert, loaded, selectedRepoName, setValue, url, setSelectedRepoName, repos]);
 
-  const onNewRepoCreated = (argoCDSecretData: ArgoCDSecretData) => {
-    setSelectedRepoName(argoCDSecretData.name || '');
-    setValue(argoCDSecretData.url || '', true);
+  const onNewRepoCreated = (name: string, url: string) => {
+    setSelectedRepoName(name);
+    setValue(url, true);
   };
 
   const onSelect: SelectProps['onSelect'] = (_, value) => {
@@ -93,10 +93,9 @@ const RepositoryField = ({
   };
 
   const validated = touched && errorMsg ? ValidatedOptions.error : ValidatedOptions.default;
-  const repoNames = repos
+  const sortedRepos = repos
     .filter((repo) => repo.data.type === type)
-    .map((repo) => repo.data.name)
-    .sort((name1, name2) => name1?.localeCompare(name2 || '') || 0);
+    .sort((repo1, repo2) => repo1.data?.name?.localeCompare(repo2.data?.name || '') || 0);
 
   return (
     <FormGroup
@@ -133,8 +132,17 @@ const RepositoryField = ({
             </Button>
           }
         >
-          {repoNames.map((name) => {
-            return <SelectOption value={name} isDisabled={false} key={name} name={name} />;
+          {sortedRepos.map((repo) => {
+            const name = repo.data?.name || '';
+            return (
+              <SelectOption
+                value={name}
+                isDisabled={false}
+                key={name}
+                name={name}
+                description={repo.data?.url}
+              />
+            );
           })}
         </Select>
       </CellLoader>

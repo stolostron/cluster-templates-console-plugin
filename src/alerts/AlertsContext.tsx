@@ -36,7 +36,7 @@ export const useAlerts = (): AlertsContextData => {
   const alertsContext = React.useContext(AlertsContext);
   const { t } = useTranslation();
   if (!alertsContext) {
-    throw t('useAlerts can only be used within AlertsContext.Provider');
+    throw new Error(t('useAlerts can only be used within AlertsContext.Provider'));
   }
   return alertsContext;
 };

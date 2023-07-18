@@ -1,23 +1,10 @@
-import {
-  K8sGroupVersionKind,
-  K8sResourceKindReference,
-} from '@openshift-console/dynamic-plugin-sdk';
+//duplicate this type from sdk to enable creating a story of a component using this type without bundlign the SDK
 
-/**
- * @deprecated - This will become obsolete when we move away from K8sResourceKindReference to K8sGroupVersionKind
- * Provides a reference string that uniquely identifies the group, version, and kind of a k8s resource.
- * @param K8sGroupVersionKind Pass K8sGroupVersionKind which will have group, version, and kind of a k8s resource.
- * @param K8sGroupVersionKind.group Pass group of k8s resource or model.
- * @param K8sGroupVersionKind.version Pass version of k8s resource or model.
- * @param K8sGroupVersionKind.kind Pass kind of k8s resource or model.
- * @returns The reference for any k8s resource i.e `group~version~kind`.
- * If the group will not be present then "core" will be returned as part of the group in reference.
- */
-export const getReference = ({
-  group,
-  version,
-  kind,
-}: K8sGroupVersionKind): K8sResourceKindReference => [group || 'core', version, kind].join('~');
+export type K8sGroupVersionKind = {
+  group?: string;
+  version: string;
+  kind: string;
+};
 
 export const getApiVersion = (gvk: K8sGroupVersionKind) =>
   gvk.group ? `${gvk.group}/${gvk.version}` : gvk.version;
@@ -38,7 +25,9 @@ export const getResourceUrl = (
     url += 'cluster/';
   }
 
-  url += getReference(groupVersionKind);
+  url += [groupVersionKind.group || 'core', groupVersionKind.version, groupVersionKind.kind].join(
+    '~',
+  );
 
   if (name) {
     // Some resources have a name that needs to be encoded. For instance,

@@ -19,7 +19,7 @@
     "podman:deploy": "yarn podman:build && yarn podman:push quay.io/$USER/caas-ui:latest && ./scripts/deploy.sh quay.io/$USER/caas-ui:latest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "test": "yarn cypress run"
+    "test": "yarn run start-test 'yarn storybook --no-open' http://localhost:6006 'yarn cypress run'"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
@@ -45,6 +45,7 @@
     "@types/react": "^17.0.37",
     "@types/react-helmet": "^6.1.4",
     "@types/react-router-dom": "^5.3.2",
+    "@types/url-parse": "^1.4.8",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "buffer": "^6.0.3",
@@ -75,6 +76,7 @@
     "sass": "^1.62.1",
     "sass-loader": "^13.2.0",
     "showdown": "1.8.6",
+    "start-server-and-test": "^2.0.0",
     "storybook": "^7.0.5",
     "style-loader": "^3.3.1",
     "stylelint": "^14.9.1",
@@ -99,7 +101,8 @@
       "templateDetails": "./components/ClusterTemplateDetailsPage/ClusterTemplateDetailsPage.tsx",
       "createQuota": "./components/Quotas/QuotaEditor/QuotaFormPage.tsx",
       "editQuota": "./components/Quotas/QuotaEditor/QuotaEditPage.tsx",
-      "repositoriesContext": "./contexts/helmRepositoriesContext.ts",
+      "helmRepositoriesContext": "./contexts/helmRepositoriesContext.ts",
+      "gitRepositoriesContext": "./contexts/gitRepositoriesContext.ts",
       "createInstance": "./components/Instances/InstanceCreatePage.tsx"
     },
     "dependencies": {
@@ -121,6 +124,7 @@
     "monaco-editor-core": "^0.34.1",
     "react-monaco-editor": "^0.41.2",
     "recoil": "^0.7.6",
+    "url-parse": "^1.5.10",
     "yup": "^0.32.11"
   }
 }
