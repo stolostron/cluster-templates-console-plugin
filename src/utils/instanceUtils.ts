@@ -13,6 +13,8 @@ import {
   DeserializedClusterTemplate,
 } from '../types/resourceTypes';
 import { createDownloadFile } from './utils';
+import { clusterTemplateInstanceGVK } from '../constants';
+import { getApiVersion } from './k8s';
 type ValuesObj = Record<string, unknown> | undefined;
 
 const getParametersFromSchema = (
@@ -113,6 +115,8 @@ export const getExampleInstance = (
       installationParameters,
     ) || [];
   return {
+    apiVersion: getApiVersion(clusterTemplateInstanceGVK),
+    kind: clusterTemplateInstanceGVK.kind,
     metadata: {
       name: 'example',
       namespace: 'default',
