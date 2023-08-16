@@ -51,7 +51,7 @@ export const CreateTemplateCard = ({ description }: { description: string }) => 
   const { t } = useTranslation();
   if (!qsCtx || !qsCtx.setActiveQuickStart) {
     return (
-      <ErrorState error={'QuickStartContext should be used without QuickStartContextProvider'} />
+      <ErrorState error={'QuickStartContext should be used within QuickStartContextProvider'} />
     );
   }
 
