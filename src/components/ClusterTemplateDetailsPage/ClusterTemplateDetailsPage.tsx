@@ -38,7 +38,6 @@ import { getResourceVendor } from '../../utils/clusterTemplateDataUtils';
 import useClusterTemplateActions from '../../hooks/useClusterTemplateActions';
 import useClusterTemplateDeserializer from '../../hooks/useClusterTemplateDeserializer';
 import Alerts from '../../alerts/Alerts';
-import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
 
 const useActiveNavItem = (clusterTemplate: DeserializedClusterTemplate | undefined) => {
   const history = useHistory();
@@ -153,37 +152,33 @@ const ClusterTemplateDetailsPage = ({ match }: { match: { params: { name: string
     <ErrorBoundary>
       <AlertsContextProvider>
         <PageLoader loaded={loaded} error={error}>
-          <WithClusterTemplateQuickStarts>
-            {deserializedTemplate && (
-              <Page>
-                <PageHeader clusterTemplate={deserializedTemplate} />
+          {deserializedTemplate && (
+            <Page>
+              <PageHeader clusterTemplate={deserializedTemplate} />
 
-                {activeNavItem !== 'yaml' && (
-                  <PageSection>
-                    <Stack hasGutter>
-                      <StackItem>
-                        <Alerts />
-                      </StackItem>
-                      <StackItem>
-                        {activeNavItem === 'overview' && (
-                          <OverviewTab clusterTemplate={deserializedTemplate} />
-                        )}
-                        {activeNavItem === 'quotas' && (
-                          <DetailsQuotasTab clusterTemplate={clusterTemplate} />
-                        )}
-                        {activeNavItem === 'instances' && (
-                          <InstancesTab clusterTemplate={clusterTemplate} />
-                        )}
-                      </StackItem>
-                    </Stack>
-                  </PageSection>
-                )}
-                {activeNavItem === 'yaml' && (
-                  <ResourceYAMLEditor initialResource={clusterTemplate} />
-                )}
-              </Page>
-            )}
-          </WithClusterTemplateQuickStarts>
+              {activeNavItem !== 'yaml' && (
+                <PageSection>
+                  <Stack hasGutter>
+                    <StackItem>
+                      <Alerts />
+                    </StackItem>
+                    <StackItem>
+                      {activeNavItem === 'overview' && (
+                        <OverviewTab clusterTemplate={deserializedTemplate} />
+                      )}
+                      {activeNavItem === 'quotas' && (
+                        <DetailsQuotasTab clusterTemplate={clusterTemplate} />
+                      )}
+                      {activeNavItem === 'instances' && (
+                        <InstancesTab clusterTemplate={clusterTemplate} />
+                      )}
+                    </StackItem>
+                  </Stack>
+                </PageSection>
+              )}
+              {activeNavItem === 'yaml' && <ResourceYAMLEditor initialResource={clusterTemplate} />}
+            </Page>
+          )}
         </PageLoader>
       </AlertsContextProvider>
     </ErrorBoundary>

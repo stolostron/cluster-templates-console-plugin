@@ -20,7 +20,6 @@ import ClusterTemplatesTab from './ClusterTemplatesTab';
 import QuotasTab from './QuotasTab';
 import RepositoriesTable from './RepositoriesTab';
 import './hack.css';
-import WithClusterTemplateQuickStarts from '../ClusterTemplatesGettingStarted/WithClusterTemplateQuickStarts';
 import { AlertsContextProvider } from '../../alerts/AlertsContext';
 import Alerts from '../../alerts/Alerts';
 import ErrorBoundary from '../../helpers/ErrorBoundary';
@@ -90,23 +89,21 @@ const ClusterTemplatesPage = () => {
   return (
     <ErrorBoundary>
       <AlertsContextProvider>
-        <WithClusterTemplateQuickStarts>
-          <Page>
-            <PageHeader />
-            <PageSection>
-              <Stack hasGutter>
-                <StackItem>
-                  <Alerts />
-                </StackItem>
-                <StackItem>
-                  {activeTab === 'templates' && <ClusterTemplatesTab />}
-                  {activeTab === 'repositories' && <RepositoriesTable />}
-                  {activeTab === 'quotas' && <QuotasTab />}
-                </StackItem>
-              </Stack>
-            </PageSection>
-          </Page>
-        </WithClusterTemplateQuickStarts>
+        <Page>
+          <PageHeader />
+          <PageSection>
+            <Stack hasGutter>
+              <StackItem>
+                <Alerts />
+              </StackItem>
+              <StackItem>
+                {activeTab === 'templates' && <ClusterTemplatesTab />}
+                {activeTab === 'repositories' && <RepositoriesTable />}
+                {activeTab === 'quotas' && <QuotasTab />}
+              </StackItem>
+            </Stack>
+          </PageSection>
+        </Page>
       </AlertsContextProvider>
     </ErrorBoundary>
   );
